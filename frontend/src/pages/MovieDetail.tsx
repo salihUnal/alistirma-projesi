@@ -49,7 +49,6 @@ export default function MovieDetail() {
     };
   }, [id]);
 
-  // 6) Basit SEO: sayfa başlığı ve meta description
   useEffect(() => {
     if (movie?.title) {
       document.title = `${movie.title} | MovieApp`;
