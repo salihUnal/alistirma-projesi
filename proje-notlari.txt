@@ -1,0 +1,673 @@
+
+[NEXT - Search geliştirme]
+- Durum: Movies grid sıkışma sorunu düzeltildi (Movies tam genişlikte).
+- Sıradaki adım: Arama deneyimini iyileştir.
+  1) 300ms debounce ekle (gereksiz istekleri azalt).
+  2) URL senkronizasyonu: `?q=<arama-terimi>` ile geri/ileri çalışsın.
+  3) Boş aramada tüm listeye geri dön.
+# PROJE NOTLARI - ROUTE GUARD VE CONTEXT AUTH YÖNETİMİ
+
+## 4. Route Guard (Koruma) ve Context ile Auth Yönetimi
+
+### ADIM 1: AuthContext Oluşturma
+
+**Dosya Yolu:** `src/contexts/AuthContext.tsx`
+
+**Açıklama:** Global state yönetimi için Context API kullanarak authentication durumunu yönetir.
+
+**Kod:**
+```tsx
+import React, { createContext, useContext, useState, ReactNode } from 'react';
+
+interface AuthContextType {
+  isLoggedIn: boolean;
+  username: string;
+  userRole: string;
+  login: (username: string, role: string) => void;
+  logout: () => void;
+  changeRole: (role: string) => void;
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [username, setUsername] = useState("");
+  const [userRole, setUserRole] = useState("guest");
+
+  const login = (username: string, role: string) => {
+    setIsLoggedIn(true);
+    setUsername(username);
+    setUserRole(role);
+  };
+
+  const logout = () => {
+    setIsLoggedIn(false);
+    setUsername("");
+    setUserRole("guest");
+  };
+
+  const changeRole = (role: string) => {
+    setUserRole(role);
+  };
+
+  return (
+    <AuthContext.Provider value={{ 
+      isLoggedIn, 
+      username, 
+      userRole, 
+      login, 
+      logout, 
+      changeRole 
+    }}>
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+}
+```
+
+**Önemli Noktalar:**
+- Context API ile global state yönetimi
+- TypeScript interface ile tip güvenliği
+- Custom hook (useAuth) ile kolay erişim
+- Error handling ile güvenli kullanım
+
+### ADIM 2: ProtectedRoute Bileşeni Oluşturma
+
+**Dosya Yolu:** `src/components/ProtectedRoute.tsx`
+
+**Açıklama:** Belirli sayfalara erişimi kontrol eden koruma bileşeni.
+
+**Kod:**
+```tsx
+import React from 'react';
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+
+interface ProtectedRouteProps {
+  children: React.ReactNode;
+  requiredRole?: string;
+  redirectTo?: string;
+}
+
+function ProtectedRoute({ 
+  children, 
+  requiredRole, 
+  redirectTo = "/login" 
+}: ProtectedRouteProps) {
+  const { isLoggedIn, userRole } = useAuth();
+
+  // Giriş yapmamış kullanıcıları login sayfasına yönlendir
+  if (!isLoggedIn) {
+    return <Navigate to={redirectTo} replace />;
+  }
+
+  // Belirli bir rol gerekiyorsa kontrol et
+  if (requiredRole && userRole !== requiredRole) {
+    return <Navigate to="/unauthorized" replace />;
+  }
+
+  return <>{children}</>;
+}
+
+export default ProtectedRoute;
+```
+
+**Önemli Noktalar:**
+- Navigate bileşeni ile yönlendirme
+- replace prop'u ile browser history'yi temizleme
+- Rol bazlı erişim kontrolü
+- Esnek redirectTo parametresi
+
+### ADIM 3: App.tsx'te AuthProvider'ı Sarmalama
+
+**Dosya Yolu:** `src/App.tsx`
+
+**Açıklama:** Tüm uygulamayı AuthProvider ile sarmalayarak context'i aktif hale getirme.
+
+**Kod:**
+```tsx
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './contexts/AuthContext';
+import Layout from './components/Layout';
+import Home from './pages/Home';
+import MovieList from './pages/MovieList';
+import MovieDetail from './pages/MovieDetail';
+import ProtectedRoute from './components/ProtectedRoute';
+import Unauthorized from './pages/Unauthorized';
+
+function App() {
+  return (
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Home />} />
+            <Route 
+              path="/movies/:category" 
+              element={
+                <ProtectedRoute>
+                  <MovieList />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/tv/:category" 
+              element={
+                <ProtectedRoute>
+                  <MovieList />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/movie/detail/:id" 
+              element={
+                <ProtectedRoute>
+                  <MovieDetail />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/admin" 
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <AdminPage />
+                </ProtectedRoute>
+              } 
+            />
+          </Route>
+          <Route path="/unauthorized" element={<Unauthorized />} />
+        </Routes>
+      </Router>
+    </AuthProvider>
+  );
+}
+```
+
+**Önemli Noktalar:**
+- AuthProvider en dışta olmalı
+- Router AuthProvider içinde olmalı
+- ProtectedRoute ile sayfa koruması
+- requiredRole ile rol bazlı erişim
+
+### ADIM 4: Layout.tsx'i Context ile Güncelleme
+
+**Dosya Yolu:** `src/components/Layout.tsx`
+
+**Açıklama:** Mevcut state yönetimini Context API'ye taşıma.
+
+**Kod:**
+```tsx
+import React, { useState } from "react";
+import { Outlet } from "react-router-dom";
+import { useAuth } from '../contexts/AuthContext';
+import LoginForm from "./LoginForm";
+import Dashboard from "./Dashboard";
+import MovieList from "../pages/MovieList";
+import Header from "./Header";
+
+function Layout() {
+  const { isLoggedIn, username, userRole, login, logout, changeRole } = useAuth();
+  const [showTestPage, setShowTestPage] = useState(false);
+
+  const handleLogin = (username: string, role: string) => {
+    login(username, role);
+  };
+
+  const handleLogout = () => {
+    logout();
+  };
+
+  const handleRoleChange = (role: string) => {
+    changeRole(role);
+  };
+
+  const handleTestPage = () => {
+    setShowTestPage(true);
+  };
+
+  const handleBackToLogin = () => {
+    setShowTestPage(false);
+  };
+
+  if (showTestPage) {
+    return <MovieList onBack={handleBackToLogin} />;
+  }
+
+  return (
+    <div className="App bg-gray-300 rounded-r-3xl shadow-2xl p-8">
+      {!isLoggedIn ? (
+        <LoginForm onLogin={handleLogin} onTestPage={handleTestPage} />
+      ) : (
+        <>
+          <Header />
+          <Outlet />
+          <Dashboard
+            username={username}
+            userRole={userRole}
+            isLoggedIn={isLoggedIn}
+            onLogout={handleLogout}
+            onRoleChange={handleRoleChange}
+          />
+        </>
+      )}
+    </div>
+  );
+}
+```
+
+**Önemli Noktalar:**
+- useAuth hook'u ile context'e erişim
+- State yönetimi context'e taşındı
+- Fonksiyonlar context'ten geliyor
+- Outlet ile nested route'lar render ediliyor
+
+### ADIM 5: Unauthorized Sayfası Oluşturma
+
+**Dosya Yolu:** `src/pages/Unauthorized.tsx`
+
+**Açıklama:** Yetkisiz erişim durumunda gösterilecek sayfa.
+
+**Kod:**
+```tsx
+import React from 'react';
+import { Link } from 'react-router-dom';
+
+function Unauthorized() {
+  return (
+    <div className="text-center py-20">
+      <h1 className="text-6xl font-bold text-red-500">403</h1>
+      <p className="text-xl mt-4">Bu sayfaya erişim yetkiniz yok</p>
+      <p className="text-gray-600 mt-2">
+        Bu sayfayı görüntülemek için gerekli yetkiye sahip değilsiniz.
+      </p>
+      <div className="mt-6 space-x-4">
+        <Link 
+          to="/" 
+          className="text-blue-500 hover:underline px-4 py-2 border border-blue-500 rounded"
+        >
+          Ana sayfaya dön
+        </Link>
+        <Link 
+          to="/login" 
+          className="text-green-500 hover:underline px-4 py-2 border border-green-500 rounded"
+        >
+          Farklı hesap ile giriş yap
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+export default Unauthorized;
+```
+
+**Önemli Noktalar:**
+- Kullanıcı dostu hata mesajı
+- Navigasyon seçenekleri
+- Responsive tasarım
+- Açıklayıcı metin
+
+### ADIM 6: Kullanım Örnekleri
+
+**1. Basit Korumalı Sayfa:**
+```tsx
+<Route 
+  path="/profile" 
+  element={
+    <ProtectedRoute>
+      <ProfilePage />
+    </ProtectedRoute>
+  } 
+/>
+```
+
+**2. Rol Bazlı Korumalı Sayfa:**
+```tsx
+<Route 
+  path="/admin" 
+  element={
+    <ProtectedRoute requiredRole="admin">
+      <AdminPage />
+    </ProtectedRoute>
+  } 
+/>
+```
+
+**3. Özel Yönlendirme:**
+```tsx
+<Route 
+  path="/premium" 
+  element={
+    <ProtectedRoute 
+      requiredRole="premium" 
+      redirectTo="/upgrade"
+    >
+      <PremiumPage />
+    </ProtectedRoute>
+  } 
+/>
+```
+
+### ADIM 7: Gelişmiş Özellikler
+
+**1. LocalStorage ile Kalıcılık:**
+```tsx
+// AuthContext.tsx'e ekle
+const [isLoggedIn, setIsLoggedIn] = useState(() => {
+  return localStorage.getItem('isLoggedIn') === 'true';
+});
+
+const login = (username: string, role: string) => {
+  setIsLoggedIn(true);
+  setUsername(username);
+  setUserRole(role);
+  localStorage.setItem('isLoggedIn', 'true');
+  localStorage.setItem('username', username);
+  localStorage.setItem('userRole', role);
+};
+```
+
+**2. Auto Logout Timer:**
+```tsx
+// AuthContext.tsx'e ekle
+useEffect(() => {
+  if (isLoggedIn) {
+    const timer = setTimeout(() => {
+      logout();
+    }, 30 * 60 * 1000); // 30 dakika
+
+    return () => clearTimeout(timer);
+  }
+}, [isLoggedIn]);
+```
+
+**3. Route History Tracking:**
+```tsx
+// ProtectedRoute.tsx'e ekle
+const location = useLocation();
+
+useEffect(() => {
+  if (!isLoggedIn) {
+    localStorage.setItem('redirectAfterLogin', location.pathname);
+  }
+}, [isLoggedIn, location]);
+```
+
+### ADIM 8: Test Senaryoları
+
+**1. Giriş Yapmamış Kullanıcı:**
+- Korumalı sayfaya erişim denemesi
+- Login sayfasına yönlendirme
+- Browser history'de geri gitme kontrolü
+
+**2. Yanlış Rol ile Erişim:**
+- Admin sayfasına user rolü ile erişim
+- Unauthorized sayfasına yönlendirme
+- Rol değiştirme sonrası erişim
+
+**3. Giriş Yapmış Kullanıcı:**
+- Korumalı sayfalara normal erişim
+- Rol bazlı içerik gösterimi
+- Logout sonrası state temizleme
+
+### ADIM 9: Hata Yönetimi
+
+**1. Context Error Handling:**
+```tsx
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    console.error('useAuth must be used within an AuthProvider');
+    return {
+      isLoggedIn: false,
+      username: '',
+      userRole: 'guest',
+      login: () => {},
+      logout: () => {},
+      changeRole: () => {}
+    };
+  }
+  return context;
+}
+```
+
+**2. Route Error Boundary:**
+```tsx
+class RouteErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <h1>Bir şeyler yanlış gitti.</h1>;
+    }
+
+    return this.props.children;
+  }
+}
+```
+
+### ADIM 10: Performans Optimizasyonları
+
+**1. Memoization:**
+```tsx
+const AuthProvider = React.memo(({ children }) => {
+  // ... provider logic
+});
+```
+
+**2. Lazy Loading:**
+```tsx
+const ProtectedRoute = React.lazy(() => import('./components/ProtectedRoute'));
+```
+
+**3. Context Optimization:**
+```tsx
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+AuthContext.displayName = 'AuthContext'; // Debug için
+```
+
+### SONUÇ
+
+Bu yapı ile:
+- ✅ Güvenli sayfa erişimi
+- ✅ Rol bazlı yetkilendirme
+- ✅ Global state yönetimi
+- ✅ Kullanıcı dostu hata mesajları
+- ✅ Performans optimizasyonu
+- ✅ TypeScript desteği
+- ✅ Kolay genişletilebilirlik
+
+sağlanmış olur.
+
+Kaydedilen İçerik:
+✅ 10 Adım detaylı olarak açıklandı
+✅ Kod örnekleri her adım için verildi
+✅ Önemli noktalar vurgulandı
+✅ Test senaryoları eklendi
+✅ Hata yönetimi açıklandı
+✅ Performans optimizasyonları belirtildi
+✅ Gelişmiş özellikler eklendi
+✅ Yarın yapılacaklar listesi oluşturuldu
+
+### YARIN YAPILACAKLAR
+
+1. Bu adımları sırasıyla uygulama
+2. Test senaryolarını çalıştırma
+3. Hata durumlarını kontrol etme
+4. Performans testleri yapma
+5. Kullanıcı deneyimini iyileştirme
+
+---
+
+## 5. API ENTEGRASYONU VE PAGINATION (TAMAMLANDI - 31.08.2025)
+
+### ADIM 1: JSONPlaceholder Benzeri Mock API ✅
+
+**Dosya:** `src/services/movieApi.ts`
+
+**Özellikler:**
+- ✅ TypeScript interface (Movie)
+- ✅ Mock veri (4 film)
+- ✅ Network delay simülasyonu (600-1200ms)
+- ✅ Kategori bazlı filtreleme
+- ✅ Error handling fonksiyonu
+
+**API Fonksiyonları:**
+- `getAllMovies()` - Tüm filmler
+- `getPopular()` - Drama + Fantastik
+- `getTopRated()` - IMDB 9.0+ filmler
+- `getNowPlaying()` - Suç + Korku
+- `getUpcoming()` - Fantastik + Bilim Kurgu
+- `getMoviesByType(type)` - Tür bazlı
+- `getMovieById(id)` - Tek film detayı
+- `getMoviesWithError()` - Error test
+
+### ADIM 2: MovieList API Entegrasyonu ✅
+
+**Dosya:** `src/pages/MovieList.tsx`
+
+**Özellikler:**
+- ✅ useEffect ile API çağrıları
+- ✅ Loading state (spinner + mesaj)
+- ✅ Error handling (hata mesajı + retry)
+- ✅ URL parametrelerine göre API seçimi
+- ✅ TypeScript Movie[] tipi
+
+**Kategori Mapping:**
+- `/movies/popular` → getPopular()
+- `/movies/top-rated` → getTopRated()
+- `/movies/now-playing` → getNowPlaying()
+- `/movies/upcoming` → getUpcoming()
+- `/movies/drama` → getMoviesByType("Drama")
+- `/movies/thriller` → getMoviesByType("Gerilim")
+- `/movies/scifi` → getMoviesByType("Bilim Kurgu")
+- `/movies/fantasy` → getMoviesByType("Fantastik")
+- `/movies/action` → getMoviesByType("Suç")
+- `/movies/trending` → getMoviesByType("Gençlik")
+
+### ADIM 3: Loading State ✅
+
+**Özellikler:**
+- ✅ Spinner animasyonu (Tailwind CSS)
+- ✅ "Filmler yükleniyor..." mesajı
+- ✅ Loading sırasında filtre butonları gizli
+- ✅ Network delay ile gerçekçi deneyim
+
+### ADIM 4: Error Handling ✅
+
+**Özellikler:**
+- ✅ Try-catch ile hata yakalama
+- ✅ Kullanıcı dostu hata mesajı
+- ✅ "Tekrar Dene" butonu
+- ✅ Console'da detaylı hata logu
+- ✅ Error test fonksiyonu
+
+### ADIM 5: Pagination Bileşeni ✅
+
+**Dosya:** `src/components/Pagination.tsx`
+
+**Özellikler:**
+- ✅ Sayfa numaraları (1, 2, 3, 4, 5)
+- ✅ Önceki/Sonraki butonları
+- ✅ Aktif sayfa vurgulama
+- ✅ Disabled state'ler
+- ✅ Responsive tasarım
+- ✅ Sayfa başına 6 film
+
+**Pagination Logic:**
+- ✅ URL parametrelerine göre sayfa
+- ✅ Scroll to top sayfa değişiminde
+- ✅ Toplam sayfa hesaplama
+- ✅ Film sayısı gösterimi
+
+### ADIM 6: Filtre Butonları ✅
+
+**Özellikler:**
+- ✅ URL tabanlı filtreleme
+- ✅ Aktif buton vurgulama
+- ✅ 7 kategori butonu
+- ✅ Responsive tasarım
+- ✅ URL ile senkronize
+
+### ADIM 7: Kullanıcı Sistemi Güncelleme ✅
+
+**Özellikler:**
+- ✅ Sadece admin + test kullanıcıları
+- ✅ user/guest kullanıcıları kaldırıldı
+- ✅ Hatalı girişler → Unauthorized sayfası
+- ✅ Test kullanıcısı → Film listesi
+- ✅ Admin kullanıcısı → Admin sayfası
+
+### ADIM 8: Header Navigation ✅
+
+**Dosya:** `src/components/Header.tsx`
+
+**Özellikler:**
+- ✅ 8 kategori linki
+- ✅ Renkli butonlar (mavi, yeşil, kırmızı, mor, turuncu)
+- ✅ Hover efektleri
+- ✅ Sadece test sayfasında görünür
+- ✅ URL ile senkronize
+
+### SONUÇ - BUGÜN TAMAMLANAN
+
+**✅ API Entegrasyonu:**
+- Mock API ile gerçekçi deneyim
+- Network delay simülasyonu
+- Kategori bazlı filtreleme
+- Error handling
+
+**✅ Loading & Error States:**
+- Spinner animasyonu
+- Hata mesajları
+- Retry mekanizması
+- Kullanıcı dostu arayüz
+
+**✅ Pagination:**
+- Sayfa numaraları
+- Önceki/Sonraki butonları
+- URL senkronizasyonu
+- Responsive tasarım
+
+**✅ Navigation:**
+- Header filtre butonları
+- Sidebar URL entegrasyonu
+- Aktif durum vurgulama
+- Tek filtre sistemi
+
+**✅ Kullanıcı Yönetimi:**
+- Sadece admin + test
+- Unauthorized sayfası
+- Rol bazlı yönlendirme
+- Hatalı giriş kontrolü
+
+### YARIN YAPILACAKLAR
+
+1. **MovieDetail Sayfası** - Tekil film detayı
+2. **Search Fonksiyonu** - Film arama
+3. **Favorites Sistemi** - Favori filmler
+4. **Responsive İyileştirmeler** - Mobil uyumluluk
+5. **Performance Optimizasyonu** - Lazy loading
+6. **Real API Entegrasyonu** - TMDB API
+7. **Testing** - Unit testler
+8. **Deployment** - Production hazırlığı
+
+---
+Tarih: 31.08.2025
+Proje: Film Uygulaması - API Entegrasyonu ve Pagination Tamamlandı

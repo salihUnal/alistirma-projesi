@@ -1,0 +1,18 @@
+Örnek Proje Özellikleri:
+React + TypeScript + Vite projesi
+Tailwind CSS ile stillendirilmiş
+React Router ile sayfa yönlendirmesi
+Lazy loading ile performans optimizasyonu
+Ana Bileşenler:
+Navbar - Navigasyon çubuğu
+MovieCard - Film kartları
+ModalSearch - Arama modalı
+Pagination - Sayfalama
+Home, List, Detail sayfaları
+Yapı:
+components/ - Yeniden kullanılabilir bileşenler
+views/ - Ana sayfalar
+layouts/ - Sayfa düzenleri
+services/ - API servisleri
+stores/ - State yönetimi
+Bu projeyi mevcut projenize uyarlamak için hangi özellikleri öncelikli olarak istiyorsunuz? Film kartları, arama özelliği, sayfalama gibi hangi bileşenleri önce uygulamak istersiniz?
