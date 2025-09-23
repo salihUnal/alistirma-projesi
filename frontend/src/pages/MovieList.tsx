@@ -52,7 +52,7 @@ function MovieList({ onBack }: TestPageProps) {
       Fantastik: "/movies/fantasy",
       "Bilim Kurgu": "/movies/scifi",
       Aksiyon: "/movies/action",
-      Komedi: "/movies/popular", // Komedi için popular
+      Komedi: "/movies/comedy", // Komedi için popular
       Korku: "/movies/thriller",
       Gençlik: "/movies/trending",
       Gerilim: "/movies/thriller",
@@ -67,11 +67,10 @@ function MovieList({ onBack }: TestPageProps) {
     switch (currentPage) {
       case "Filmler":
         return (
-          <div>
+          <div className="bg-white p-6 rounded-lg shadow">
             <div className="mb-6">
               <h3 className="text-lg font-semibold mb-3">
-                {category ? `${category} Filmleri` : "Tüm Filmler"}
-              </h3>
+              {category ? `${category.toLocaleUpperCase('tr-TR')} Filmleri` : "Tüm Filmler"}              </h3>
               {/* Filtre butonları */}
               <div className="flex flex-wrap gap-2">
                 {/* ... filtre butonları ... */}
@@ -231,7 +230,7 @@ function MovieList({ onBack }: TestPageProps) {
   // };
 
   return (
-    <div className="container mx-auto px-4 py-8 bg-white-100 relative">
+    <div className="container mx-auto min-h-screen px-4 py-8 bg-slate-600 text-white">
       {/* Sabit çıkış butonu */}
       <div className="absolute top-4 right-4 z-50">
         <button
@@ -245,7 +244,7 @@ function MovieList({ onBack }: TestPageProps) {
       <div className="flex gap-6">
         <Sidebar title="Menü" onItemClick={handleSidebarClick} />
         <div className="flex-1">
-          <h1 className="text-3xl font-bold mb-6">Test Sayfası</h1>
+          <h1 className="text-3xl text-center font-bold mb-6">Filmler</h1>
           {renderContent()}
         </div>
       </div>

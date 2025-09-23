@@ -40,7 +40,7 @@ export default function Movies({ category }: MoviesProps) {
         if (category) {
           // Kategori bazlı API çağrısı
           switch (category) {
-            case "popular":
+            case "Popular":
               data = await movieApi.getPopular();
               break;
             case "top-rated":
