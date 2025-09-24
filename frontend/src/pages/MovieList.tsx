@@ -67,10 +67,13 @@ function MovieList({ onBack }: TestPageProps) {
     switch (currentPage) {
       case "Filmler":
         return (
-          <div className="bg-white p-6 rounded-lg shadow">
+          <div className="bg-gray-800 p-6 rounded-lg shadow">
             <div className="mb-6">
               <h3 className="text-lg font-semibold mb-3">
-              {category ? `${category.toLocaleUpperCase('tr-TR')} Filmleri` : "Tüm Filmler"}              </h3>
+                {category
+                  ? `${category.toLocaleUpperCase("tr-TR")} Filmleri`
+                  : "Tüm Filmler"}{" "}
+              </h3>
               {/* Filtre butonları */}
               <div className="flex flex-wrap gap-2">
                 {/* ... filtre butonları ... */}
@@ -235,13 +238,21 @@ function MovieList({ onBack }: TestPageProps) {
       <div className="absolute top-4 right-4 z-50">
         <button
           onClick={onBack}
-          className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg shadow-lg transition-colors duration-200"
+          className="bg-orange-500 hover:bg-red-700 text-white px-4 py-2 rounded-lg shadow-lg transition-colors duration-200"
         >
           Çıkış Yap
         </button>
       </div>
+      <div className="absolute top-4 right-4 z-50">
+        <button
+          // onClick={onBack}
+          className="bg-orange-500 hover:bg-red-700 text-white px-4 py-2 rounded-lg shadow-lg transition-colors duration-200"
+        >
+          ⚛
+        </button>
+      </div>
 
-      <div className="flex gap-6">
+      <div className="flex gap-6 ">
         <Sidebar title="Menü" onItemClick={handleSidebarClick} />
         <div className="flex-1">
           <h1 className="text-3xl text-center font-bold mb-6">Filmler</h1>

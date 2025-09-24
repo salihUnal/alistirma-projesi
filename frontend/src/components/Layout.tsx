@@ -52,7 +52,14 @@ function Layout() {
   }
 
   return (
-    <div className="App bg-gray-300 rounded-r-3xl shadow-2xl p-8">
+    // <div className="App bg-gray-300 rounded-r-3xl shadow-2xl p-8">
+    <div
+      className="
+  relative min-h-screen
+  bg-gradient-to-b from-slate-50 via-slate-100 to-slate-200
+  dark:from-slate-900 dark:via-slate-950 dark:to-black
+"
+    >
       {!isLoggedIn ? (
         <LoginForm onLogin={handleLogin} onTestPage={handleTestPage} />
       ) : (

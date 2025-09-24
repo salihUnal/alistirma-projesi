@@ -76,7 +76,7 @@ export default function Sidebar({
             }
           }}
           className={`
-            w-full flex items-center gap-3 px-4 py-3 rounded-lg 
+            w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-gray-200
             text-gray-700 hover:bg-blue-50 hover:text-blue-700 
             transition-all duration-200 ease-in-out
             ${level > 0 ? "ml-4 text-sm" : "font-medium"}
@@ -87,7 +87,7 @@ export default function Sidebar({
             <div
               className={`
               w-2 h-2 rounded-full 
-              ${level === 0 ? "bg-blue-500" : "bg-gray-400"}
+              ${level === 0 ? "bg-blue-500" : "bg-green-400"}
             `}
             />
             <span>{item.label}</span>
@@ -122,10 +122,10 @@ export default function Sidebar({
   };
 
   return (
-    <aside className="h-full w-64 bg-white border-r border-gray-200 shadow-lg">
+    <aside className="h-full w-64 bg-gray-800 border-r border-gray-200 shadow-lg">
       {/* Header */}
       <div className="px-6 py-6 border-b border-gray-100">
-        <h2 className="text-xl font-bold text-gray-800 tracking-tight">
+        <h2 className=" font-extrabold text-2xl text-gray-100 tracking-tight">
           {title}
         </h2>
       </div>
