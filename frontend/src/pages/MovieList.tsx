@@ -235,20 +235,19 @@ function MovieList({ onBack }: TestPageProps) {
   return (
     <div className="container mx-auto min-h-screen px-4 py-8 bg-slate-600 text-white">
       {/* Sabit çıkış butonu */}
-      <div className="absolute top-4 right-4 z-50">
+      <div className="absolute top-4 right-4 z-50 flex flex-col gap-2">
         <button
           onClick={onBack}
           className="bg-orange-500 hover:bg-red-700 text-white px-4 py-2 rounded-lg shadow-lg transition-colors duration-200"
         >
           Çıkış Yap
         </button>
-      </div>
-      <div className="absolute top-4 right-4 z-50">
+
         <button
           // onClick={onBack}
-          className="bg-orange-500 hover:bg-red-700 text-white px-4 py-2 rounded-lg shadow-lg transition-colors duration-200"
+          className="bg-gray-800 hover:bg-yellow-500 text-white px-2 py-1 rounded-lg shadow-lg transition-colors duration-200"
         >
-          ⚛
+          <p> ⚛ Dark Mode</p>
         </button>
       </div>
 
