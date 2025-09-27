@@ -87,14 +87,14 @@ export default function Movies({ category }: MoviesProps) {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Film, tür, yönetmen ara..."
-        className="w-full md:w-96 rounded border px-3 py-2 mb-4"
+        className="w-full md:w-96 rounded border px-3 py-2 mb-4 bg-slate-900/80 dark:bg-slate-800/90 backdrop-blur-sm"
         aria-label="Ara"
       />
 
       {loading && <p>Yükleniyor...</p>}
       {error && <p className="text-red-600">{error}</p>}
       {!loading && !error && movies.length === 0 && (
-        <p className="text-gray-600">Sonuç bulunamadı.</p>
+        <p className="text-gray-100 dark:text-gray-400">Sonuç bulunamadı.</p>
       )}
 
       <div className="grid grid-cols-6 sm:grid-cols-3 lg:grid-cols-6 gap-6">
@@ -114,7 +114,7 @@ export default function Movies({ category }: MoviesProps) {
               role="button"
               tabIndex={0}
               aria-label={`${movie.title} filmini görüntüle`}
-              className="cursor-pointer bg-white rounded-2xl shadow border border-gray-200 overflow-hidden"
+              className="cursor-pointer bg-slate-900/80 dark:bg-slate-800/90 rounded-2xl shadow border border-slate-700 dark:border-slate-600 overflow-hidden backdrop-blur-sm"
             >
               <img
                 src={movie.image}
@@ -126,16 +126,16 @@ export default function Movies({ category }: MoviesProps) {
                 }}
                 loading="lazy"
               />
-              <div className="p-4">
+              <div className="p-3">
                 <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-lg font-semibold text-gray-900">
+                  <h3 className="text-lg font-semibold text-white dark:text-slate-100">
                     {movie.title}
                   </h3>
-                  <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-600 text-yellow-100 dark:bg-yellow-500 dark:text-yellow-900">
                     IMDB {movie.IMDB_Point}
                   </span>
                 </div>
-                <p className="text-sm text-gray-600 mb-3">
+                <p className="text-sm text-gray-300 dark:text-slate-300 mb-3">
                   {movie.description}
                 </p>
 
@@ -143,7 +143,7 @@ export default function Movies({ category }: MoviesProps) {
                   {movie.types.map((type) => (
                     <span
                       key={type}
-                      className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                      className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-600 text-blue-100 dark:bg-blue-500 dark:text-blue-900"
                     >
                       {type}
                     </span>

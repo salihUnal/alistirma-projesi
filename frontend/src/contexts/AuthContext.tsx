@@ -22,7 +22,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return localStorage.getItem("isLoggedIn") === "true";
   });
   const [username, setUsername] = useState(() => {
-    return localStorage.getItem("username") || " ";
+    return localStorage.getItem("username") || "";
   });
   const [userRole, setUserRole] = useState(() => {
     return localStorage.getItem("userRole") || "guest";

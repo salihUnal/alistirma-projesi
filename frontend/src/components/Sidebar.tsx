@@ -122,21 +122,19 @@ export default function Sidebar({
   };
 
   return (
-    <aside className="h-full w-64 bg-gray-800 border-r border-gray-200 shadow-lg">
+    <aside className="h-full w-64 bg-slate-800/80 backdrop-blur border-r border-slate-600 shadow-sm">
       {/* Header */}
       <div className="px-6 py-6 border-b border-gray-100">
         <h2 className=" font-extrabold text-2xl text-gray-100 tracking-tight">
           {title}
         </h2>
       </div>
-
       {/* Navigation */}
       <nav className="px-4 py-4">
         <ul className="space-y-2">
           {items.map((item) => renderMenuItem(item))}
         </ul>
       </nav>
-
       {/* Footer */}
       {footer && (
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-100 bg-gray-50">

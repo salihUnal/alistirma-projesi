@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import Movies from "../components/Movies";
+import { useAuth } from "../contexts/AuthContext";
+
 // import Pagination from "../components/Pagination";
 
 interface TestPageProps {
@@ -9,6 +11,10 @@ interface TestPageProps {
 }
 
 function MovieList({ onBack }: TestPageProps) {
+  const { username } = useAuth();
+  console.log("Username:", username);
+  console.log("Username type:", typeof username);
+  console.log("Username length:", username?.length);
   const { category, page: urlPage } = useParams();
   const [currentPage, setCurrentPage] = useState("Dashboard");
   // const [loading, setLoading] = useState(true);
@@ -67,8 +73,8 @@ function MovieList({ onBack }: TestPageProps) {
     switch (currentPage) {
       case "Filmler":
         return (
-          <div className="bg-gray-800 p-6 rounded-lg shadow">
-            <div className="mb-6">
+          <div className="bg-gray-800 p-6 mt-10 rounded-lg shadow">
+            <div className="mb-1">
               <h3 className="text-lg font-semibold mb-3">
                 {category
                   ? `${category.toLocaleUpperCase("tr-TR")} Filmleri`
@@ -233,30 +239,34 @@ function MovieList({ onBack }: TestPageProps) {
   // };
 
   return (
-    <div className="container mx-auto min-h-screen px-4 py-8 bg-slate-600 text-white">
+    <div className=" grid  w-auto min-h-screen px-4 py-8 bg-slate-600 text-white">
       {/* Sabit çıkış butonu */}
-      <div className="absolute top-4 right-4 z-50 flex flex-col gap-2">
-        <button
-          onClick={onBack}
-          className="bg-orange-500 hover:bg-red-700 text-white px-4 py-2 rounded-lg shadow-lg transition-colors duration-200"
-        >
-          Çıkış Yap
-        </button>
-
+      <div className="grid grid-cols-2 absolute top-4 right-4 z-50  gap-2">
         <button
           // onClick={onBack}
           className="bg-gray-800 hover:bg-yellow-500 text-white px-2 py-1 rounded-lg shadow-lg transition-colors duration-200"
         >
           <p> ⚛ Dark Mode</p>
         </button>
+        <button
+          onClick={onBack}
+          className="bg-orange-500 hover:bg-red-700 text-white px-4 py-2 rounded-lg shadow-lg transition-colors duration-200"
+        >
+          Çıkış Yap
+        </button>
       </div>
-
-      <div className="flex gap-6 ">
+      <div className="flex gap-3 ">
         <Sidebar title="Menü" onItemClick={handleSidebarClick} />
-        <div className="flex-1">
+        <div className="flex-auto">
           <h1 className="text-3xl text-center font-bold mb-6">Filmler</h1>
           {renderContent()}
         </div>
+      </div>
+      <div className="bg-white-100">
+        <footer className="text-center  text-lg font-thin italic capitalize py-1">
+          Powered By {username?.trim() || "Misafir"}
+        </footer>
+        {/* kullanıcı adı görünmüyor. düzelt*/}
       </div>
     </div>
   );
