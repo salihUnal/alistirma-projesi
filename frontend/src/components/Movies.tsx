@@ -46,7 +46,27 @@ export default function Movies({ category }: MoviesProps) {
             case "top-rated":
               data = await movieApi.getTopRated();
               break;
-            // ... diğer case'ler
+            case "drama":
+              data = await movieApi.getMoviesByType("Drama");
+              break;
+            case "thriller":
+              data = await movieApi.getMoviesByType("Gerilim");
+              break;
+            case "scifi":
+              data = await movieApi.getMoviesByType("Bilim Kurgu");
+              break;
+            case "fantasy":
+              data = await movieApi.getMoviesByType("Fantastik");
+              break;
+            case "action":
+              data = await movieApi.getMoviesByType("Suç");
+              break;
+            case "teen":
+              data = await movieApi.getMoviesByType("Gençlik");
+              break;
+            case "trending":
+              data = await movieApi.getMoviesByType("Trend");
+              break;
             default:
               data = await movieApi.getAllMovies();
           }
@@ -131,7 +151,7 @@ export default function Movies({ category }: MoviesProps) {
                   <h3 className="text-lg font-semibold text-white dark:text-slate-100">
                     {movie.title}
                   </h3>
-                  <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-600 text-yellow-100 dark:bg-yellow-500 dark:text-yellow-900">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-600 text-yellow-100 dark:bg-yellow-500 dark:text-yellow-900">
                     IMDB {movie.IMDB_Point}
                   </span>
                 </div>

@@ -15,7 +15,7 @@ function LoginForm({ onLogin, onTestPage }: LoginFormProps) {
     if (userInput === "admin") {
       onLogin(username, userInput);
     } else if (userInput === "test") {
-      onLogin(username, "test");
+      // onLogin(username, "test");
       onTestPage();
     } else {
       window.location.href = "/unauthorized";

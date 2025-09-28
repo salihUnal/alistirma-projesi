@@ -60,7 +60,8 @@ function MovieList({ onBack }: TestPageProps) {
       Aksiyon: "/movies/action",
       Komedi: "/movies/comedy", // Komedi için popular
       Korku: "/movies/thriller",
-      Gençlik: "/movies/trending",
+      Gençlik: "/movies/teen",
+      Trend: "/movies/trend",
       Gerilim: "/movies/thriller",
       "Çizgi Roman": "/movies/fantasy",
     };
@@ -82,7 +83,86 @@ function MovieList({ onBack }: TestPageProps) {
               </h3>
               {/* Filtre butonları */}
               <div className="flex flex-wrap gap-2">
-                {/* ... filtre butonları ... */}
+                <button
+                  onClick={() => navigate("/movies")}
+                  className={`px-3 py-1 rounded-full text-sm ${
+                    !category // ✅ Doğru! Tümü butonu için
+                      ? "bg-blue-500 text-white"
+                      : "bg-slate-600 text-slate-300 hover:bg-slate-500"
+                  }`}
+                >
+                  Tümü
+                </button>
+                <button
+                  onClick={() => navigate("/movies/drama")}
+                  className={`px-3 py-1 rounded-full text-sm ${
+                    category === "drama"
+                      ? "bg-blue-500 text-white"
+                      : "bg-slate-600 text-slate-300 hover:bg-slate-500"
+                  }`}
+                >
+                  Drama
+                </button>
+                <button
+                  onClick={() => navigate("/movies/thriller")}
+                  className={`px-3 py-1 rounded-full text-sm ${
+                    category === "thriller"
+                      ? "bg-blue-500 text-white"
+                      : "bg-gray-200 text-gray-700"
+                  }`}
+                >
+                  Gerilim
+                </button>
+                <button
+                  onClick={() => navigate("/movies/scifi")}
+                  className={`px-3 py-1 rounded-full text-sm ${
+                    category === "scifi"
+                      ? "bg-blue-500 text-white"
+                      : "bg-gray-200 text-gray-700"
+                  }`}
+                >
+                  Bilim Kurgu
+                </button>
+                <button
+                  onClick={() => navigate("/movies/fantasy")}
+                  className={`px-3 py-1 rounded-full text-sm ${
+                    category === "fantasy"
+                      ? "bg-blue-500 text-white"
+                      : "bg-gray-200 text-gray-700"
+                  }`}
+                >
+                  Fantastik
+                </button>
+                <button
+                  onClick={() => navigate("/movies/action")}
+                  className={`px-3 py-1 rounded-full text-sm ${
+                    category === "action"
+                      ? "bg-blue-500 text-white"
+                      : "bg-gray-200 text-gray-700"
+                  }`}
+                >
+                  Aksiyon
+                </button>
+                <button
+                  onClick={() => navigate("/movies/teen")}
+                  className={`px-3 py-1 rounded-full text-sm ${
+                    category === "teen"
+                      ? "bg-blue-500 text-white"
+                      : "bg-gray-200 text-gray-700"
+                  }`}
+                >
+                  Gençlik
+                </button>
+                <button
+                  onClick={() => navigate("/movies/trending")}
+                  className={`px-3 py-1 rounded-full text-sm ${
+                    category === "trending"
+                      ? "bg-blue-500 text-white"
+                      : "bg-gray-200 text-gray-700"
+                  }`}
+                >
+                  Trend
+                </button>
               </div>
             </div>
             <Movies category={category} />
@@ -97,149 +177,9 @@ function MovieList({ onBack }: TestPageProps) {
         );
     }
   };
-  // const renderContent = () => {
-  //   switch (currentPage) {
-  //     case "Filmler":
-  //       if (loading) {
-  //         return (
-  //           <div className="flex justify-center items-center h-64">
-  //             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-  //             <span className="ml-3 text-gray-600">Filmler yükleniyor...</span>
-  //           </div>
-  //         );
-  //       }
-
-  //       if (error) {
-  //         return (
-  //           <div className="text-center py-8">
-  //             <div className="text-red-500 text-lg mb-4">⚠️ {error}</div>
-  //             <button
-  //               onClick={() => window.location.reload()}
-  //               className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-  //             >
-  //               Tekrar Dene
-  //             </button>
-  //           </div>
-  //         );
-  //       }
-
-  //       return (
-  //         <div>
-  //           {/* Kategori bilgisi
-  //           <div className="mb-6">
-  //             <h3 className="text-lg font-semibold mb-3">
-  //               {category ? `${category} Filmleri` : "Tüm Filmler"}
-  //             </h3>
-  //             <p className="text-gray-600 mb-4">
-  //               {totalMovies} film bulundu (Sayfa {page} / {totalPages})
-  //             </p>
-
-  //             {/* Filtre butonları */}
-  //             <div className="flex flex-wrap gap-2">
-  //               <button
-  //                 onClick={() => navigate("/movies")}
-  //                 className={`px-3 py-1 rounded-full text-sm ${
-  //                   !category
-  //                     ? "bg-blue-500 text-white"
-  //                     : "bg-gray-200 text-gray-700"
-  //                 }`}
-  //               >
-  //                 Tümü
-  //               </button>
-  //               <button
-  //                 onClick={() => navigate("/movies/drama")}
-  //                 className={`px-3 py-1 rounded-full text-sm ${
-  //                   category === "drama"
-  //                     ? "bg-blue-500 text-white"
-  //                     : "bg-gray-200 text-gray-700"
-  //                 }`}
-  //               >
-  //                 Drama
-  //               </button>
-  //               <button
-  //                 onClick={() => navigate("/movies/thriller")}
-  //                 className={`px-3 py-1 rounded-full text-sm ${
-  //                   category === "thriller"
-  //                     ? "bg-blue-500 text-white"
-  //                     : "bg-gray-200 text-gray-700"
-  //                 }`}
-  //               >
-  //                 Gerilim
-  //               </button>
-  //               <button
-  //                 onClick={() => navigate("/movies/scifi")}
-  //                 className={`px-3 py-1 rounded-full text-sm ${
-  //                   category === "scifi"
-  //                     ? "bg-blue-500 text-white"
-  //                     : "bg-gray-200 text-gray-700"
-  //                 }`}
-  //               >
-  //                 Bilim Kurgu
-  //               </button>
-  //               <button
-  //                 onClick={() => navigate("/movies/fantasy")}
-  //                 className={`px-3 py-1 rounded-full text-sm ${
-  //                   category === "fantasy"
-  //                     ? "bg-blue-500 text-white"
-  //                     : "bg-gray-200 text-gray-700"
-  //                 }`}
-  //               >
-  //                 Fantastik
-  //               </button>
-  //               <button
-  //                 onClick={() => navigate("/movies/action")}
-  //                 className={`px-3 py-1 rounded-full text-sm ${
-  //                   category === "action"
-  //                     ? "bg-blue-500 text-white"
-  //                     : "bg-gray-200 text-gray-700"
-  //                 }`}
-  //               >
-  //                 Aksiyon
-  //               </button>
-  //               <button
-  //                 onClick={() => navigate("/movies/trending")}
-  //                 className={`px-3 py-1 rounded-full text-sm ${
-  //                   category === "trending"
-  //                     ? "bg-blue-500 text-white"
-  //                     : "bg-gray-200 text-gray-700"
-  //                 }`}
-  //               >
-  //                 Trend
-  //               </button>
-  //             </div>
-  //           </div> */}
-
-  //           {/* Film listesi */}
-  //           <div>
-  //             <Movies category={category} />
-  //           </div>
-  //           // <Pagination
-  //           //   currentPage={page}
-  //           //   totalPages={totalPages}
-  //           //   onPageChange={handlePageChange}
-  //           // />
-  //         </div>
-  //       );
-
-  //     case "Suç":
-  //       return (
-  //         <div className="grid grid-cols-6 sm:grid-cols-3 lg:grid-cols-6 gap-6">
-  //           <Movies category="action" />
-  //         </div>
-  //       );
-
-  //     default:
-  //       return (
-  //         <div className="bg-white p-6 rounded-lg shadow">
-  //           <h2 className="text-2xl font-bold mb-4">Dashboard</h2>
-  //           <p>Ana sayfa içeriği burada...</p>
-  //         </div>
-  //       );
-  //   }
-  // };
 
   return (
-    <div className=" grid  w-auto min-h-screen px-4 py-8 bg-slate-600 text-white">
+    <div className="w-full min-h-screen px-4 py-8 bg-slate-600 text-white">
       {/* Sabit çıkış butonu */}
       <div className="grid grid-cols-2 absolute top-4 right-4 z-50  gap-2">
         <button
@@ -255,7 +195,7 @@ function MovieList({ onBack }: TestPageProps) {
           Çıkış Yap
         </button>
       </div>
-      <div className="flex gap-3 ">
+      <div className="flex gap-3 text-center">
         <Sidebar title="Menü" onItemClick={handleSidebarClick} />
         <div className="flex-auto">
           <h1 className="text-3xl text-center font-bold mb-6">Filmler</h1>
