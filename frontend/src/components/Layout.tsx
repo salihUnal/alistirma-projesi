@@ -1,4 +1,3 @@
-import React from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import LoginForm from "./LoginForm";
@@ -6,6 +5,7 @@ import Dashboard from "./Dashboard";
 import MovieList from "../pages/MovieList";
 import Header from "./Header";
 import { useState } from "react";
+import ThemeToggle from "./common/ThemeToggle";
 
 function Layout() {
   const navigate = useNavigate();
@@ -67,6 +67,7 @@ function Layout() {
         <>
           {/* <div className="text-green-600 font-semibold italic text-4xl"> */}
           {userRole !== "admin" && <Header />}
+          <ThemeToggle />
           {/* </div> */}
           <Outlet />
           <Dashboard

@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import Movies from "../components/Movies";
 import { useAuth } from "../contexts/AuthContext";
+import ThemeToggle from "../components/common/ThemeToggle";
 
 // import Pagination from "../components/Pagination";
 
@@ -181,14 +182,13 @@ function MovieList({ onBack }: TestPageProps) {
   return (
     <div className="w-full min-h-screen px-4 py-8 bg-slate-600 text-white">
       {/* Sabit çıkış butonu */}
-      <div className="grid grid-cols-2 absolute top-4 right-4 z-50  gap-2">
+      <div
+        className="grid grid-cols-2 absolute top-4 right-4 z-50  gap-2"
+        role="group"
+      >
+        <ThemeToggle />
         <button
-          // onClick={onBack}
-          className="bg-gray-800 hover:bg-yellow-500 text-white px-2 py-1 rounded-lg shadow-lg transition-colors duration-200"
-        >
-          <p> ⚛ Dark Mode</p>
-        </button>
-        <button
+          type="button"
           onClick={onBack}
           className="bg-orange-500 hover:bg-red-700 text-white px-4 py-2 rounded-lg shadow-lg transition-colors duration-200"
         >

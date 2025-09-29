@@ -102,7 +102,7 @@ export default function Movies({ category }: MoviesProps) {
     };
   }, [category, query]);
   return (
-    <div>
+    <div className="p-5">
       <input
         value={query}
         onChange={(e) => setQuery(e.target.value)}
@@ -134,7 +134,9 @@ export default function Movies({ category }: MoviesProps) {
               role="button"
               tabIndex={0}
               aria-label={`${movie.title} filmini görüntüle`}
-              className="cursor-pointer bg-slate-900/80 dark:bg-slate-800/90 rounded-2xl shadow border border-slate-700 dark:border-slate-600 overflow-hidden backdrop-blur-sm"
+              className="cursor-pointer rounded-2xl shadow border text-gray-700
+                bg-white/90 dark:bg-slate-900/70
+                border-gray-200 dark:border-slate-700 overflow-hidden"
             >
               <img
                 src={movie.image}
@@ -148,14 +150,14 @@ export default function Movies({ category }: MoviesProps) {
               />
               <div className="p-3">
                 <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-lg font-semibold text-white dark:text-slate-100">
+                  <h3 className="text-lg font-semibold text-slate-900  dark:text-white">
                     {movie.title}
                   </h3>
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-600 text-yellow-100 dark:bg-yellow-500 dark:text-yellow-900">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-orange-400 text-yellow-100 dark:bg-yellow-600 dark:text-gray-100">
                     IMDB {movie.IMDB_Point}
                   </span>
                 </div>
-                <p className="text-sm text-gray-300 dark:text-slate-300 mb-3">
+                <p className="text-sm text-blue-950 dark:text-white mb-3">
                   {movie.description}
                 </p>
 
@@ -163,7 +165,7 @@ export default function Movies({ category }: MoviesProps) {
                   {movie.types.map((type) => (
                     <span
                       key={type}
-                      className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-600 text-blue-100 dark:bg-blue-500 dark:text-blue-900"
+                      className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-500 text-gray-50 dark:bg-blue-800  dark:text-gray-50"
                     >
                       {type}
                     </span>
