@@ -46,27 +46,7 @@ export default function Movies({ category }: MoviesProps) {
             case "top-rated":
               data = await movieApi.getTopRated();
               break;
-            case "drama":
-              data = await movieApi.getMoviesByType("Drama");
-              break;
-            case "thriller":
-              data = await movieApi.getMoviesByType("Gerilim");
-              break;
-            case "scifi":
-              data = await movieApi.getMoviesByType("Bilim Kurgu");
-              break;
-            case "fantasy":
-              data = await movieApi.getMoviesByType("Fantastik");
-              break;
-            case "action":
-              data = await movieApi.getMoviesByType("Suç");
-              break;
-            case "teen":
-              data = await movieApi.getMoviesByType("Gençlik");
-              break;
-            case "trending":
-              data = await movieApi.getMoviesByType("Trend");
-              break;
+            // ... diğer case'ler
             default:
               data = await movieApi.getAllMovies();
           }
@@ -102,19 +82,19 @@ export default function Movies({ category }: MoviesProps) {
     };
   }, [category, query]);
   return (
-    <div className="p-5">
+    <div>
       <input
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Film, tür, yönetmen ara..."
-        className="w-full md:w-96 rounded border px-3 py-2 mb-4 bg-slate-900/80 dark:bg-slate-800/90 backdrop-blur-sm"
+        placeholder="Film, tür, yönetmen a"
+        className="w-full md:w-96 rounded border px-3 py-2 mb-4"
         aria-label="Ara"
       />
 
       {loading && <p>Yükleniyor...</p>}
       {error && <p className="text-red-600">{error}</p>}
       {!loading && !error && movies.length === 0 && (
-        <p className="text-gray-100 dark:text-gray-400">Sonuç bulunamadı.</p>
+        <p className="text-gray-600">Sonuç bulunamadı.</p>
       )}
 
       <div className="grid grid-cols-6 sm:grid-cols-3 lg:grid-cols-6 gap-6">
@@ -134,9 +114,7 @@ export default function Movies({ category }: MoviesProps) {
               role="button"
               tabIndex={0}
               aria-label={`${movie.title} filmini görüntüle`}
-              className="cursor-pointer rounded-2xl shadow border text-gray-700
-                bg-white/90 dark:bg-slate-900/70
-                border-gray-200 dark:border-slate-700 overflow-hidden"
+              className="cursor-pointer bg-white rounded-2xl shadow border border-gray-200 overflow-hidden"
             >
               <img
                 src={movie.image}
@@ -148,16 +126,16 @@ export default function Movies({ category }: MoviesProps) {
                 }}
                 loading="lazy"
               />
-              <div className="p-3">
+              <div className="p-4">
                 <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-lg font-semibold text-slate-900  dark:text-white">
+                  <h3 className="text-lg font-semibold text-gray-900">
                     {movie.title}
                   </h3>
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-orange-400 text-yellow-100 dark:bg-yellow-600 dark:text-gray-100">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
                     IMDB {movie.IMDB_Point}
                   </span>
                 </div>
-                <p className="text-sm text-blue-950 dark:text-white mb-3">
+                <p className="text-sm text-gray-600 mb-3">
                   {movie.description}
                 </p>
 
@@ -165,7 +143,7 @@ export default function Movies({ category }: MoviesProps) {
                   {movie.types.map((type) => (
                     <span
                       key={type}
-                      className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-500 text-gray-50 dark:bg-blue-800  dark:text-gray-50"
+                      className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
                     >
                       {type}
                     </span>
