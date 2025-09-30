@@ -107,7 +107,8 @@ export default function Movies({ category }: MoviesProps) {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Film, tür, yönetmen ara..."
-        className="w-full md:w-96 rounded border px-3 py-2 mb-4 bg-slate-900/80 dark:bg-slate-800/90 backdrop-blur-sm"
+        className="w-full md:w-96 rounded border px-3 py-2 mb-4 bg-transparent text-black text-font-semibold text-lg dark:bg-gray-800 dark:text-white backdrop-blur-sm dark:bg-transparent
+         placeholder:text-black placeholder:font-semibold placeholder:text-lg dark:placeholder:text-gray-400 dark:placeholder:italic"
         aria-label="Ara"
       />
 

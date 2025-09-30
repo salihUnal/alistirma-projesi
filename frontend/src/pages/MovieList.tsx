@@ -75,9 +75,9 @@ function MovieList({ onBack }: TestPageProps) {
     switch (currentPage) {
       case "Filmler":
         return (
-          <div className="bg-gray-800 p-6 mt-10 rounded-lg shadow">
+          <div className="bg-white/30 dark:bg-gray-800 p-6 mt-10 rounded-lg shadow">
             <div className="mb-1">
-              <h3 className="text-lg font-semibold mb-3">
+              <h3 className="text-3xl font-extrabold italic text-gray-800 dark:text-white mb-3">
                 {category
                   ? `${category.toLocaleUpperCase("tr-TR")} Filmleri`
                   : "Tüm Filmler"}{" "}
