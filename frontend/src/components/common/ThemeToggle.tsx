@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { MdLightMode } from "react-icons/md";
+import { MdDarkMode } from "react-icons/md";
 
 export default function ThemeToggle() {
   const [isDark, setIsDark] = useState(false);
@@ -24,7 +26,7 @@ export default function ThemeToggle() {
     <button
       type="button"
       onClick={toggleTheme}
-      className="inline-flex items-center gap-2 rounded-md border
+      className="inline-grid h-10 w-10 items-center gap-1 justify-center rounded-full border
                  border-slate-300 dark:border-slate-700
                  bg-white dark:bg-slate-700
                  px-4 py-2 text-sm
@@ -32,7 +34,10 @@ export default function ThemeToggle() {
                  hover:bg-gray-400 dark:hover:bg-slate-900 transition  "
       aria-label="Tema değiştir"
     >
-      {isDark ? "Açık Tema" : "Karanlık Tema"}
+      {isDark ? "☀︎" : "🌙"}
     </button>
   );
+}
+{
+  /* <button className="inline-flex h-10 w-10 items-center justify-center rounded-full"> */
 }

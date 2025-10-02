@@ -107,8 +107,8 @@ export default function Movies({ category }: MoviesProps) {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Film, tür, yönetmen ara..."
-        className="w-full md:w-96 rounded border px-3 py-2 mb-4 bg-transparent text-black text-font-semibold text-lg dark:bg-gray-800 dark:text-white backdrop-blur-sm dark:bg-transparent
-         placeholder:text-black placeholder:font-semibold placeholder:text-lg dark:placeholder:text-gray-400 dark:placeholder:italic"
+        className="w-full md:w-96 rounded border-separate border-blue-200 dark:border-blue-700 border-4  px-3 py-2 mb-4 bg-transparent text-black text-font-semibold text-lg dark:bg-gray-800 dark:text-white backdrop-blur-sm dark:bg-transparent
+         placeholder:text-black placeholder:font-normal placeholder:italic placeholder:text-base dark:placeholder:text-gray-400 dark:placeholder:italic"
         aria-label="Ara"
       />
 
@@ -154,8 +154,8 @@ export default function Movies({ category }: MoviesProps) {
                   <h3 className="text-lg font-semibold text-slate-900  dark:text-white">
                     {movie.title}
                   </h3>
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-orange-400 text-yellow-100 dark:bg-yellow-600 dark:text-gray-100">
-                    IMDB {movie.IMDB_Point}
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-sm font-medium bg-orange-400 text-yellow-100 dark:bg-yellow-600 dark:text-gray-100">
+                    ☆ {movie.IMDB_Point}
                   </span>
                 </div>
                 <p className="text-sm text-blue-950 dark:text-white mb-3">

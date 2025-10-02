@@ -75,12 +75,12 @@ function MovieList({ onBack }: TestPageProps) {
     switch (currentPage) {
       case "Filmler":
         return (
-          <div className="bg-white/30 dark:bg-gray-800 p-6 mt-10 rounded-lg shadow">
+          <div className="border-separate border-blue-200 dark:border-blue-700 border-4 bg-white dark:bg-gray-800 p-6 mt-10 rounded-lg shadow ">
             <div className="mb-1">
-              <h3 className="text-3xl font-extrabold italic text-gray-800 dark:text-white mb-3">
+              <h3 className="  md:grid-cols-2 text-3xl font-extrabold italic text-gray-800 dark:text-white mb-3">
                 {category
                   ? `${category.toLocaleUpperCase("tr-TR")} Filmleri`
-                  : "Tüm Filmler"}{" "}
+                  : "🎬 Tüm Filmler"}{" "}
               </h3>
               {/* Filtre butonları */}
               <div className="flex flex-wrap gap-2">
@@ -180,17 +180,17 @@ function MovieList({ onBack }: TestPageProps) {
   };
 
   return (
-    <div className="w-full min-h-screen px-4 py-8 bg-slate-600 text-white">
+    <div className="w-full min-h-screen px-4 py-8 dark:bg-slate-900 text-white">
       {/* Sabit çıkış butonu */}
       <div
-        className="grid grid-cols-2 absolute top-4 right-4 z-50  gap-2"
+        className="grid grid-cols-2 absolute top-4 right-4 z-50  mr-1"
         role="group"
       >
         <ThemeToggle />
         <button
           type="button"
           onClick={onBack}
-          className="bg-orange-500 hover:bg-red-700 text-white px-4 py-2 rounded-lg shadow-lg transition-colors duration-200"
+          className="bg-orange-500 hover:bg-red-700 text-white px-1 py-1 mr-0 rounded-lg shadow-lg transition-colors duration-200"
         >
           Çıkış Yap
         </button>
@@ -198,7 +198,9 @@ function MovieList({ onBack }: TestPageProps) {
       <div className="flex gap-3 text-center">
         <Sidebar title="Menü" onItemClick={handleSidebarClick} />
         <div className="flex-auto">
-          <h1 className="text-3xl text-center font-bold mb-6">Filmler</h1>
+          <h1 className="text-3xl text-center font-bold mb-6 text-gray-900 dark:text-white">
+            Filmler
+          </h1>
           {renderContent()}
         </div>
       </div>
