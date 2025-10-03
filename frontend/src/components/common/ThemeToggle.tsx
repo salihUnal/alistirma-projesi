@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import { MdLightMode } from "react-icons/md";
-import { MdDarkMode } from "react-icons/md";
 
 export default function ThemeToggle() {
   const [isDark, setIsDark] = useState(false);
@@ -37,7 +35,4 @@ export default function ThemeToggle() {
       {isDark ? "☀︎" : "🌙"}
     </button>
   );
-}
-{
-  /* <button className="inline-flex h-10 w-10 items-center justify-center rounded-full"> */
 }
