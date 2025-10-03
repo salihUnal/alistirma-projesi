@@ -32,10 +32,10 @@ function Header() {
           Yakında
         </Link>
         <Link
-          to="/movies/trending"
+          to="/movies/populer"
           className="px-3 py-1 bg-orange-500 text-white rounded hover:bg-orange-600 text-sm"
         >
-          Trend
+          Popüler
         </Link>
       </div>
 

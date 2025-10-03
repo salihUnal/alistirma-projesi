@@ -64,8 +64,8 @@ export default function Movies({ category }: MoviesProps) {
             case "teen":
               data = await movieApi.getMoviesByType("Gençlik");
               break;
-            case "trending":
-              data = await movieApi.getMoviesByType("Trend");
+            case "populer":
+              data = await movieApi.getMoviesByType("Popüler");
               break;
             default:
               data = await movieApi.getAllMovies();
@@ -107,7 +107,7 @@ export default function Movies({ category }: MoviesProps) {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Film, tür, yönetmen ara..."
-        className="w-full md:w-96 rounded border-separate border-blue-200 dark:border-blue-700 border-4  px-3 py-2 mb-4 bg-transparent text-black text-font-semibold text-lg dark:bg-gray-800 dark:text-white backdrop-blur-sm dark:bg-transparent
+        className="w-full md:w-96 rounded border-separate border-blue-200 dark:border-blue-700 border-2  px-3 py-2 mb-4 bg-transparent text-black text-font-semibold text-lg dark:bg-gray-800 dark:text-white backdrop-blur-sm dark:bg-transparent
          placeholder:text-black placeholder:font-normal placeholder:italic placeholder:text-base dark:placeholder:text-gray-400 dark:placeholder:italic"
         aria-label="Ara"
       />
@@ -119,7 +119,6 @@ export default function Movies({ category }: MoviesProps) {
       )}
 
       <div className="grid grid-cols-6 sm:grid-cols-3 lg:grid-cols-6 gap-6">
-        {" "}
         {!loading &&
           !error &&
           movies.map((movie, index) => (
@@ -145,16 +144,16 @@ export default function Movies({ category }: MoviesProps) {
                 className="w-full h-64 object-cover"
                 onError={(e) => {
                   (e.currentTarget as HTMLImageElement).src =
-                    "/images/Hulk.jpg";
+                    "/images/no-image-available.jpeg";
                 }}
                 loading="lazy"
               />
               <div className="p-3">
-                <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center  justify-between mb-2">
                   <h3 className="text-lg font-semibold text-slate-900  dark:text-white">
                     {movie.title}
                   </h3>
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-sm font-medium bg-orange-400 text-yellow-100 dark:bg-yellow-600 dark:text-gray-100">
+                  <span className="inline-flex  flex-wrap items-center px-2 py-0.5 rounded-full text-sm font-medium bg-orange-400 text-yellow-100 dark:bg-yellow-600 dark:text-gray-100">
                     ☆ {movie.IMDB_Point}
                   </span>
                 </div>
