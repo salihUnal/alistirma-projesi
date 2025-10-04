@@ -9,6 +9,8 @@ type Movie = {
   description: string;
   IMDB_Point: string;
   types: string[];
+  director: string;
+  duration: string;
 };
 
 interface MoviesProps {
@@ -84,8 +86,10 @@ export default function Movies({ category }: MoviesProps) {
             image: m.image,
             title: m.title,
             description: m.description,
-            IMDB_Point: m.IMDB_Point,
+            IMDB_Point: m.imdb_point.toString(),
             types: m.types,
+            director: m.director,
+            duration: m.duration,
           }))
         );
       } catch (e) {
@@ -102,7 +106,7 @@ export default function Movies({ category }: MoviesProps) {
     };
   }, [category, query]);
   return (
-    <div className="p-5">
+    <div className="p-4">
       <input
         value={query}
         onChange={(e) => setQuery(e.target.value)}
@@ -118,7 +122,8 @@ export default function Movies({ category }: MoviesProps) {
         <p className="text-gray-100 dark:text-gray-400">Sonuç bulunamadı.</p>
       )}
 
-      <div className="grid grid-cols-6 sm:grid-cols-3 lg:grid-cols-6 gap-6">
+      {/* <div className="grid grid-cols-6 sm:grid-cols-3 lg:grid-cols-6 gap-6"> */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
         {!loading &&
           !error &&
           movies.map((movie, index) => (
@@ -141,15 +146,15 @@ export default function Movies({ category }: MoviesProps) {
               <img
                 src={movie.image}
                 alt={movie.title}
-                className="w-full h-64 object-cover"
+                className="w-full h-75 object-cover"
                 onError={(e) => {
                   (e.currentTarget as HTMLImageElement).src =
                     "/images/no-image-available.jpeg";
                 }}
                 loading="lazy"
               />
-              <div className="p-3">
-                <div className="flex items-center  justify-between mb-2">
+              <div className="p-4">
+                <div className="flex items-center  justify-between mb-3">
                   <h3 className="text-lg font-semibold text-slate-900  dark:text-white">
                     {movie.title}
                   </h3>
@@ -157,10 +162,15 @@ export default function Movies({ category }: MoviesProps) {
                     ☆ {movie.IMDB_Point}
                   </span>
                 </div>
-                <p className="text-sm text-blue-950 dark:text-white mb-3">
-                  {movie.description}
-                </p>
-
+                <div className="text-sm text-blue-950 dark:text-white mb-3">
+                  <p>{movie.description}</p>
+                </div>
+                <div className="text-sm text-blue-950 dark:text-white  flex items-center  justify-between mb-3">
+                  <p>Yönetmen: {movie.director}</p>
+                  <span className="inline-flex  flex-wrap items-center px-2 py-0.5 rounded-full text-sm font-medium bg-white-400 text-orange-100 dark:bg-orange-600 dark:text-gray-100">
+                    {movie.duration}
+                  </span>
+                </div>
                 <div className="flex flex-wrap gap-1">
                   {movie.types.map((type) => (
                     <span
