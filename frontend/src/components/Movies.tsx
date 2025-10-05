@@ -11,6 +11,7 @@ type Movie = {
   types: string[];
   director: string;
   duration: string;
+  release_year: number;
 };
 
 interface MoviesProps {
@@ -90,6 +91,7 @@ export default function Movies({ category }: MoviesProps) {
             types: m.types,
             director: m.director,
             duration: m.duration,
+            release_year: m.release_year,
           }))
         );
       } catch (e) {
@@ -123,7 +125,7 @@ export default function Movies({ category }: MoviesProps) {
       )}
 
       {/* <div className="grid grid-cols-6 sm:grid-cols-3 lg:grid-cols-6 gap-6"> */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+      <div className="grid grid-cols-2  sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
         {!loading &&
           !error &&
           movies.map((movie, index) => (
@@ -139,47 +141,62 @@ export default function Movies({ category }: MoviesProps) {
               role="button"
               tabIndex={0}
               aria-label={`${movie.title} filmini görüntüle`}
-              className="cursor-pointer rounded-2xl shadow border text-gray-700
+              className="cursor-pointer flex flex-col h-full rounded-2xl shadow border text-gray-700
                 bg-white/90 dark:bg-slate-900/70
                 border-gray-200 dark:border-slate-700 overflow-hidden"
             >
               <img
                 src={movie.image}
                 alt={movie.title}
-                className="w-full h-75 object-cover"
+                className="w-full h-72  object-cover"
                 onError={(e) => {
                   (e.currentTarget as HTMLImageElement).src =
                     "/images/no-image-available.jpeg";
                 }}
                 loading="lazy"
               />
-              <div className="p-4">
-                <div className="flex items-center  justify-between mb-3">
-                  <h3 className="text-lg font-semibold text-slate-900  dark:text-white">
+              <div className="flex flex-col h-full p-4">
+                <div className="flex  items-start  justify-between mb-3 min-h-[56px]">
+                  <h3 className="text-lg text-center font-semibold text-slate-900  dark:text-white">
                     {movie.title}
                   </h3>
-                  <span className="inline-flex  flex-wrap items-center px-2 py-0.5 rounded-full text-sm font-medium bg-orange-400 text-yellow-100 dark:bg-yellow-600 dark:text-gray-100">
-                    ☆ {movie.IMDB_Point}
-                  </span>
+                  <div className="flex flex-col items-end gap-1 shrink-0">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-sm font-medium bg-orange-400 text-yellow-100 dark:bg-yellow-600 dark:text-gray-100 whitespace-nowrap leading-none">
+                      {movie.IMDB_Point}
+                    </span>
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-orange-400 text-gray-700 dark:bg-orange-600 dark:text-gray-100 whitespace-nowrap leading-none">
+                      {movie.duration}
+                    </span>
+                  </div>
                 </div>
+
                 <div className="text-sm text-blue-950 dark:text-white mb-3">
                   <p>{movie.description}</p>
                 </div>
-                <div className="text-sm text-blue-950 dark:text-white  flex items-center  justify-between mb-3">
-                  <p>Yönetmen: {movie.director}</p>
-                  <span className="inline-flex  flex-wrap items-center px-2 py-0.5 rounded-full text-sm font-medium bg-white-400 text-orange-100 dark:bg-orange-600 dark:text-gray-100">
-                    {movie.duration}
-                  </span>
-                </div>
-                <div className="flex flex-wrap gap-1">
-                  {movie.types.map((type) => (
-                    <span
-                      key={type}
-                      className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-500 text-gray-50 dark:bg-blue-800  dark:text-gray-50"
-                    >
-                      {type}
+                <div className="mt-auto">
+                  <div className="flex flex-wrap gap-1">
+                    {movie.types.map((type) => (
+                      <span
+                        key={type}
+                        className="inline-flex items-center px-1 py-1 rounded-full text-xs font-medium bg-blue-500 text-gray-50 dark:bg-blue-800  dark:text-gray-50"
+                      >
+                        {type}
+                      </span>
+                    ))}
+                  </div>
+                  <div className="text-sm text-blue-950 dark:text-white flex flex-col gap-1">
+                    <span className="text-sm font-medium text-center py-1 mb-2 my-3 rounded-full whitespace-nowrap leading-none border-2 border-blue-800 text-gray-800 dark:text-gray-100">
+                      {movie.release_year}
                     </span>
-                  ))}
+                    <div className="flex items-center gap-1">
+                      <span className="font-semibold text-gray-900 dark:text-gray-300">
+                        Yönetmen:
+                      </span>
+                      <span className="italic text-blue-700 dark:text-blue-300">
+                        {movie.director}
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

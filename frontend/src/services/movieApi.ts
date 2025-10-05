@@ -5,9 +5,9 @@ type ApiMovie = {
   title: string;
   description: string;
   image: string;
-  imdb_point: number; // IMDB_Point yerine imdb_point
+  imdb_point: number;
   types: string[];
-  release_year: number; // releaseYear yerine release_year
+  release_year: number;
   director: string;
   duration: string;
 };

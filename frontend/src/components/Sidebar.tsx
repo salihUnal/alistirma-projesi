@@ -65,8 +65,8 @@ export default function Sidebar({
     const isExpanded = expandedItems.has(item.label);
 
     return (
-      <div className="pr-4">
-        <li key={item.label}>
+      <div className="pr-4" key={item.label}>
+        <li>
           <button
             onClick={() => {
               if (hasChildren) {

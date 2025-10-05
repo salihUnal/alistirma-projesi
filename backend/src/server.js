@@ -18,8 +18,9 @@ app.get("/api/movies", (req, res) => {
   let params = [];
 
   if (search) {
-    query += " WHERE title LIKE ? OR description LIKE ? OR director LIKE ?";
-    params = [`%${search}%`, `%${search}%`, `%${search}%`];
+    query +=
+      " WHERE title LIKE ? OR description LIKE ? OR director LIKE ? OR CAST(release_year AS TEXT) LIKE ?";
+    params = [`%${search}%`, `%${search}%`, `%${search}%`, `%${search}%`];
   }
 
   if (type) {
@@ -27,7 +28,7 @@ app.get("/api/movies", (req, res) => {
     params.push(`%${type}%`);
   }
 
-  query += " ORDER BY created_at DESC";
+  query += " ORDER BY id DESC";
 
   db.all(query, params, (err, rows) => {
     if (err) {
