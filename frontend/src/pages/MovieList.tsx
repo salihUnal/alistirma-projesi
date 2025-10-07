@@ -34,17 +34,6 @@ function MovieList({ onBack }: TestPageProps) {
     }
   }, [category]);
 
-  // useEffect(() => {
-  //   window.scrollTo(0, 0);
-  // }, [page]);
-
-  // const handlePageChange = (newPage: number) => {
-  //   setPage(newPage);
-  //   navigate(`/movies/${category || "popular"}/${newPage}`);
-  // };
-
-  // Kategori bazlı client-side filtreleme ileride yeniden eklenecek
-
   const handleSidebarClick = (label: string) => {
     setCurrentPage(label);
 
@@ -57,7 +46,7 @@ function MovieList({ onBack }: TestPageProps) {
       "Bilim Kurgu": "/movies/scifi",
       Aksiyon: "/movies/action",
       Komedi: "/movies/comedy",
-      Korku: "/movies/thriller",
+      Korku: "/movies/horror",
       Gençlik: "/movies/teen",
       Popüler: "/movies/populer",
       Gerilim: "/movies/thriller",
@@ -161,6 +150,16 @@ function MovieList({ onBack }: TestPageProps) {
                   }`}
                 >
                   Popüler
+                </button>
+                <button
+                  onClick={() => navigate("/movies/horror")}
+                  className={`px-3 py-1 rounded-full text-sm ${
+                    category === "populer"
+                      ? "bg-blue-500 text-white font-mono"
+                      : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
+                  }`}
+                >
+                  Korku
                 </button>
               </div>
             </div>

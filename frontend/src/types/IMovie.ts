@@ -5,6 +5,6 @@ export interface IMovie {
   posterPath?: string;
   releaseDate?: string;
   voteAverage?: number;
-  genres?: string[]; // basit tut
+  genres?: string[];
   runtime?: number;
 }

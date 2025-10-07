@@ -70,6 +70,9 @@ export default function Movies({ category }: MoviesProps) {
             case "populer":
               data = await movieApi.getMoviesByType("Popüler");
               break;
+            case "horror":
+              data = await movieApi.getMoviesByType("Korku");
+              break;
             default:
               data = await movieApi.getAllMovies();
           }
@@ -112,7 +115,7 @@ export default function Movies({ category }: MoviesProps) {
       <input
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Film, tür, yönetmen ara..."
+        placeholder="Film, tür, yönetmen, yıl ara..."
         className="w-full md:w-96 rounded border-separate border-blue-200 dark:border-blue-700 border-2  px-3 py-2 mb-4 bg-transparent text-black text-font-semibold text-lg dark:bg-gray-800 dark:text-white backdrop-blur-sm dark:bg-transparent
          placeholder:text-black placeholder:font-normal placeholder:italic placeholder:text-base dark:placeholder:text-gray-400 dark:placeholder:italic"
         aria-label="Ara"
