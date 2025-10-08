@@ -49,28 +49,28 @@ export default function Movies({ category }: MoviesProps) {
             case "top-rated":
               data = await movieApi.getTopRated();
               break;
-            case "drama":
+            case "Drama":
               data = await movieApi.getMoviesByType("Drama");
               break;
-            case "thriller":
+            case "Gerilim":
               data = await movieApi.getMoviesByType("Gerilim");
               break;
-            case "scifi":
+            case "Bilim-Kurgu":
               data = await movieApi.getMoviesByType("Bilim Kurgu");
               break;
-            case "fantasy":
+            case "Fantastik":
               data = await movieApi.getMoviesByType("Fantastik");
               break;
-            case "action":
+            case "Aksiyon":
               data = await movieApi.getMoviesByType("Suç");
               break;
-            case "teen":
+            case "Genclik":
               data = await movieApi.getMoviesByType("Gençlik");
               break;
-            case "populer":
+            case "Populer":
               data = await movieApi.getMoviesByType("Popüler");
               break;
-            case "horror":
+            case "Korku":
               data = await movieApi.getMoviesByType("Korku");
               break;
             default:

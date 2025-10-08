@@ -40,20 +40,20 @@ function MovieList({ onBack }: TestPageProps) {
     // Sidebar butonlarına göre URL değiştir
     const urlMap: Record<string, string> = {
       Filmler: "/movies",
-      Suç: "/movies/action",
-      Drama: "/movies/drama",
-      Fantastik: "/movies/fantasy",
-      "Bilim Kurgu": "/movies/scifi",
-      Aksiyon: "/movies/action",
-      Komedi: "/movies/comedy",
-      Korku: "/movies/horror",
-      Gençlik: "/movies/teen",
-      Popüler: "/movies/populer",
-      Gerilim: "/movies/thriller",
-      "Çizgi Roman": "/movies/cartoon",
+      Suç: "/movies/Aksiyon",
+      Drama: "/movies/Drama",
+      Fantastik: "/movies/Fantastik",
+      "Bilim Kurgu": "/movies/Bilim-Kurgu",
+      Aksiyon: "/movies/Aksiyon",
+      Komedi: "/movies/Komedi",
+      Korku: "/movies/Korku",
+      Gençlik: "/movies/Genclik",
+      Popüler: "/movies/Populer",
+      Gerilim: "/movies/Gerilim",
+      "Çizgi Roman": "/movies/Cizgi-Roman",
     };
 
-    const targetUrl = urlMap[label] || "/movies/popular";
+    const targetUrl = urlMap[label] || "/movies/Populer";
     navigate(targetUrl);
   };
 
@@ -64,9 +64,7 @@ function MovieList({ onBack }: TestPageProps) {
           <div className="border-separate border-blue-200 dark:border-blue-700 border-2 bg-white dark:bg-gray-800 p-6 mt-10 rounded-lg shadow ">
             <div className="mb-1">
               <h3 className=" text-center md:grid-cols-2 text-2xl font-bold italic text-gray-800 dark:text-white mb-3">
-                {category
-                  ? `🎬 ${category.toLocaleUpperCase("tr-TR")} Filmleri`
-                  : "🎬 Tüm Filmler"}
+                {category ? `🎬 ${category} Filmleri` : "🎬 Tüm Filmler"}
                 {""}
               </h3>
               {/* Filtre butonları */}
@@ -74,7 +72,7 @@ function MovieList({ onBack }: TestPageProps) {
                 <button
                   onClick={() => navigate("/movies")}
                   className={`px-3 py-1 rounded-full text-sm ${
-                    !category // ✅ Doğru! Tümü butonu için
+                    !category
                       ? "bg-blue-500 text-white font-mono "
                       : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
                   }`}
@@ -82,9 +80,9 @@ function MovieList({ onBack }: TestPageProps) {
                   Tümü
                 </button>
                 <button
-                  onClick={() => navigate("/movies/drama")}
+                  onClick={() => navigate("/movies/Drama")}
                   className={`px-3 py-1 rounded-full text-sm ${
-                    category === "drama"
+                    category === "Drama"
                       ? "bg-blue-500 text-white font-mono "
                       : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
                   }`}
@@ -92,9 +90,9 @@ function MovieList({ onBack }: TestPageProps) {
                   Drama
                 </button>
                 <button
-                  onClick={() => navigate("/movies/thriller")}
+                  onClick={() => navigate("/movies/Gerilim")}
                   className={`px-3 py-1 rounded-full text-sm ${
-                    category === "thriller"
+                    category === "Gerilim"
                       ? "bg-blue-500 text-white font-mono "
                       : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
                   }`}
@@ -102,9 +100,9 @@ function MovieList({ onBack }: TestPageProps) {
                   Gerilim
                 </button>
                 <button
-                  onClick={() => navigate("/movies/scifi")}
+                  onClick={() => navigate("/movies/Bilim-Kurgu")}
                   className={`px-3 py-1 rounded-full text-sm ${
-                    category === "scifi"
+                    category === "Bilim-Kurgu"
                       ? "bg-blue-500 text-white font-mono "
                       : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
                   }`}
@@ -112,9 +110,9 @@ function MovieList({ onBack }: TestPageProps) {
                   Bilim Kurgu
                 </button>
                 <button
-                  onClick={() => navigate("/movies/fantasy")}
+                  onClick={() => navigate("/movies/Fantastik")}
                   className={`px-3 py-1 rounded-full text-sm ${
-                    category === "fantasy"
+                    category === "Fantastik"
                       ? "bg-blue-500 text-white font-mono "
                       : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
                   }`}
@@ -122,9 +120,9 @@ function MovieList({ onBack }: TestPageProps) {
                   Fantastik
                 </button>
                 <button
-                  onClick={() => navigate("/movies/action")}
+                  onClick={() => navigate("/movies/Aksiyon")}
                   className={`px-3 py-1 rounded-full text-sm ${
-                    category === "action"
+                    category === "Aksiyon"
                       ? "bg-blue-500 text-white font-mono "
                       : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
                   }`}
@@ -132,9 +130,9 @@ function MovieList({ onBack }: TestPageProps) {
                   Aksiyon
                 </button>
                 <button
-                  onClick={() => navigate("/movies/teen")}
+                  onClick={() => navigate("/movies/Genclik")}
                   className={`px-3 py-1 rounded-full text-sm ${
-                    category === "teen"
+                    category === "Genclik"
                       ? "bg-blue-500 text-white font-mono "
                       : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
                   }`}
@@ -142,9 +140,9 @@ function MovieList({ onBack }: TestPageProps) {
                   Gençlik
                 </button>
                 <button
-                  onClick={() => navigate("/movies/populer")}
+                  onClick={() => navigate("/movies/Populer")}
                   className={`px-3 py-1 rounded-full text-sm ${
-                    category === "populer"
+                    category === "Populer"
                       ? "bg-blue-500 text-white font-mono"
                       : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
                   }`}
@@ -152,9 +150,9 @@ function MovieList({ onBack }: TestPageProps) {
                   Popüler
                 </button>
                 <button
-                  onClick={() => navigate("/movies/horror")}
+                  onClick={() => navigate("/movies/Korku")}
                   className={`px-3 py-1 rounded-full text-sm ${
-                    category === "populer"
+                    category === "Korku"
                       ? "bg-blue-500 text-white font-mono"
                       : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
                   }`}
