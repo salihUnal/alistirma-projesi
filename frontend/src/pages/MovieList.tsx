@@ -4,6 +4,7 @@ import Sidebar from "../components/Sidebar";
 import Movies from "../components/Movies";
 import { useAuth } from "../contexts/AuthContext";
 import ThemeToggle from "../components/common/ThemeToggle";
+import Books from "../components/Books";
 
 // import Pagination from "../components/Pagination";
 
@@ -51,9 +52,13 @@ function MovieList({ onBack }: TestPageProps) {
       Popüler: "/movies/Populer",
       Gerilim: "/movies/Gerilim",
       "Çizgi Roman": "/movies/Cizgi-Roman",
+      "Kitap listesi": "/books",
+      Roman: "/books/Roman",
+      Tarih: "/books/Tarih",
+      "Bilim Kurgu Kitap": "/books/Bilim-Kurgu",
     };
 
-    const targetUrl = urlMap[label] || "/movies/Populer";
+    const targetUrl = urlMap[label] || "/movies";
     navigate(targetUrl);
   };
 
@@ -162,6 +167,20 @@ function MovieList({ onBack }: TestPageProps) {
               </div>
             </div>
             <Movies category={category} />
+          </div>
+        );
+      case "Roman":
+      case "Bilim Kurgu Kitap":
+      case "Tarih":
+      case "Kitap listesi":
+        return (
+          <div className="border-separate border-blue-200 dark:border-blue-700 border-2 bg-white dark:bg-gray-800 p-6 mt-10 rounded-lg shadow">
+            <div className="mb-1">
+              <h3 className="text-center md:grid-cols-2 text-2xl font-bold italic text-gray-800 dark:text-white mb-3">
+                {category ? `📚 ${category} Kitapları` : "📚 Tüm Kitaplar"}
+              </h3>
+            </div>
+            <Books category={category} />
           </div>
         );
       default:

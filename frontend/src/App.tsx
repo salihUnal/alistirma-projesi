@@ -9,8 +9,14 @@ import AdminPage from "./pages/AdminPage";
 import Layout from "./components/Layout";
 import NotFoundPage from "./pages/NotFoundPage";
 import Unauthorized from "./pages/Unauthorized";
+import BookList from "./pages/BookList";
+import BookDetail from "./pages/BookDetail";
 
 function App() {
+  const handleLogout = () => {
+    // logout logic
+  };
+
   return (
     <AuthProvider>
       <Router>
@@ -61,6 +67,30 @@ function App() {
               element={
                 <ProtectedRoute requiredRole="admin">
                   <AdminPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/books"
+              element={
+                <ProtectedRoute>
+                  <BookList onBack={handleLogout} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/books/:category"
+              element={
+                <ProtectedRoute>
+                  <BookList onBack={handleLogout} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/book/detail/:id"
+              element={
+                <ProtectedRoute>
+                  <BookDetail />
                 </ProtectedRoute>
               }
             />

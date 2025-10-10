@@ -45,6 +45,32 @@ app.get("/api/movies", (req, res) => {
     res.json(movies);
   });
 });
+app.get("/api/books", (req, res) => {
+  const { search, genre } = req.query;
+  let query = "SELECT * FROM books";
+  let params = [];
+
+  if (search) {
+    query += " WHERE title LIKE ? OR author LIKE ? OR description LIKE ?";
+    params = [`%${search}%`, `%${search}%`, `%${search}%`];
+  }
+
+  if (genre) {
+    query += search ? " AND genre LIKE ?" : " WHERE genre LIKE ?";
+    params.push(`%${genre}%`);
+  }
+
+  query += " ORDER BY id DESC";
+
+  db.all(query, params, (err, rows) => {
+    if (err) {
+      console.error("Books query error:", err);
+      res.status(500).json({ error: err.message });
+      return;
+    }
+    res.json(rows);
+  });
+});
 
 app.get("/api/movies/:id", (req, res) => {
   const { id } = req.params;
@@ -67,6 +93,22 @@ app.get("/api/movies/:id", (req, res) => {
     };
 
     res.json(movie);
+  });
+});
+
+app.get("/api/books/:id", (req, res) => {
+  const { id } = req.params;
+  db.get("SELECT * FROM books WHERE id = ?", [id], (err, row) => {
+    console.log("select çalıştı");
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    }
+    if (!row) {
+      res.status(404).json({ error: "Kitap Bulunamadı!!" });
+      return;
+    }
+    res.json(row);
   });
 });
 

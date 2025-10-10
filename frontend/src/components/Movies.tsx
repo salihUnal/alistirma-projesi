@@ -27,7 +27,6 @@ export default function Movies({ category }: MoviesProps) {
   const navigate = useNavigate();
 
   const handleMovieClick = (movieId: number) => {
-    console.log("Film tıklandı:", movieId);
     navigate(`/movie/detail/${movieId}`);
   };
 

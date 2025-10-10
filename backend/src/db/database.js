@@ -34,6 +34,28 @@ db.serialize(() => {
       }
     }
   );
+  // Books tablosu
+  db.run(
+    `CREATE TABLE IF NOT EXISTS books (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    author TEXT NOT NULL,
+    publish_date INTEGER,
+    genre TEXT,
+    description TEXT,
+    image TEXT,
+    is_read BOOLEAN DEFAULT 0,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )`,
+    (err) => {
+      if (err) {
+        console.error("Books tablo oluşturma hatası:", err.message);
+      } else {
+        console.log("Books tablosu hazır.");
+      }
+    }
+  );
 });
 
 module.exports = db;
