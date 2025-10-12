@@ -31,7 +31,24 @@ function MovieList({ onBack }: TestPageProps) {
 
   useEffect(() => {
     if (category) {
-      setCurrentPage("Filmler");
+      // URL'den gelen kategoriye göre currentPage'i ayarla
+      const filmCategories = [
+        "Drama",
+        "Gerilim",
+        "Bilim-Kurgu",
+        "Fantastik",
+        "Aksiyon",
+        "Genclik",
+        "Populer",
+        "Korku",
+      ];
+      const bookCategories = ["Roman", "Tarih", "Bilim-Kurgu"];
+
+      if (filmCategories.includes(category)) {
+        setCurrentPage("Filmler");
+      } else if (bookCategories.includes(category)) {
+        setCurrentPage("Kitap listesi");
+      }
     }
   }, [category]);
 
@@ -240,7 +257,7 @@ function MovieList({ onBack }: TestPageProps) {
             onClick={() => navigate("/movies")}
           />
           <span className="text-2xl font-semibold text-slate-800 dark:text-slate-100">
-            Film Uygulaması
+            Blog ve Multimedya Uygulaması
           </span>
         </div>
 
@@ -263,9 +280,9 @@ function MovieList({ onBack }: TestPageProps) {
         </div>
 
         <div className="flex-1">
-          <h1 className="text-3xl text-center font-bold mb-6 text-gray-900 dark:text-white">
+          {/* <h1 className="text-3xl text-center font-bold mb-6 text-gray-900 dark:text-white">
             Filmler
-          </h1>
+          </h1> */}
           {renderContent()}
         </div>
       </div>

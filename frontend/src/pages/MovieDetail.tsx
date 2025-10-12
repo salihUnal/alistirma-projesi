@@ -111,9 +111,11 @@ export default function MovieDetail() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div>
           <img
-            src={movie.posterPath ?? "/images/Hulk.jpg"}
+            src={movie.posterPath || "/images/no-image-available.jpeg"}
             onError={(e) => {
-              (e.currentTarget as HTMLImageElement).src = "/images/Hulk.jpg";
+              // Eğer web linki çalışmazsa varsayılan görseli göster
+              const target = e.target as HTMLImageElement;
+              target.src = "/images/no-image-available.jpeg";
             }}
             alt={movie.title}
             className="w-full h-auto rounded shadow"

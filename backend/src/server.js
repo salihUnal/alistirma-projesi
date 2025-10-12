@@ -60,7 +60,7 @@ app.get("/api/books", (req, res) => {
     params.push(`%${genre}%`);
   }
 
-  query += " ORDER BY id DESC";
+  query += " ORDER BY id ASC";
 
   db.all(query, params, (err, rows) => {
     if (err) {

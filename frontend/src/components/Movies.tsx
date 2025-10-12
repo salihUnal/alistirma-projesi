@@ -148,12 +148,13 @@ export default function Movies({ category }: MoviesProps) {
                 border-gray-200 dark:border-slate-700 overflow-hidden"
             >
               <img
-                src={movie.image}
+                src={movie.image || "/images/no-image-available.jpeg"}
                 alt={movie.title}
                 className="w-full h-72  object-cover"
                 onError={(e) => {
-                  (e.currentTarget as HTMLImageElement).src =
-                    "/images/no-image-available.jpeg";
+                  // Eğer web linki çalışmazsa varsayılan görseli göster
+                  const target = e.target as HTMLImageElement;
+                  target.src = "/images/no-image-available.jpeg";
                 }}
                 loading="lazy"
               />

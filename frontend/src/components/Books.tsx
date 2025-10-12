@@ -11,6 +11,7 @@ type Book = {
   publish_date: number;
   genre: string;
   image: string;
+  Page_Count: number;
   is_read: boolean;
 };
 
@@ -93,11 +94,23 @@ export default function Books({ category }: BooksProps) {
                 alt={book.title}
                 className="w-full h-72 object-cover"
                 loading="lazy"
+                onError={(e) => {
+                  // Eğer web linki çalışmazsa varsayılan görseli göster
+                  const target = e.target as HTMLImageElement;
+                  target.src = "/images/no-image-available.jpeg";
+                }}
               />
               <div className="flex flex-col h-full p-4">
-                <h3 className="text-lg text-center font-semibold text-slate-900 dark:text-white mb-2">
-                  {book.title}
-                </h3>
+                <div className="flex  items-start  justify-between mb-3 min-h-[56px]">
+                  <h3 className="text-lg text-center font-semibold text-slate-900 dark:text-white mb-2">
+                    {book.title}
+                  </h3>
+                  <div className="flex flex-col items-end gap-1 shrink-0">
+                    <p className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-orange-400 text-gray-700 dark:bg-orange-600 dark:text-gray-100 whitespace-nowrap leading-none">
+                      {book.Page_Count}
+                    </p>
+                  </div>
+                </div>
                 <div className="text-sm text-blue-950 dark:text-white mb-3">
                   <p>{book.description}</p>
                 </div>

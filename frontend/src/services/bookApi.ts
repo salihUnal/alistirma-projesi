@@ -8,6 +8,7 @@ type ApiBook = {
   publish_date: number;
   genre: string;
   image: string;
+  Page_Count: number;
   is_read: boolean;
 };
 

@@ -10,6 +10,7 @@ type Book = {
   publish_date: number;
   genre: string;
   image: string;
+  Page_Count: number;
   is_read: boolean;
 };
 
@@ -112,8 +113,9 @@ export default function BookDetail() {
           <img
             src={book.image || "/images/no-image-available.jpeg"}
             onError={(e) => {
-              (e.currentTarget as HTMLImageElement).src =
-                "/images/no-image-available.jpeg";
+              // Eğer web linki çalışmazsa varsayılan görseli göster
+              const target = e.target as HTMLImageElement;
+              target.src = "/images/no-image-available.jpeg";
             }}
             alt={book.title}
             className="w-full h-auto rounded shadow"
