@@ -106,9 +106,12 @@ export default function Books({ category }: BooksProps) {
                     {book.title}
                   </h3>
                   <div className="flex flex-col items-end gap-1 shrink-0">
-                    <p className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-orange-400 text-gray-700 dark:bg-orange-600 dark:text-gray-100 whitespace-nowrap leading-none">
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-orange-400 text-gray-700 dark:bg-orange-600 dark:text-gray-100 whitespace-nowrap leading-none">
                       {book.Page_Count}
-                    </p>
+                    </span>
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-400 text-yellow-100 dark:bg-yellow-600 dark:text-gray-100 whitespace-nowrap leading-none">
+                      Sayfa
+                    </span>
                   </div>
                 </div>
                 <div className="text-sm text-blue-950 dark:text-white mb-3">
