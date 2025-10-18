@@ -4,9 +4,7 @@ import Sidebar from "../components/Sidebar";
 import Movies from "../components/Movies";
 import { useAuth } from "../contexts/AuthContext";
 import ThemeToggle from "../components/common/ThemeToggle";
-import Books from "../components/Books";
-
-// import Pagination from "../components/Pagination";
+import { buildBookUrl } from "../utils/bookCategories";
 
 interface TestPageProps {
   onBack: () => void;
@@ -15,7 +13,7 @@ interface TestPageProps {
 function MovieList({ onBack }: TestPageProps) {
   const { username } = useAuth();
   const { category, page: urlPage } = useParams();
-  const [currentPage, setCurrentPage] = useState("Dashboard");
+  const [currentPage, setCurrentPage] = useState("Filmler");
   // const [loading, setLoading] = useState(true);
   // const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
@@ -30,26 +28,8 @@ function MovieList({ onBack }: TestPageProps) {
   }, [urlPage]);
 
   useEffect(() => {
-    if (category) {
-      // URL'den gelen kategoriye göre currentPage'i ayarla
-      const filmCategories = [
-        "Drama",
-        "Gerilim",
-        "Bilim-Kurgu",
-        "Fantastik",
-        "Aksiyon",
-        "Genclik",
-        "Populer",
-        "Korku",
-      ];
-      const bookCategories = ["Roman", "Tarih", "Bilim-Kurgu"];
-
-      if (filmCategories.includes(category)) {
-        setCurrentPage("Filmler");
-      } else if (bookCategories.includes(category)) {
-        setCurrentPage("Kitap listesi");
-      }
-    }
+    // “/movies” veya “/movies/:category” her durumda Film görünümü
+    setCurrentPage("Filmler");
   }, [category]);
 
   const handleSidebarClick = (label: string) => {
@@ -69,10 +49,6 @@ function MovieList({ onBack }: TestPageProps) {
       Popüler: "/movies/Populer",
       Gerilim: "/movies/Gerilim",
       "Çizgi Roman": "/movies/Cizgi-Roman",
-      "Kitap listesi": "/books",
-      Roman: "/books/Roman",
-      Tarih: "/books/Tarih",
-      "Bilim Kurgu Kitap": "/books/Bilim-Kurgu",
     };
 
     const targetUrl = urlMap[label] || "/movies";
@@ -186,20 +162,7 @@ function MovieList({ onBack }: TestPageProps) {
             <Movies category={category} />
           </div>
         );
-      case "Roman":
-      case "Bilim Kurgu Kitap":
-      case "Tarih":
-      case "Kitap listesi":
-        return (
-          <div className="border-separate border-blue-200 dark:border-blue-700 border-2 bg-white dark:bg-gray-800 p-6 mt-10 rounded-lg shadow">
-            <div className="mb-1">
-              <h3 className="text-center md:grid-cols-2 text-2xl font-bold italic text-gray-800 dark:text-white mb-3">
-                {category ? `📚 ${category} Kitapları` : "📚 Tüm Kitaplar"}
-              </h3>
-            </div>
-            <Books category={category} />
-          </div>
-        );
+
       default:
         return (
           <div className="bg-white p-6 rounded-lg shadow">
@@ -211,40 +174,6 @@ function MovieList({ onBack }: TestPageProps) {
   };
 
   return (
-    // <div className=" w-full min-h-screen  px-4 py-8 dark:bg-slate-900 text-white">
-    //   {/* Sabit çıkış butonu */}
-
-    //   <div
-    //     className="grid grid-cols-2 absolute top-4 right-4 z-50  mr-1"
-    //     role="group" //nedenini araştır.
-    //   >
-    //     <ThemeToggle />
-    //     <button
-    //       type="button"
-    //       onClick={onBack}
-    //       className="bg-orange-500 hover:bg-red-700 text-white px-1 py-1 mr-0 rounded-lg shadow-lg transition-colors duration-200"
-    //     >
-    //       Çıkış Yap
-    //     </button>
-    //   </div>
-    //   <div className="flex gap-3 text-center">
-    //     <Sidebar title="Menü" onItemClick={handleSidebarClick} />
-    //     <div className="flex-auto">
-    //       <h1 className="text-3xl text-center font-bold mb-6 text-gray-900 dark:text-white">
-    //         Filmler
-    //       </h1>
-    //       {renderContent()}
-    //     </div>
-    //   </div>
-    //   <div className="bg-white-100">
-    //     <footer className="text-center  text-lg font-thin italic capitalize py-1">
-    //       Powered By {username?.trim() || "Misafir"}
-    //     </footer>
-    //     {/* kullanıcı adı görünmüyor. düzelt*/}
-    //   </div>
-    // </div>
-    // Dış kapsayıcı
-
     <div className="w-full min-h-screen px-4 py-8 dark:bg-slate-900 text-white">
       <div className="flex items-center justify-between px-4 py-3 bg-white/70 dark:bg-slate-900/70 backdrop-blur border-b border-slate-200/60 dark:border-slate-700/60 rounded-lg">
         {/* Sol: Logo */}
@@ -276,7 +205,25 @@ function MovieList({ onBack }: TestPageProps) {
       <div className="mt-4 flex gap-3 ">
         {/* Sidebar’a sabit genişlik vererek yapıyı koru */}
         <div className="w-64 shrink-0 ">
-          <Sidebar title="Menü" onItemClick={handleSidebarClick} />
+          <Sidebar title="Menü" />
+          {/* <Sidebar
+            title="Menü"
+            items={[
+              {
+                label: "Filmler",
+                children: [
+                  { label: "Drama", to: "/movies/Drama" },
+                  { label: "Gerilim", to: "/movies/Gerilim" },
+                  { label: "Bilim Kurgu", to: "/movies/Bilim-Kurgu" },
+                  { label: "Fantastik", to: "/movies/Fantastik" },
+                  { label: "Aksiyon", to: "/movies/Aksiyon" },
+                  { label: "Gençlik", to: "/movies/Genclik" },
+                  { label: "Popüler", to: "/movies/Populer" },
+                  { label: "Korku", to: "/movies/Korku" },
+                ],
+              },
+            ]}
+          /> */}
         </div>
 
         <div className="flex-1">

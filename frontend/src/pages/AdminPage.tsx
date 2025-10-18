@@ -1,9 +1,11 @@
 import React from "react";
+import ThemeToggle from "../components/common/ThemeToggle";
 
 function AdminPage() {
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">Admin Paneli</h1>
+      <ThemeToggle />
+      <h1 className="text-3xl font-bold mb-6 dark:text-white">Admin Paneli</h1>
       <div className="bg-white p-6 rounded-lg shadow">
         <h2 className="text-2xl font-bold mb-4">Yönetim Paneli</h2>
         <p>Bu sayfa sadece admin kullanıcıları tarafından görüntülenebilir.</p>

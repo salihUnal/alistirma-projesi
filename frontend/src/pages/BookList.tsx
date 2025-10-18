@@ -4,6 +4,12 @@ import Sidebar from "../components/Sidebar";
 import Books from "../components/Books";
 import { useAuth } from "../contexts/AuthContext";
 import ThemeToggle from "../components/common/ThemeToggle";
+import {
+  BOOK_CATEGORIES,
+  isBookCategory,
+  buildBookUrl,
+  LABEL_TO_BOOK_SLUG,
+} from "../utils/bookCategories";
 
 interface BookListPageProps {
   onBack: () => void;
@@ -12,47 +18,56 @@ interface BookListPageProps {
 function BookList({ onBack }: BookListPageProps) {
   const { username } = useAuth();
   const { category } = useParams();
-  const [currentPage, setCurrentPage] = useState("Dashboard");
+  const [currentPage, setCurrentPage] = useState("Kitaplar");
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (category) {
-      setCurrentPage("Kitaplar");
-    }
+    console.log("BookList useEffect çalışıyor, category:", category);
+    setCurrentPage("Kitaplar");
   }, [category]);
 
   const handleSidebarClick = (label: string) => {
-    setCurrentPage(label);
+    if (label === "Filmler") {
+      navigate("/movies");
+      return;
+    }
 
-    const urlMap: Record<string, string> = {
-      Kitaplar: "/books",
-      Roman: "/books/Roman",
-      "Bilim Kurgu Kitap": "/books/Bilim-Kurgu",
-      Tarih: "/books/Tarih",
-      "Kisisel-Gelisim": "/books/Kisisel-Gelisim",
-      Distopya: "/books/Distopya",
-      Oyku: "/books/Oyku",
-      "Cocuk-Edebiyati": "/books/Cocuk-Edebiyati",
-      Otobiyografi: "/books/Otobiyografi",
-      Mektup: "/books/Mektup",
-      Macera: "/books/Macera",
-      Felsefe: "/books/Felsefe",
-      Gunluk: "/books/Gunluk",
-      Fantastik: "/books/Fantastik",
-      Deneme: "/books/Deneme",
-      Biyografi: "/books/Biyografi",
-      Ani: "/books/Ani",
-      Allegori: "/books/Allegori",
-      Genclik: "/books/Genclik",
-    };
-
-    const targetUrl = urlMap[label] || "/books";
+    setCurrentPage("Kitaplar");
+    const slug = LABEL_TO_BOOK_SLUG[label] ?? "";
+    const targetUrl = buildBookUrl(slug || undefined);
     navigate(targetUrl);
+
+    // const urlMap: Record<string, string> = {
+    //   Kitaplar: "/books",
+    //   Roman: "/books/Roman",
+    //   "Bilim Kurgu Kitap": "/books/Bilim-Kurgu",
+    //   Tarih: "/books/Tarih",
+    //   "Kisisel-Gelisim": "/books/Kisisel-Gelisim",
+    //   Distopya: "/books/Distopya",
+    //   Oyku: "/books/Oyku",
+    //   "Cocuk-Edebiyati": "/books/Cocuk-Edebiyati",
+    //   Otobiyografi: "/books/Otobiyografi",
+    //   Mektup: "/books/Mektup",
+    //   Macera: "/books/Macera",
+    //   Felsefe: "/books/Felsefe",
+    //   Gunluk: "/books/Gunluk",
+    //   Fantastik: "/books/Fantastik",
+    //   Deneme: "/books/Deneme",
+    //   Biyografi: "/books/Biyografi",
+    //   Ani: "/books/Ani",
+    //   Allegori: "/books/Allegori",
+    //   Genclik: "/books/Genclik",
+    // };
+
+    // const targetUrl = urlMap[label] || "/books";
+    // navigate(targetUrl);
   };
 
+  console.log("renderContent çalışıyor, currentPage:", currentPage);
   const renderContent = () => {
     switch (currentPage) {
       case "Kitaplar":
+        console.log("Kitaplar case'i çalışıyor");
         return (
           <div className="border-separate border-blue-200 dark:border-blue-700 border-2 bg-white dark:bg-gray-800 p-6 mt-10 rounded-lg shadow">
             <div className="mb-1">
@@ -62,7 +77,7 @@ function BookList({ onBack }: BookListPageProps) {
               {/* Filtre butonları */}
               <div className="flex flex-wrap gap-2">
                 <button
-                  onClick={() => navigate("/books")}
+                  onClick={() => navigate(buildBookUrl())}
                   className={`px-3 py-1 rounded-full text-sm ${
                     !category
                       ? "bg-blue-500 text-white font-mono"
@@ -72,7 +87,7 @@ function BookList({ onBack }: BookListPageProps) {
                   Tümü
                 </button>
                 <button
-                  onClick={() => navigate("/books/Roman")}
+                  onClick={() => navigate(buildBookUrl("Roman"))}
                   className={`px-3 py-1 rounded-full text-sm ${
                     category === "Roman"
                       ? "bg-blue-500 text-white font-mono"
@@ -82,7 +97,7 @@ function BookList({ onBack }: BookListPageProps) {
                   Roman
                 </button>
                 <button
-                  onClick={() => navigate("/books/Bilim-Kurgu")}
+                  onClick={() => navigate(buildBookUrl("Bilim-Kurgu"))}
                   className={`px-3 py-1 rounded-full text-sm ${
                     category === "Bilim-Kurgu"
                       ? "bg-blue-500 text-white font-mono"
@@ -92,7 +107,7 @@ function BookList({ onBack }: BookListPageProps) {
                   Bilim Kurgu
                 </button>
                 <button
-                  onClick={() => navigate("/books/Tarih")}
+                  onClick={() => navigate(buildBookUrl("Tarih"))}
                   className={`px-3 py-1 rounded-full text-sm ${
                     category === "Tarih"
                       ? "bg-blue-500 text-white font-mono"
@@ -102,7 +117,7 @@ function BookList({ onBack }: BookListPageProps) {
                   Tarih
                 </button>
                 <button
-                  onClick={() => navigate("/books/Kisisel-Gelisim")}
+                  onClick={() => navigate(buildBookUrl("Kisisel-Gelisim"))}
                   className={`px-3 py-1 rounded-full text-sm ${
                     category === "Kisisel-Gelisim"
                       ? "bg-blue-500 text-white font-mono"
@@ -112,7 +127,7 @@ function BookList({ onBack }: BookListPageProps) {
                   Kişisel Gelişim
                 </button>
                 <button
-                  onClick={() => navigate("/books/Distopya")}
+                  onClick={() => navigate(buildBookUrl("Distopya"))}
                   className={`px-3 py-1 rounded-full text-sm ${
                     category === "Distopya"
                       ? "bg-blue-500 text-white font-mono"
@@ -122,7 +137,7 @@ function BookList({ onBack }: BookListPageProps) {
                   Distopya
                 </button>
                 <button
-                  onClick={() => navigate("/books/Oyku")}
+                  onClick={() => navigate(buildBookUrl("Oyku"))}
                   className={`px-3 py-1 rounded-full text-sm ${
                     category === "Oyku"
                       ? "bg-blue-500 text-white font-mono"
@@ -132,7 +147,7 @@ function BookList({ onBack }: BookListPageProps) {
                   Öykü
                 </button>
                 <button
-                  onClick={() => navigate("/books/Cocuk-Edebiyati")}
+                  onClick={() => navigate(buildBookUrl("Cocuk-Edebiyati"))}
                   className={`px-3 py-1 rounded-full text-sm ${
                     category === "Cocuk-Edebiyati"
                       ? "bg-blue-500 text-white font-mono"
@@ -142,7 +157,7 @@ function BookList({ onBack }: BookListPageProps) {
                   Çocuk Edebiyatı
                 </button>
                 <button
-                  onClick={() => navigate("/books/Otobiyografi")}
+                  onClick={() => navigate(buildBookUrl("Otobiyografi"))}
                   className={`px-3 py-1 rounded-full text-sm ${
                     category === "Otobiyografi"
                       ? "bg-blue-500 text-white font-mono"
@@ -152,7 +167,7 @@ function BookList({ onBack }: BookListPageProps) {
                   Otobiyografi
                 </button>
                 <button
-                  onClick={() => navigate("/books/Mektup")}
+                  onClick={() => navigate(buildBookUrl("Mektup"))}
                   className={`px-3 py-1 rounded-full text-sm ${
                     category === "Mektup"
                       ? "bg-blue-500 text-white font-mono"
@@ -162,7 +177,7 @@ function BookList({ onBack }: BookListPageProps) {
                   Mektup
                 </button>
                 <button
-                  onClick={() => navigate("/books/Macera")}
+                  onClick={() => navigate(buildBookUrl("Macera"))}
                   className={`px-3 py-1 rounded-full text-sm ${
                     category === "Macera"
                       ? "bg-blue-500 text-white font-mono"
@@ -172,7 +187,7 @@ function BookList({ onBack }: BookListPageProps) {
                   Macera
                 </button>
                 <button
-                  onClick={() => navigate("/books/Felsefe")}
+                  onClick={() => navigate(buildBookUrl("Felsefe"))}
                   className={`px-3 py-1 rounded-full text-sm ${
                     category === "Felsefe"
                       ? "bg-blue-500 text-white font-mono"
@@ -182,7 +197,7 @@ function BookList({ onBack }: BookListPageProps) {
                   Felsefe
                 </button>
                 <button
-                  onClick={() => navigate("/books/Gunluk")}
+                  onClick={() => navigate(buildBookUrl("Gunluk"))}
                   className={`px-3 py-1 rounded-full text-sm ${
                     category === "Gunluk"
                       ? "bg-blue-500 text-white font-mono"
@@ -192,7 +207,7 @@ function BookList({ onBack }: BookListPageProps) {
                   Günlük
                 </button>
                 <button
-                  onClick={() => navigate("/books/Fantastik")}
+                  onClick={() => navigate(buildBookUrl("Fantastik"))}
                   className={`px-3 py-1 rounded-full text-sm ${
                     category === "Fantastik"
                       ? "bg-blue-500 text-white font-mono"
@@ -202,7 +217,7 @@ function BookList({ onBack }: BookListPageProps) {
                   Fantastik
                 </button>
                 <button
-                  onClick={() => navigate("/books/Deneme")}
+                  onClick={() => navigate(buildBookUrl("Deneme"))}
                   className={`px-3 py-1 rounded-full text-sm ${
                     category === "Deneme"
                       ? "bg-blue-500 text-white font-mono"
@@ -212,7 +227,7 @@ function BookList({ onBack }: BookListPageProps) {
                   Deneme
                 </button>
                 <button
-                  onClick={() => navigate("/books/Biyografi")}
+                  onClick={() => navigate(buildBookUrl("Biyografi"))}
                   className={`px-3 py-1 rounded-full text-sm ${
                     category === "Biyografi"
                       ? "bg-blue-500 text-white font-mono"
@@ -222,7 +237,7 @@ function BookList({ onBack }: BookListPageProps) {
                   Biyografi
                 </button>
                 <button
-                  onClick={() => navigate("/books/Ani")}
+                  onClick={() => navigate(buildBookUrl("Ani"))}
                   className={`px-3 py-1 rounded-full text-sm ${
                     category === "Ani"
                       ? "bg-blue-500 text-white font-mono"
@@ -232,7 +247,7 @@ function BookList({ onBack }: BookListPageProps) {
                   Anı
                 </button>
                 <button
-                  onClick={() => navigate("/books/Allegori")}
+                  onClick={() => navigate(buildBookUrl("Allegori"))}
                   className={`px-3 py-1 rounded-full text-sm ${
                     category === "Allegori"
                       ? "bg-blue-500 text-white font-mono"
@@ -242,7 +257,7 @@ function BookList({ onBack }: BookListPageProps) {
                   Allegori
                 </button>
                 <button
-                  onClick={() => navigate("/books/Genclik")}
+                  onClick={() => navigate(buildBookUrl("Genclik"))}
                   className={`px-3 py-1 rounded-full text-sm ${
                     category === "Genclik"
                       ? "bg-blue-500 text-white font-mono"
@@ -253,10 +268,12 @@ function BookList({ onBack }: BookListPageProps) {
                 </button>
               </div>
             </div>
+
             <Books category={category} />
           </div>
         );
       default:
+        console.log("Default case çalışıyor");
         return (
           <div className="bg-white p-6 rounded-lg shadow">
             <h2 className="text-2xl font-bold mb-4">Dashboard</h2>
@@ -289,7 +306,35 @@ function BookList({ onBack }: BookListPageProps) {
 
       <div className="mt-4 flex gap-3">
         <div className="w-64 shrink-0">
-          <Sidebar title="Menü" onItemClick={handleSidebarClick} />
+          <Sidebar title="Menü" />
+          {/* <Sidebar
+            title="Menü"
+            items={[
+              {
+                label: "Kitap listesi",
+                children: [
+                  { label: "Roman", to: "/books/Roman" },
+                  { label: "Bilim Kurgu", to: "/books/Bilim-Kurgu" },
+                  { label: "Tarih", to: "/books/Tarih" },
+                  { label: "Kişisel Gelişim", to: "/books/Kisisel-Gelisim" },
+                  { label: "Distopya", to: "/books/Distopya" },
+                  { label: "Öykü", to: "/books/Oyku" },
+                  { label: "Çocuk Edebiyatı", to: "/books/Cocuk-Edebiyati" },
+                  { label: "Otobiyografi", to: "/books/Otobiyografi" },
+                  { label: "Mektup", to: "/books/Mektup" },
+                  { label: "Macera", to: "/books/Macera" },
+                  { label: "Felsefe", to: "/books/Felsefe" },
+                  { label: "Günlük", to: "/books/Gunluk" },
+                  { label: "Fantastik", to: "/books/Fantastik" },
+                  { label: "Deneme", to: "/books/Deneme" },
+                  { label: "Biyografi", to: "/books/Biyografi" },
+                  { label: "Anı", to: "/books/Ani" },
+                  { label: "Allegori", to: "/books/Allegori" },
+                  { label: "Gençlik", to: "/books/Genclik" },
+                ],
+              },
+            ]}
+          /> */}
         </div>
         <div className="flex-1">
           <h1 className="text-3xl text-center font-bold mb-6 text-gray-900 dark:text-white">

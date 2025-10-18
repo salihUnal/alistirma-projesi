@@ -1,9 +1,11 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 type SidebarItem = {
   label: string;
   icon?: React.ReactNode;
-  href?: string;
+  href?: string; // mevcut
+  to?: string; // EKLE: SPA route
   onClick?: () => void;
   children?: SidebarItem[];
 };
@@ -21,41 +23,43 @@ export default function Sidebar({
     {
       label: "Kitap listesi",
       children: [
-        { label: "Allegori" },
-        { label: "Anı" },
-        { label: "Bilim Kurgu" },
-        { label: "Biyografi" },
-        { label: "Deneme" },
-        { label: "Distopya" },
-        { label: "Fantastik" },
-        { label: "Felsefe" },
-        { label: "Günlük" },
-        { label: "Kişisel Gelişim" },
+        { label: "Tümü", to: "/books/Tumu" },
+        { label: "Allegori", to: "/books/Allegori" },
+        { label: "Anı", to: "/books/Ani" },
+        { label: "Bilim Kurgu", to: "/books/Bilim-Kurgu" },
+        { label: "Biyografi", to: "/books/Biyografi" },
+        { label: "Deneme", to: "/books/Deneme" },
+        { label: "Distopya", to: "/books/Distopya" },
+        { label: "Fantastik", to: "/books/Fantastik" },
+        { label: "Felsefe", to: "/books/Felsefe" },
+        { label: "Günlük", to: "/books/Gunluk" },
+        { label: "Kişisel Gelişim", to: "/books/Kisisel-Gelisim" },
         { label: "Macera" },
-        { label: "Mektup" },
-        { label: "Otobiyografi" },
-        { label: "Roman" },
-        { label: "Tarih" },
-        { label: "Tiyatro" },
-        { label: "Çocuk Edebiyatı" },
-        { label: "Öykü" },
+        { label: "Mektup", to: "/books/Mektup" },
+        { label: "Otobiyografi", to: "/books/Otobiyografi" },
+        { label: "Roman", to: "/books/Roman" },
+        { label: "Tarih", to: "/books/Tarih" },
+        { label: "Tiyatro", to: "/books/Tiyatro" },
+        { label: "Çocuk Edebiyatı", to: "/books/Cocuk-Edebiyati" },
+        { label: "Öykü", to: "/books/Oyku" },
       ],
     },
     { label: "Özlü Sözler" },
     {
       label: "Filmler",
       children: [
-        { label: "Aksiyon" },
-        { label: "Komedi" },
-        { label: "Drama" },
-        { label: "Suç" },
-        { label: "Korku" },
-        { label: "Fantastik" },
-        { label: "Bilim Kurgu" },
-        { label: "Gerilim" },
-        { label: "Çizgi Roman" },
-        { label: "Gençlik" },
-        { label: "Popüler" },
+        { label: "Tümü", to: "/movies/Tumu" },
+        { label: "Aksiyon", to: "/movies/Aksiyon" },
+        { label: "Komedi", to: "/movies/Komedi" },
+        { label: "Drama", to: "/movies/Drama" },
+        { label: "Suç", to: "/movies/Suc" },
+        { label: "Korku", to: "/movies/Korku" },
+        { label: "Fantastik", to: "/movies/Fantastik" },
+        { label: "Bilim Kurgu", to: "/movies/Bilim-Kurgu" },
+        { label: "Gerilim", to: "/movies/Gerilim" },
+        { label: "Çizgi Roman", to: "/movies/Cizgi-Roman" },
+        { label: "Gençlik", to: "/movies/Genclik" },
+        { label: "Popüler", to: "/movies/Populer" },
       ],
     },
     { label: "Yapılacaklar" },
@@ -64,6 +68,7 @@ export default function Sidebar({
   footer,
   onItemClick,
 }: SidebarProps) {
+  const navigate = useNavigate();
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const toggleExpanded = (label: string) => {
     const newExpanded = new Set(expandedItems);
@@ -85,11 +90,20 @@ export default function Sidebar({
           <button
             onClick={() => {
               if (hasChildren) {
+                // Sadece aç/kapa yap; parent için navigation tetikleme
                 toggleExpanded(item.label);
-                onItemClick?.(item.label);
               } else {
-                item.onClick?.();
-                onItemClick?.(item.label);
+                // Yaprak: explicit route → fallback href/onClick/onItemClick
+                if (item.to) {
+                  navigate(item.to);
+                  return;
+                } else if (item.href) {
+                  window.location.href = item.href;
+                } else if (item.onClick) {
+                  item.onClick();
+                } else {
+                  onItemClick?.(item.label);
+                }
               }
             }}
             className={`

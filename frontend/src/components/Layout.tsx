@@ -2,7 +2,6 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import LoginForm from "./LoginForm";
 import Dashboard from "./Dashboard";
-import MovieList from "../pages/MovieList";
 import Header from "./Header";
 import { useState } from "react";
 import ThemeToggle from "./common/ThemeToggle";
@@ -17,13 +16,18 @@ function Layout() {
     login(username, role);
 
     const stored = localStorage.getItem("redirectAfterLogin");
+    // const target =
+    //   stored && stored !== "/unauthorized"
+    //     ? stored
+    //     : role === "admin"
+    //     ? "/admin"
+    //       : "/";
+
     const target =
       stored && stored !== "/unauthorized"
         ? stored
         : role === "admin"
         ? "/admin"
-        : role === "test"
-        ? "/movies/popular" // Test kullanıcısı için URL
         : "/";
 
     localStorage.removeItem("redirectAfterLogin");
@@ -40,17 +44,17 @@ function Layout() {
   };
 
   const handleTestPage = () => {
-    // login("test", "test");
+    login("test", "test");
     setShowTestPage(true);
   };
 
-  const handleBackToLogin = () => {
-    setShowTestPage(false);
-  };
+  // const handleBackToLogin = () => {
+  //   setShowTestPage(false);
+  // };
 
-  if (showTestPage) {
-    return <MovieList onBack={handleBackToLogin} />;
-  }
+  // if (showTestPage) {
+  //   return <MovieList onBack={handleBackToLogin} />;
+  // }
 
   return (
     // <div className="App bg-gray-300 rounded-r-3xl shadow-2xl p-8">
@@ -66,8 +70,9 @@ function Layout() {
       ) : (
         <>
           {/* <div className="text-green-600 font-semibold italic text-4xl"> */}
-          {userRole !== "admin" && <Header />}
-          <ThemeToggle />
+          {userRole !== "test" && <Header />}{" "}
+          {/* test kullanıcı olmayan kullanıcılar için header sayfası açılıyor. admin için yukarıda admin sayfasına yönelndiriyorum. */}
+          {/* <ThemeToggle /> */}
           {/* </div> */}
           <Outlet />
           <Dashboard

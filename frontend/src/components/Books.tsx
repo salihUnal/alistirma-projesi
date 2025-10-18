@@ -21,6 +21,8 @@ interface BooksProps {
 }
 
 export default function Books({ category }: BooksProps) {
+  console.log("Books bileşeni render ediliyor, category:", category);
+
   const [query, setQuery] = useState("");
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(false);
@@ -32,6 +34,7 @@ export default function Books({ category }: BooksProps) {
   };
 
   useEffect(() => {
+    console.log("Books useEffect çalışıyor, category:", category);
     let cancelled = false;
 
     async function run() {
@@ -41,7 +44,12 @@ export default function Books({ category }: BooksProps) {
 
         let data;
         if (category) {
-          data = await bookApi.getBooksByGenre(category);
+          // Slug'ı API'nin beklediği genre metnine çevir
+          const { BOOK_SLUG_TO_GENRE } = await import(
+            "../utils/bookCategories"
+          );
+          const genreForApi = BOOK_SLUG_TO_GENRE[category] ?? category;
+          data = await bookApi.getBooksByGenre(genreForApi);
         } else {
           data = query
             ? await bookApi.search(query)

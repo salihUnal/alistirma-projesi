@@ -31,6 +31,14 @@ function App() {
               }
             />
             <Route
+              path="/test"
+              element={
+                <ProtectedRoute>
+                  <MovieList onBack={() => {}} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/movies/:category"
               element={
                 <ProtectedRoute>
