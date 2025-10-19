@@ -48,6 +48,7 @@ export const BOOK_SLUG_TO_GENRE: Record<string, string> = {
   "Cocuk-Edebiyati": "Çocuk Edebiyatı",
   Gunluk: "Günlük",
   Genclik: "Gençlik",
+
   // Diğerleri slug=genre zaten aynı
 };
 

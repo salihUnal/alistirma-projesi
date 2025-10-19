@@ -77,7 +77,7 @@ function BookList({ onBack }: BookListPageProps) {
               {/* Filtre butonları */}
               <div className="flex flex-wrap gap-2">
                 <button
-                  onClick={() => navigate(buildBookUrl())}
+                  onClick={() => navigate(buildBookUrl(""))}
                   className={`px-3 py-1 rounded-full text-sm ${
                     !category
                       ? "bg-blue-500 text-white font-mono"
