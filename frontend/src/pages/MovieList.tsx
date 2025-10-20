@@ -186,7 +186,7 @@ function MovieList({ onBack }: TestPageProps) {
             onClick={() => navigate("/movies")}
           />
           <span className="text-2xl font-semibold text-slate-800 dark:text-slate-100">
-            Blog ve Multimedya Uygulaması
+            Film Uygulaması
           </span>
         </div>
 
