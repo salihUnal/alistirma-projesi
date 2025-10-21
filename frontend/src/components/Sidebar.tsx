@@ -20,6 +20,7 @@ type SidebarProps = {
 export default function Sidebar({
   title = "Panel",
   items = [
+    { label: "Anasayfa", to: "/" },
     {
       label: "Kitap listesi",
       children: [

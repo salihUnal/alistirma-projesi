@@ -1,7 +1,7 @@
 import React from "react";
 import Sidebar from "../components/Sidebar";
 import ThemeToggle from "../components/common/ThemeToggle";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 
 function Home() {
@@ -12,18 +12,23 @@ function Home() {
     <div className="w-full min-h-screen px-4 py-8 dark:bg-slate-900 text-white">
       <div className="flex items-center justify-between px-4 py-3 bg-white/70 dark:bg-slate-900/70 backdrop-blur border-b border-slate-200/60 dark:border-slate-700/60 rounded-lg">
         {/* Sol: Logo */}
-        <div className="flex items-center gap-3">
+        {/* <div className="flex items-center gap-3"> */}
+        <Link to="/" className="flex items-center gap-3">
           <img
             src="\images\home-logo.png"
             alt="Uygulama Logosu"
-            className="w-20 h-20 shrink-0 cursor-pointer"
+            className="cursor-pointer w-10 h-10 shrink-0 "
             role="button"
             onClick={() => navigate("/")}
           />
-          <span className="text-2xl font-semibold text-slate-800 dark:text-slate-100">
+          <span
+            className="cursor-pointer text-2xl font-semibold text-slate-800 dark:text-slate-100"
+            onClick={() => navigate("/")}
+          >
             Blog ve Multimedya Uygulaması
           </span>
-        </div>
+        </Link>
+        {/* </div> */}
 
         <div className="flex items-center gap-3">
           <ThemeToggle />

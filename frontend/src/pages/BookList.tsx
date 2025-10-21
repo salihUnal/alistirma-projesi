@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import Books from "../components/Books";
 import { useAuth } from "../contexts/AuthContext";
@@ -273,7 +273,6 @@ function BookList({ onBack }: BookListPageProps) {
           </div>
         );
       default:
-        console.log("Default case çalışıyor");
         return (
           <div className="bg-white p-6 rounded-lg shadow">
             <h2 className="text-2xl font-bold mb-4">Dashboard</h2>
@@ -287,11 +286,20 @@ function BookList({ onBack }: BookListPageProps) {
     <div className="w-full min-h-screen px-4 py-8 dark:bg-slate-900 text-white">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 bg-white/70 dark:bg-slate-900/70 backdrop-blur border-b border-slate-200/60 dark:border-slate-700/60 rounded-lg">
-        <div className="flex items-center gap-3">
+        {/* <div className="flex items-center gap-3"> */}
+        <Link to="/books/" className="flex items-center gap-3">
+          <img
+            src="/images/kitap-logo.png"
+            alt="Uygulama Logosu"
+            className="w-12 h-12 shrink-0 "
+            // role="button"
+            // onClick={() => navigate("/books/Tumu")}
+          />
           <span className="text-2xl font-semibold text-slate-800 dark:text-slate-100">
             Kitap Uygulaması
           </span>
-        </div>
+        </Link>
+        {/* </div> */}
         <div className="flex items-center gap-3">
           <ThemeToggle />
           <button
