@@ -66,6 +66,7 @@ function MovieList({ onBack }: TestPageProps) {
                 {""}
               </h3>
               {/* Filtre butonları */}
+
               <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => navigate("/movies")}

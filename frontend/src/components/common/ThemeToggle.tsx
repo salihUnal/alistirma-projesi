@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 export default function ThemeToggle() {
   const [isDark, setIsDark] = useState(false);
+  const tooltipText = isDark ? "Açık temaya geç" : "Karanlık temaya geç";
 
   useEffect(() => {
     const saved = localStorage.getItem("theme");
@@ -30,7 +31,8 @@ export default function ThemeToggle() {
                  px-4 py-2 text-sm
                  text-slate-700 dark:text-slate-100
                  hover:bg-gray-400 dark:hover:bg-slate-900 transition  "
-      aria-label="Tema değiştir"
+      title={tooltipText}
+      aria-label={tooltipText}
     >
       {isDark ? "☀︎" : "🌙"}
     </button>

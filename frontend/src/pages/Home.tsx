@@ -3,6 +3,7 @@ import Sidebar from "../components/Sidebar";
 import ThemeToggle from "../components/common/ThemeToggle";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import TypingEffect from "react-typing-effect";
 
 function Home() {
   const navigate = useNavigate();
@@ -44,6 +45,20 @@ function Home() {
           </button>
         </div>
       </div>
+      <div className="flex flex-1 mt-4 gap-3">
+        <main className="flex-1 flex flex-col items-center w-full min-w-0">
+          {/* Başlık */}
+          <h1 className="mb-4 text-4xl font-extrabold text-green-600 dark:text-green-400 drop-shadow-lg font-['Uncial_Antiqua',cursive] text-center">
+            <TypingEffect
+              text={["Bu Bir React ile Hazırlanmış", "React App Uygulaması"]}
+              speed={100}
+              eraseSpeed={90}
+              typingDelay={500}
+              eraseDelay={1000}
+            />
+          </h1>
+        </main>
+      </div>
 
       <div className="mt-4 flex gap-3 ">
         {/* Sidebar’a sabit genişlik vererek yapıyı koru */}
@@ -51,12 +66,16 @@ function Home() {
           <Sidebar title="Menü" />
         </div>
       </div>
-
       <div className="bg-white-100">
-        <footer className="text-center  text-lg font-thin italic capitalize py-1">
+        {/* <footer className="text-center  text-lg font-thin italic capitalize py-1">
           Powered By {username?.trim() || "Misafir"}{" "}
+        </footer> */}
+        <footer className="text-center text-lg text-black dark:text-white font-thin italic capitalize py-1">
+          Powered By{" "}
+          <span className="font-semibold not-italic text-cyan-500 dark:text-cyan-400">
+            {username?.trim() || "Misafir"}
+          </span>
         </footer>
-        {/* kullanıcı adı görünmüyor. düzelt*/}{" "}
       </div>
     </div>
   );

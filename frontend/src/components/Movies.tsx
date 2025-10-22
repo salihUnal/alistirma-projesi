@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { movieApi } from "../services/movieApi";
 
 type Movie = {
@@ -131,21 +131,35 @@ export default function Movies({ category }: MoviesProps) {
         {!loading &&
           !error &&
           movies.map((movie, index) => (
-            <div
-              key={`${movie.title}-${index}`}
-              onClick={() => handleMovieClick(movie.id)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  handleMovieClick(movie.id);
-                }
-              }}
-              role="button"
-              tabIndex={0}
+            // <div
+            //   key={`${movie.title}-${index}`}
+            //   onClick={() => handleMovieClick(movie.id)}
+            //   onKeyDown={(e) => {
+            //     if (e.key === "Enter" || e.key === " ") {
+            //       e.preventDefault();
+            //       handleMovieClick(movie.id);
+            //     }
+            //   }}
+            //   role="button"
+            //   tabIndex={0}
+            //   aria-label={`${movie.title} filmini görüntüle`}
+            //   className="cursor-pointer flex flex-col h-full rounded-2xl shadow border text-gray-700
+            //     bg-white/90 dark:bg-slate-900/70
+            //     border-gray-200 dark:border-slate-700 overflow-hidden"
+            // >
+            <Link
+              // key için index yerine benzersiz olan movie.id kullanmak daha iyidir
+              key={movie.id}
+              // 'to' prop'u ile hedef URL'i belirtiyoruz
+              to={`/movie/detail/${movie.id}`}
+              // Fareyle üzerine gelince tarayıcı tooltip'i göstermesi için
+              title={movie.title}
               aria-label={`${movie.title} filmini görüntüle`}
               className="cursor-pointer flex flex-col h-full rounded-2xl shadow border text-gray-700
-                bg-white/90 dark:bg-slate-900/70
-                border-gray-200 dark:border-slate-700 overflow-hidden"
+                         bg-white/90 dark:bg-slate-900/70
+                         border-gray-200 dark:border-slate-700 overflow-hidden"
+              // onClick, onKeyDown, role, ve tabIndex prop'larına
+              // 'Link' bileşeni kullandığımız için artık gerek yok.
             >
               <img
                 src={movie.image || "/images/no-image-available.jpeg"}
@@ -158,6 +172,7 @@ export default function Movies({ category }: MoviesProps) {
                 }}
                 loading="lazy"
               />
+
               <div className="flex flex-col h-full p-4">
                 <div className="flex  items-start  justify-between mb-3 min-h-[56px]">
                   <h3 className="text-lg text-center font-semibold text-slate-900  dark:text-white">
@@ -202,7 +217,7 @@ export default function Movies({ category }: MoviesProps) {
                   </div>
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
       </div>
     </div>
