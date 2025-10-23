@@ -108,7 +108,7 @@ export default function Sidebar({
               }
             }}
             className={`
-            w-full flex items-center gap-5 px-7 py-3 rounded-lg bg-white dark:border-separate border-2 border-blue-200 dark:border-gray-500 dark:bg-gray-800 dark:text-white
+            w-full flex items-center gap-5 px-7 py-3 rounded-full bg-white dark:border-separate border-2 border-blue-200 dark:border-gray-500 dark:bg-gray-800 dark:text-white
             text-gray-900 hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-500 dark:hover:text-white
             transition-all duration-200 ease-in-out
             ${level > 0 ? "ml-4 text-sm" : "font-medium"}

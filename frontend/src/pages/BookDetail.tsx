@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { bookApi } from "../services/bookApi";
+import ThemeToggle from "../components/common/ThemeToggle";
 
 type Book = {
   id: number;
@@ -91,7 +92,7 @@ export default function BookDetail() {
         </p>
         <button
           onClick={() => navigate(-1)}
-          className="px-4 py-2 rounded bg-gray-800 dark:bg-gray-600 text-white hover:bg-gray-700 dark:hover:bg-gray-500 transition-colors"
+          className="mb-6 px-4 py-2 rounded  bg-blue-500  dark:bg-blue-400 text-white hover:bg-blue-700 dark:hover:bg-blue-700 transition-colors"
         >
           Geri
         </button>
@@ -100,62 +101,74 @@ export default function BookDetail() {
   }
 
   return (
-    <div className="p-6">
-      <button
-        onClick={() => navigate(-1)}
-        className="mb-6 px-4 py-2 rounded bg-gray-800 dark:bg-gray-600 text-white hover:bg-gray-700 dark:hover:bg-gray-500 transition-colors"
-      >
-        Geri
-      </button>
+    <>
+      <div className=" fixed top-4 right-4 z-50 ">
+        <ThemeToggle />
+      </div>
+      <div className="p-6 ">
+        <button
+          onClick={() => navigate(-1)}
+          className="mb-6 px-4 py-2 rounded-lg  bg-blue-500  dark:bg-blue-400 text-white hover:bg-blue-700 dark:hover:bg-blue-700 transition-colors"
+        >
+          Geri
+        </button>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div>
-          <img
-            src={book.image || "/images/no-image-available.jpeg"}
-            onError={(e) => {
-              // Eğer web linki çalışmazsa varsayılan görseli göster
-              const target = e.target as HTMLImageElement;
-              target.src = "/images/no-image-available.jpeg";
-            }}
-            alt={book.title}
-            className="w-full h-auto rounded shadow"
-          />
-        </div>
-        <div className="md:col-span-2 space-y-4">
-          <h1 className="text-3xl font-semibold text-gray-900 dark:text-white">
-            {book.title}
-          </h1>
-
-          {book.description && (
-            <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-              {book.description}
-            </p>
-          )}
-
-          <div className="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-400">
-            {book.publish_date && <span>Yayın Yılı: {book.publish_date}</span>}
-            {book.author && <span>Yazar: {book.author}</span>}
-            {book.genre && <span>Tür: {book.genre}</span>}
-            <span
-              className={`px-2 py-1 rounded text-xs ${
-                book.is_read
-                  ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-                  : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
-              }`}
-            >
-              {book.is_read ? "Okundu" : "Okunmadı"}
-            </span>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 border-blue-200 dark:border-blue-700 border-2">
+          <div>
+            <img
+              src={book.image || "/images/no-image-available.jpeg"}
+              onError={(e) => {
+                // Eğer web linki çalışmazsa varsayılan görseli göster
+                const target = e.target as HTMLImageElement;
+                target.src = "/images/no-image-available.jpeg";
+              }}
+              alt={book.title}
+              className="w-full h-auto rounded  shadow-xl shadow-blue-900 dark:shadow-slate-200  m-4 p-2"
+            />
           </div>
+          <div className="md:col-span-2 space-y-4 p-6 m-4">
+            <h1 className="text-3xl font-semibold text-gray-900 dark:text-white">
+              {book.title}
+            </h1>
 
-          {book.genre && (
-            <div className="flex flex-wrap gap-2">
-              <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded border text-xs">
-                {book.genre}
+            {book.description && (
+              <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                {book.description}
+              </p>
+            )}
+
+            <div className="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-100">
+              {book.publish_date && (
+                <span>Yayın Yılı: {book.publish_date}</span>
+              )}
+              {book.author && <span>Yazar: {book.author}</span>}
+              {book.genre && <span>Tür: {book.genre}</span>}
+              <span
+                className={`px-2 py-1 rounded-full text-xs ${
+                  book.is_read
+                    ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                    : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
+                }`}
+              >
+                {book.is_read ? "Okundu" : "Okunmadı"}
               </span>
             </div>
-          )}
+
+            {book.genre && (
+              <div className="flex flex-wrap gap-2">
+                <span className="px-2 py-1 rounded-full border text-xs  bg-blue-200 dark:bg-blue-900 text-blue-800 dark:text-blue-200 ">
+                  {book.genre}
+                </span>
+              </div>
+            )}
+            {/* <div className="md:col-span-2 space-y-4 p-6 m-4"> */}
+            <button className="rounded-3xl text-sm  border-2 border-blue-300 mb-6 px-4 py-2   bg-orange-500  dark:bg-orange-500 text-white hover:bg-orange-600 dark:hover:bg-orange-700 transition-colors">
+              Okundu
+            </button>
+            {/* </div> */}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

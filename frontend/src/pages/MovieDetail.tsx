@@ -92,7 +92,7 @@ export default function MovieDetail() {
         <p className="text-red-600 mb-4">{error ?? "Kayıt bulunamadı"}</p>
         <button
           onClick={() => navigate(-1)}
-          className="px-4 py-2 rounded  bg-slate-700 text-white hover:bg-blue-700"
+          className="mb-6 px-4 py-2 rounded  bg-blue-500  dark:bg-blue-400 text-white hover:bg-blue-700 dark:hover:bg-blue-700 transition-colors"
         >
           Geri
         </button>
@@ -101,59 +101,66 @@ export default function MovieDetail() {
   }
 
   return (
-    <div className="p-6">
-      <button
-        onClick={() => navigate(-1)}
-        className="mb-6 px-4 py-2 rounded bg-slate-700 text-white hover:bg-blue-700"
-      >
-        Geri
-      </button>
+    <>
+      <div className="fixed top-4 right-4 z-50">
+        <ThemeToggle />
+      </div>
+      <div className="p-6">
+        <button
+          onClick={() => navigate(-1)}
+          className="mb-6 px-4 py-2 rounded  bg-blue-500  dark:bg-blue-400 text-white hover:bg-blue-700 dark:hover:bg-blue-700 transition-colors"
+        >
+          Geri
+        </button>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div>
-          <img
-            src={movie.posterPath || "/images/no-image-available.jpeg"}
-            onError={(e) => {
-              // Eğer web linki çalışmazsa varsayılan görseli göster
-              const target = e.target as HTMLImageElement;
-              target.src = "/images/no-image-available.jpeg";
-            }}
-            alt={movie.title}
-            className="w-full h-auto rounded shadow"
-          />
-        </div>
-        <div className=" md:col-span-2 space-y-4">
-          <h1 className="dark:text-white text-3xl font-semibold">
-            {movie.title}
-          </h1>
-          {movie.overview && (
-            <p className="dark:text-white leading-relaxed">{movie.overview}</p>
-          )}
-
-          <div className="flex flex-wrap gap-4 text-sm text-gray-800 dark:text-gray-100">
-            {movie.releaseDate && <span>Yıl: {movie.releaseDate}</span>}
-            {typeof movie.voteAverage === "number" && (
-              <span>Puan: {movie.voteAverage}</span>
-            )}
-            {typeof movie.runtime === "number" && (
-              <span>Süre: {movie.runtime} dk</span>
-            )}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6  border-blue-200 dark:border-blue-700 border-2">
+          <div>
+            <img
+              src={movie.posterPath || "/images/no-image-available.jpeg"}
+              onError={(e) => {
+                // Eğer web linki çalışmazsa varsayılan görseli göster
+                const target = e.target as HTMLImageElement;
+                target.src = "/images/no-image-available.jpeg";
+              }}
+              alt={movie.title}
+              className="w-full h-auto rounded shadow m-4 p-2"
+            />
           </div>
+          <div className=" md:col-span-2 space-y-4  p-6 m-4">
+            <h1 className="dark:text-white text-3xl font-semibold">
+              {movie.title}
+            </h1>
+            {movie.overview && (
+              <p className="dark:text-white leading-relaxed">
+                {movie.overview}
+              </p>
+            )}
 
-          {movie.genres?.length ? (
-            <div className="flex flex-wrap gap-2 ">
-              {movie.genres.map((g) => (
-                <span
-                  key={g}
-                  className="px-2 py-1 rounded border text-xs font-medium bg-blue-500 text-gray-50 dark:bg-blue-800 dark:text-gray-50"
-                >
-                  {g}
-                </span>
-              ))}
+            <div className="flex flex-wrap gap-4 text-sm text-gray-800 dark:text-gray-100">
+              {movie.releaseDate && <span>Yıl: {movie.releaseDate}</span>}
+              {typeof movie.voteAverage === "number" && (
+                <span>Puan: {movie.voteAverage}</span>
+              )}
+              {typeof movie.runtime === "number" && (
+                <span>Süre: {movie.runtime} dk</span>
+              )}
             </div>
-          ) : null}
+
+            {movie.genres?.length ? (
+              <div className="flex flex-wrap gap-2 ">
+                {movie.genres.map((g) => (
+                  <span
+                    key={g}
+                    className="px-2 py-1 rounded border text-xs font-medium bg-blue-500 text-gray-50 dark:bg-blue-800 dark:text-gray-50"
+                  >
+                    {g}
+                  </span>
+                ))}
+              </div>
+            ) : null}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

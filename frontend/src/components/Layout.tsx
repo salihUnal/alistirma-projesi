@@ -75,13 +75,15 @@ function Layout() {
           {/* <ThemeToggle /> */}
           {/* </div> */}
           <Outlet />
-          <Dashboard
-            username={username}
-            userRole={userRole}
-            isLoggedIn={isLoggedIn}
-            onLogout={handleLogout}
-            onRoleChange={handleRoleChange}
-          />
+          {userRole !== "test" && (
+            <Dashboard
+              username={username}
+              userRole={userRole}
+              isLoggedIn={isLoggedIn}
+              onLogout={handleLogout}
+              onRoleChange={handleRoleChange}
+            />
+          )}
         </>
       )}
     </div>
