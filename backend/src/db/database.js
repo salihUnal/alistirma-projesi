@@ -57,6 +57,31 @@ db.serialize(() => {
       }
     }
   );
+
+  //Users tablosu
+
+    db.run(
+      `CREATE TABLE IF NOT EXISTS  users (
+        Id            TEXT         PRIMARY KEY,
+        Username      TEXT         UNIQUE                                   NOT NULL,
+        Email         TEXT         UNIQUE                                   NOT NULL,
+        Password_Hash TEXT         NOT NULL,
+        Full_Name     TEXT,
+        Avatar_url    TEXT,
+        Creation_date TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,
+        Updated_at    TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,
+        Position      VARCHAR DEFAULT 'standard',
+        Bio           TEXT,
+        Phone         TEXT    
+    )`,
+      (err) => {
+        if (err) {
+          console.error("Tablo oluşturma hatası:", err.message);
+        } else {
+          console.log("Users tablosu hazır.");
+        }
+      }
+    );
 });
 
 module.exports = db;

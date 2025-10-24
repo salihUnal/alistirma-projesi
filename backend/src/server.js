@@ -146,6 +146,28 @@ app.post("/api/movies", (req, res) => {
       res.json({ id: this.lastID, message: "Film başarıyla eklendi" });
     }
   );
+// });
+
+db.run(
+  "INSERT INTO books (title, author, publish_date, genre, description, image, duration, Page_Count,is_read) VALUES (?, ?, ?, ?, ?, ?, ?)",
+  [    
+    title     ,
+    author      ,
+    publish_date ,
+    genre        ,
+    description  ,
+    image        ,
+    Page_Count   ,
+    is_read     ,
+  ],
+  function (err) {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    }
+    res.json({ id: this.lastID, message: "Kitap başarıyla eklendi" });
+  }
+);
 });
 
 app.listen(PORT, () => {

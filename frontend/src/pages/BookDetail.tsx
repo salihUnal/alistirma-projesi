@@ -21,6 +21,7 @@ export default function BookDetail() {
   const [book, setBook] = useState<Book | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [read, setRead] = useState(false);
 
   useEffect(() => {
     if (!id) return;

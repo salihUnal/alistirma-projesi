@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "react-typing-effect": "^2.0.5"
+  },
+  "devDependencies": {
+    "@types/react-typing-effect": "^2.0.7"
+  }
+}
