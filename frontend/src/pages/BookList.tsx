@@ -16,13 +16,12 @@ interface BookListPageProps {
 }
 
 function BookList({ onBack }: BookListPageProps) {
-  const { username } = useAuth();
+  const { username, logout } = useAuth();
   const { category } = useParams();
   const [currentPage, setCurrentPage] = useState("Kitaplar");
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log("BookList useEffect çalışıyor, category:", category);
     setCurrentPage("Kitaplar");
   }, [category]);
 
@@ -63,11 +62,9 @@ function BookList({ onBack }: BookListPageProps) {
     // navigate(targetUrl);
   };
 
-  console.log("renderContent çalışıyor, currentPage:", currentPage);
   const renderContent = () => {
     switch (currentPage) {
       case "Kitaplar":
-        console.log("Kitaplar case'i çalışıyor");
         return (
           <div className="border-separate border-blue-200 dark:border-blue-700 border-2 bg-white dark:bg-gray-800 p-6 mt-10 rounded-lg shadow">
             <div className="mb-1">
@@ -304,7 +301,10 @@ function BookList({ onBack }: BookListPageProps) {
           <ThemeToggle />
           <button
             type="button"
-            onClick={onBack}
+            onClick={() => {
+              logout();
+              navigate("/");
+            }}
             className="rounded-md bg-orange-500 px-3 py-2 text-white shadow hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 dark:focus:ring-offset-slate-900 transition-colors"
           >
             Çıkış Yap

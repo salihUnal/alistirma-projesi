@@ -21,8 +21,6 @@ interface BooksProps {
 }
 
 export default function Books({ category }: BooksProps) {
-  console.log("Books bileşeni render ediliyor, category:", category);
-
   const [query, setQuery] = useState("");
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(false);
@@ -34,7 +32,6 @@ export default function Books({ category }: BooksProps) {
   };
 
   useEffect(() => {
-    console.log("Books useEffect çalışıyor, category:", category);
     let cancelled = false;
 
     async function run() {

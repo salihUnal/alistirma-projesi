@@ -4,6 +4,7 @@ import ThemeToggle from "../components/common/ThemeToggle";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import TypingEffect from "react-typing-effect";
+import Layout from "../components/Layout";
 
 function Home() {
   const navigate = useNavigate();
@@ -66,6 +67,7 @@ function Home() {
           <Sidebar title="Menü" />
         </div>
       </div>
+
       <div className="bg-white-100">
         {/* <footer className="text-center  text-lg font-thin italic capitalize py-1">
           Powered By {username?.trim() || "Misafir"}{" "}
@@ -82,4 +84,3 @@ function Home() {
 }
 
 export default Home;
-

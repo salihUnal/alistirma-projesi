@@ -11,7 +11,7 @@ interface TestPageProps {
 }
 
 function MovieList({ onBack }: TestPageProps) {
-  const { username } = useAuth();
+  const { username, logout } = useAuth();
   const { category, page: urlPage } = useParams();
   const [currentPage, setCurrentPage] = useState("Filmler");
   // const [loading, setLoading] = useState(true);
@@ -201,7 +201,10 @@ function MovieList({ onBack }: TestPageProps) {
           <ThemeToggle />
           <button
             type="button"
-            onClick={onBack}
+            onClick={() => {
+              logout();
+              navigate("/");
+            }}
             className="rounded-md bg-orange-500 px-3 py-2 text-white shadow hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 dark:focus:ring-offset-slate-900 transition-colors"
           >
             Çıkış Yap
