@@ -1,19 +1,20 @@
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import LoginForm from "./LoginForm";
 import Dashboard from "./Dashboard";
 import Header from "./Header";
 import { useState } from "react";
-import ThemeToggle from "./common/ThemeToggle";
+// import ThemeToggle from "./common/ThemeToggle";
 
 function Layout() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { isLoggedIn, username, userRole, login, logout, changeRole } =
     useAuth();
-  const [showTestPage, setShowTestPage] = useState(false);
+  const [showTestPage, setShowTestPage] = useState(false); // Bu 'test' kullanıcısı için
 
-  const handleLogin = (username: string, role: string) => {
-    login(username, role);
+  const handleLogin = (username: string, role: string, token: string) => {
+    login(username, role, token);
 
     const stored = localStorage.getItem("redirectAfterLogin");
     // const target =
@@ -44,7 +45,7 @@ function Layout() {
   };
 
   const handleTestPage = () => {
-    login("test", "test");
+    login("test", "test", "fake-test-token");
     setShowTestPage(true);
   };
 
@@ -66,14 +67,15 @@ function Layout() {
 "
     >
       {!isLoggedIn ? (
-        <LoginForm onLogin={handleLogin} onTestPage={handleTestPage} />
+        location.pathname === "/register" ? (
+          <Outlet /> // Register sayfasını göster
+        ) : (
+          <LoginForm onLogin={handleLogin} onTestPage={handleTestPage} /> // Login sayfasını göster
+        )
       ) : (
+        // Kullanıcı giriş yapmışsa
         <>
-          {/* <div className="text-green-600 font-semibold italic text-4xl"> */}
-          {userRole !== "test" && <Header />}{" "}
-          {/* test kullanıcı olmayan kullanıcılar için header sayfası açılıyor. admin için yukarıda admin sayfasına yönelndiriyorum. */}
-          {/* <ThemeToggle /> */}
-          {/* </div> */}
+          {userRole !== "test" && <Header />}
           <Outlet />
           {userRole !== "test" && (
             <Dashboard
@@ -84,6 +86,7 @@ function Layout() {
               onRoleChange={handleRoleChange}
             />
           )}
+          {/* 'test' kullanıcısı için özel bir dashboard/çıkış vs. gerekiyorsa buraya ekleyebilirsiniz */}
         </>
       )}
     </div>

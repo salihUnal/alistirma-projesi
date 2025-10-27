@@ -2,30 +2,60 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import FloatingLabelInput from "./common/FloatingLabelInput";
 import Copyright from "./common/Copyright";
-import Register from "../pages/public/Register";
+// import Register from "../pages/public/Register";
 // import ThemeToggle from "./common/ThemeToggle";
 
 interface LoginFormProps {
-  onLogin: (username: string, role: string) => void;
+  onLogin: (username: string, role: string, token: string) => void;
   onTestPage: () => void;
 }
 
 function LoginForm({ onLogin, onTestPage }: LoginFormProps) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const userInput = username.trim().toLowerCase();
+    setError(null);
+    setLoading(true);
 
-    if (userInput === "admin") {
-      onLogin(username, userInput);
-    } else if (userInput === "test") {
-      // onLogin(username, "test");
+    const userInput = username.trim();
+
+    // 'test' kullanıcısı girişini koruyalım (çevrimdışı test için)
+    if (userInput.toLowerCase() === "test") {
+      setLoading(false);
       onTestPage();
-    } else {
-      window.location.href = "/unauthorized";
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:3001/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: userInput,
+          password: password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Giriş yapılamadı");
+      }
+
+      // Başarılı giriş
+      setLoading(false);
+      // AuthContext'i token ile güncelle
+      onLogin(data.user.username, data.user.role, data.token);
+    } catch (err: any) {
+      setLoading(false);
+      setError(err.message);
     }
   };
 
@@ -62,6 +92,7 @@ function LoginForm({ onLogin, onTestPage }: LoginFormProps) {
               onChange={(e) => setPassword(e.target.value)}
               className="w-full p-2 border border-gray-300 rounded mb-4"
             /> */}
+            {error && <p className="text-red-400 text-center mb-4">{error}</p>}
             <FloatingLabelInput
               id="username"
               label="👤 Kullanıcı Adınız"
@@ -92,10 +123,10 @@ function LoginForm({ onLogin, onTestPage }: LoginFormProps) {
             </button> */}
             <button
               type="submit"
-              disabled={!username.trim()}
+              disabled={!username.trim() || !password.trim() || loading}
               className=" w-full rounded-xl bg-blue-500 text-white text-md py-2 px-4  hover:bg-blue-700 disabled:bg-blue-300"
             >
-              ➜] Giriş
+              {loading ? "Giriş yapılıyor..." : "➜] Giriş"}
             </button>
             <div className="text-center ">
               {/* register sayfasına yönelendirmeiyor. muhtemelen loyault tarafından  değişiklik lazım */}

@@ -10,7 +10,8 @@ interface AuthContextType {
   isLoggedIn: boolean;
   username: string;
   userRole: string;
-  login: (username: string, role: string) => void;
+  token: string | null;
+  login: (username: string, role: string, token: string) => void;
   logout: () => void;
   changeRole: (role: string) => void;
 }
@@ -18,9 +19,13 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [isLoggedIn, setIsLoggedIn] = useState(() => {
-    return localStorage.getItem("isLoggedIn") === "true";
-  });
+  const [token, setToken] = useState<string | null>(() =>
+    localStorage.getItem("token")
+  );
+
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    () => !!localStorage.getItem("token")
+  );
   const [username, setUsername] = useState(() => {
     return localStorage.getItem("username") || "";
   });
@@ -28,11 +33,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return localStorage.getItem("userRole") || "guest";
   });
 
-  const login = (username: string, role: string) => {
+  const login = (username: string, role: string, token: string) => {
+    setToken(token);
     setIsLoggedIn(true);
     setUsername(username);
     setUserRole(role);
-    localStorage.setItem("isLoggedIn", "true");
+
+    // Bilgileri localStorage'a kaydet
+    localStorage.setItem("token", token);
     localStorage.setItem("username", username);
     localStorage.setItem("userRole", role);
   };
@@ -41,23 +49,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoggedIn(false);
     setUsername("");
     setUserRole("guest");
+
     localStorage.setItem("isLoggedIn", "false");
     localStorage.setItem("username", "");
     localStorage.setItem("userRole", "guest");
+    localStorage.removeItem("token");
+    localStorage.removeItem("username");
+    localStorage.removeItem("userRole");
+    // Eski "isLoggedIn" anahtarını da temizleyelim
+    localStorage.removeItem("isLoggedIn");
   };
 
   const changeRole = (role: string) => {
     setUserRole(role);
+    // İsteğe bağlı: Rolü localStorage'da da güncelleyebilirsiniz
+    localStorage.setItem("userRole", role);
   };
 
   useEffect(() => {
-    if (isLoggedIn) {
+    if (token) {
       const timer = setTimeout(() => {
         logout();
       }, 30 * 60 * 1000);
       return () => clearTimeout(timer);
     }
-  }, [isLoggedIn]);
+  }, [token]);
 
   return (
     <AuthContext.Provider
@@ -65,6 +81,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isLoggedIn,
         username,
         userRole,
+        token,
         login,
         logout,
         changeRole,

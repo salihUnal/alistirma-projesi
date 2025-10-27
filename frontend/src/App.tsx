@@ -11,6 +11,7 @@ import NotFoundPage from "./pages/NotFoundPage";
 import Unauthorized from "./pages/Unauthorized";
 import BookList from "./pages/BookList";
 import BookDetail from "./pages/BookDetail";
+import Register from "./pages/public/Register";
 
 function App() {
   const handleLogout = () => {
@@ -22,6 +23,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Layout />}>
+            <Route path="/register" element={<Register />} />
             <Route
               index
               element={
@@ -31,7 +33,7 @@ function App() {
               }
             />
             <Route
-              path="/test"
+              path="/movies"
               element={
                 <ProtectedRoute>
                   <MovieList onBack={() => {}} />
