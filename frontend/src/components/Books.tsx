@@ -95,14 +95,18 @@ export default function Books({ category }: BooksProps) {
               className="cursor-pointer flex flex-col h-full rounded-2xl shadow border text-gray-700 bg-white/90 dark:bg-slate-900/70 border-gray-200 dark:border-slate-700 overflow-hidden"
             >
               <img
-                src={book.image || "/images/no-image-available.jpeg"}
+                src={
+                  book.image ||
+                  "https://res.cloudinary.com/dklvz02ew/image/upload/v1761658140/no-image-available_es01vr.jpg"
+                }
                 alt={book.title}
                 className="w-full h-72 object-cover"
                 loading="lazy"
                 onError={(e) => {
                   // Eğer web linki çalışmazsa varsayılan görseli göster
                   const target = e.target as HTMLImageElement;
-                  target.src = "/images/no-image-available.jpeg";
+                  target.src =
+                    "https://res.cloudinary.com/dklvz02ew/image/upload/v1761658140/no-image-available_es01vr.jpg";
                 }}
               />
               <div className="flex flex-col h-full p-4">

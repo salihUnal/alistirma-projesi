@@ -15,3 +15,26 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+
+/* Tarayıcının otomatik tamamlama (autofill) stilini sıfırlama */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  /* 1. Arka Planı Şeffaf Yapma Hilesi:
+      Tarayıcılar 'background-color: transparent' komutunu yok sayar.
+      Bunun yerine, içeriye doğru şeffaf bir 'box-shadow' basarak 
+      arka planı şeffaf görünmeye zorlarız.
+    */
+  box-shadow: 0 0 0 30px rgba(0, 0, 0, 0) inset !important;
+
+  /* 2. Yazı Rengini Beyaz Yapma:
+      Tarayıcının yazı rengini siyaha çekmesini engeller 
+      ve sizin 'text-white' stilinizi korur.
+    */
+  -webkit-text-fill-color: #FFFFFF !important;
+
+  /* İsteğe bağlı: Arka plan değişim animasyonunu geciktirir */
+  transition: background-color 5000s ease-in-out 0s;
+}

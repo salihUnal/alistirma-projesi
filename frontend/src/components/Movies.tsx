@@ -162,13 +162,17 @@ export default function Movies({ category }: MoviesProps) {
               // 'Link' bileşeni kullandığımız için artık gerek yok.
             >
               <img
-                src={movie.image || "/images/no-image-available.jpeg"}
+                src={
+                  movie.image ||
+                  "https://res.cloudinary.com/dklvz02ew/image/upload/v1761658140/no-image-available_es01vr.jpg"
+                }
                 alt={movie.title}
                 className="w-full h-72  object-cover"
                 onError={(e) => {
                   // Eğer web linki çalışmazsa varsayılan görseli göster
                   const target = e.target as HTMLImageElement;
-                  target.src = "/images/no-image-available.jpeg";
+                  target.src =
+                    "https://res.cloudinary.com/dklvz02ew/image/upload/v1761658140/no-image-available_es01vr.jpg";
                 }}
                 loading="lazy"
               />

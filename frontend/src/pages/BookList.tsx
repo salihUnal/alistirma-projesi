@@ -286,7 +286,7 @@ function BookList({ onBack }: BookListPageProps) {
         {/* <div className="flex items-center gap-3"> */}
         <Link to="/books/" className="flex items-center gap-3">
           <img
-            src="/images/kitap-logo.png"
+            src="https://res.cloudinary.com/dklvz02ew/image/upload/v1761658139/kitap-logo_acpjzd.png"
             alt="Uygulama Logosu"
             className="w-12 h-12 shrink-0 "
             // role="button"

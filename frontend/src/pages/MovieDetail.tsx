@@ -116,11 +116,15 @@ export default function MovieDetail() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6  border-blue-200 dark:border-blue-700 border-2">
           <div>
             <img
-              src={movie.posterPath || "/images/no-image-available.jpeg"}
+              src={
+                movie.posterPath ||
+                "https://res.cloudinary.com/dklvz02ew/image/upload/v1761658140/no-image-available_es01vr.jpg"
+              }
               onError={(e) => {
                 // Eğer web linki çalışmazsa varsayılan görseli göster
                 const target = e.target as HTMLImageElement;
-                target.src = "/images/no-image-available.jpeg";
+                target.src =
+                  "https://res.cloudinary.com/dklvz02ew/image/upload/v1761658140/no-image-available_es01vr.jpg";
               }}
               alt={movie.title}
               className="w-full h-auto rounded shadow m-4 p-2"
