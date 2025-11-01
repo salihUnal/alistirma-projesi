@@ -21,7 +21,27 @@ export default function BookDetail() {
   const [book, setBook] = useState<Book | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [read, setRead] = useState(false);
+  const [readUpdated, setReadUpdated] = useState(false);
+
+  const handleToggleRead = async () => {
+    if (!book || readUpdated) return;
+
+    setReadUpdated(true);
+    setError(null);
+
+    try {
+      const readUpdated = await bookApi.updateBookReadStatus(
+        book.id,
+        !book.is_read
+      );
+      setBook(readUpdated);
+    } catch (err) {
+      console.error("Güncelleme hatası:", err);
+      setError("Durum güncellenirken bir hata oluştu. Lütfen tekrar deneyin.");
+    } finally {
+      setReadUpdated(false);
+    }
+  };
 
   useEffect(() => {
     if (!id) return;
@@ -167,8 +187,15 @@ export default function BookDetail() {
               </div>
             )}
             {/* <div className="md:col-span-2 space-y-4 p-6 m-4"> */}
-            <button className="rounded-3xl text-sm  border-2 border-blue-300 mb-6 px-4 py-2   bg-orange-500  dark:bg-orange-500 text-white hover:bg-orange-600 dark:hover:bg-orange-700 transition-colors">
-              Okundu
+            <button
+              onClick={handleToggleRead}
+              className="rounded-3xl text-sm  border-2 border-blue-300 mb-6 px-4 py-2   bg-orange-500  dark:bg-orange-500 text-white hover:bg-orange-600 dark:hover:bg-orange-700 transition-colors"
+            >
+              {readUpdated
+                ? "Güncelleniyor..."
+                : book.is_read
+                ? "Bu Kitabı Okumadım"
+                : "Bu Kitabı Okudum"}
             </button>
             {/* </div> */}
           </div>

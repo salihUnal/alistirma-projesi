@@ -49,4 +49,27 @@ export const bookApi = {
     }
     return response.json();
   },
+
+  updateBookReadStatus: async (
+    id: number,
+    is_read: boolean
+  ): Promise<ApiBook> => {
+    const response = await fetch(`${API_BASE_URL}/books/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        // NOT: Eğer ilerde bu endpoint'i korumalı yaparsanız
+        // (örn: sadece giriş yapan kullanıcı güncelleyebilsin),
+        // buraya 'Authorization' header'ı eklemeniz gerekecek.
+        // 'Authorization': `Bearer ${kullaniciTokeni}`
+      },
+      body: JSON.stringify({ is_read: is_read }),
+    });
+    if (!response.ok) {
+      throw new Error("Kitap okunma durumu güncellenemedi");
+    }
+
+    // Sunucudan dönen güncel kitabı (JSON) döndür
+    return response.json();
+  },
 };

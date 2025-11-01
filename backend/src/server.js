@@ -7,7 +7,7 @@ const jwt = require("jsonwebtoken");
 const { v4: uuidv4 } = require("uuid");
 const app = express();
 const PORT = process.env.PORT || 3001;
-const JWT_SECRET = "sizin_super_guvenli_secret_keyiniz"; // Bunu karmaşık bir şeyle değiştirin
+const JWT_SECRET = "q4t7w!z%C*F-JaNdRgUkXp2s5v8y/A?D(G+KbPeShV"; // Bunu karmaşık bir şeyle değiştirin
 
 // Middleware
 app.use(cors());
@@ -285,7 +285,7 @@ app.post("/api/books", (req, res) => {
   } = req.body;
 
   db.run(
-    "INSERT INTO books (title, author, publish_date, genre, description, image, duration, Page_Count,is_read) VALUES (?, ?, ?, ?, ?, ?, ?)",
+    "INSERT INTO books (title, author, publish_date, genre, description, image,  Page_Count,is_read) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
     [
       title,
       author,
@@ -304,6 +304,41 @@ app.post("/api/books", (req, res) => {
       res.json({ id: this.lastID, message: "Kitap başarıyla eklendi" });
     }
   );
+});
+
+app.patch("/api/books/:id", (req, res) => {
+  const { id } = req.params;
+  const { is_read } = req.body;
+
+  if (typeof is_read !== "boolean") {
+    return res
+      .status(400)
+      .json({ error: "is_read alanı boolean (true/false) olmalıdır" });
+  }
+  const sql = "UPDATE books SET updated_at = ? ,is_read = ? WHERE id = ?";
+  const params = [new Date().toISOString(), is_read, id];
+
+  db.run(sql, params, function (err) {
+    if (err) {
+      console.error("Kitap Güncellemesi Hatası:", err);
+      return res
+        .status(500)
+        .json({ error: "Kitap güncellenirken hata oluştu" });
+    }
+
+    if (this.changes === 0) {
+      return res.status(404).json({ error: "Kitap bulunamadı" });
+    }
+
+    db.get("SELECT * FROM books WHERE id = ?", [id], (err, row) => {
+      if (err) {
+        return res
+          .status(500)
+          .json({ error: "Güncellenmiş kitap verisi getirilemedi" });
+      }
+      return res.json(row);
+    });
+  });
 });
 
 app.listen(PORT, () => {

@@ -17,30 +17,15 @@ function ProtectedRoute({
   const { isLoggedIn, userRole } = useAuth();
   const location = useLocation();
 
-  console.log(
-    "ProtectedRoute - isLoggedIn:",
-    isLoggedIn,
-    "userRole:",
-    userRole,
-    "pathname:",
-    location.pathname
-  );
-
   if (!isLoggedIn) {
-    console.log(
-      "ProtectedRoute - Kullanıcı giriş yapmamış, yönlendiriliyor:",
-      redirectTo
-    );
     localStorage.setItem("redirectAfterLogin", location.pathname);
     return <Navigate to={redirectTo} replace />;
   }
 
   if (requiredRole && userRole !== requiredRole) {
-    console.log("ProtectedRoute - Yetki yok, yönlendiriliyor: /unauthorized");
     return <Navigate to="/unauthorized" replace />;
   }
 
-  console.log("ProtectedRoute - Erişim izni verildi");
   return <>{children}</>;
 }
 

@@ -17,7 +17,7 @@ function Home() {
         {/* <div className="flex items-center gap-3"> */}
         <Link to="/" className="flex items-center gap-3">
           <img
-            src="\images\home-logo.png"
+            src="https://res.cloudinary.com/dklvz02ew/image/upload/v1761658138/home-logo_vjluhr.png"
             alt="Uygulama Logosu"
             className="cursor-pointer w-10 h-10 shrink-0 "
             role="button"
