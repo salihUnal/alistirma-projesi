@@ -9,4 +9,4 @@ export interface IMovie {
   genres?: string[];
   runtime?: number;
   is_watched?: boolean;
-}
+};

@@ -92,7 +92,7 @@ export default function Books({ category }: BooksProps) {
             <div
               key={`${book.title}-${index}`}
               onClick={() => handleBookClick(book.id)}
-              className="cursor-pointer flex flex-col h-full rounded-2xl shadow border text-gray-700 bg-white/90 dark:bg-slate-900/70 border-gray-200 dark:border-slate-700 overflow-hidden"
+              className="cursor-pointer flex flex-col h-full rounded-2xl shadow border text-gray-700 bg-white/90 dark:bg-slate-900/70 border-gray-200 dark:border-slate-700 overflow-hidden hover:scale-105 transition-all duration-300"
             >
               <img
                 src={
