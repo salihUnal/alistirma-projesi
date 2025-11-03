@@ -11,6 +11,26 @@ export default function MovieDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const [watchUpdated, setWatchUpdated] = useState(false);
+
+  const handleToggleWatch = async () => {
+    if (!movie || watchUpdated) return;
+    setWatchUpdated(true);
+    setError(null);
+    try {
+      const watchUpdated = await movieApi.updateMovieWatchStatus(
+        movie.id,
+        !movie.is_watched
+      );
+      setMovie(watchUpdated);
+    } catch (err) {
+      console.error("Güncelleme hatası:", err);
+      setError("Durum güncellenirken bir hata oluştu. Lütfen tekrar deneyin.");
+    } finally {
+      setWatchUpdated(false);
+    }
+  };
+
   useEffect(() => {
     if (!id) return;
     let isActive = true;
@@ -25,19 +45,20 @@ export default function MovieDetail() {
           return;
         }
         // Servisten gelen Movie'yi IMovie şekline dönüştür
-        const mapped: IMovie = {
-          id: data.id,
-          title: data.title,
-          posterPath: (data as any).image,
-          overview: (data as any).description,
-          releaseDate: String((data as any).releaseYear ?? ""),
-          voteAverage: Number((data as any).IMDB_Point ?? 0),
-          runtime: Number(
-            String((data as any).duration ?? "").split(" ")[0] || 0
-          ),
-          genres: (data as any).types ?? [],
-        } as IMovie;
-        setMovie(mapped);
+        // const mapped: IMovie = {
+        //   id: data.id,
+        //   title: data.title,
+        //   posterPath: (data as any).image,
+        //   overview: (data as any).description,
+        //   releaseDate: String((data as any).releaseYear ?? ""),
+        //   voteAverage: Number((data as any).IMDB_Point ?? 0),
+        //   runtime: Number(
+        //     String((data as any).duration ?? "").split(" ")[0] || 0
+        //   ),
+        //   genres: (data as any).types ?? [],
+        //   is_watched: (data as any).is_watched ?? false,
+        // } as IMovie;
+        setMovie(data);
         setError(null);
       })
       .catch((e) => {
@@ -162,6 +183,16 @@ export default function MovieDetail() {
                 ))}
               </div>
             ) : null}
+            <button
+              onClick={handleToggleWatch}
+              className="rounded-3xl text-sm  border-2 border-blue-300 mb-6 px-4 py-2   bg-orange-500  dark:bg-orange-500 text-white hover:bg-orange-600 dark:hover:bg-orange-700 transition-colors"
+            >
+              {watchUpdated
+                ? "Güncelleniyor..."
+                : movie.is_watched
+                ? "Bu Filmı İzledim"
+                : "Bu Filmı İzlemedim"}
+            </button>
           </div>
         </div>
       </div>

@@ -23,6 +23,7 @@ db.serialize(() => {
     director TEXT,
     duration TEXT,
     types TEXT,
+    is_watched BOOLEAN DEFAULT 0,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`,
@@ -60,8 +61,8 @@ db.serialize(() => {
 
   //Users tablosu
 
-    db.run(
-      `CREATE TABLE IF NOT EXISTS  users (
+  db.run(
+    `CREATE TABLE IF NOT EXISTS  users (
         Id            TEXT         PRIMARY KEY,
         Username      TEXT         UNIQUE                                   NOT NULL,
         Email         TEXT         UNIQUE                                   NOT NULL,
@@ -74,14 +75,14 @@ db.serialize(() => {
         Bio           TEXT,
         Phone         TEXT    
     )`,
-      (err) => {
-        if (err) {
-          console.error("Tablo oluşturma hatası:", err.message);
-        } else {
-          console.log("Users tablosu hazır.");
-        }
+    (err) => {
+      if (err) {
+        console.error("Tablo oluşturma hatası:", err.message);
+      } else {
+        console.log("Users tablosu hazır.");
       }
-    );
+    }
+  );
 });
 
 module.exports = db;

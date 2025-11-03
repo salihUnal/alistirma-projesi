@@ -246,12 +246,13 @@ app.post("/api/movies", (req, res) => {
     director,
     duration,
     types,
+    is_watched,
   } = req.body;
 
   const typesString = Array.isArray(types) ? types.join(",") : types;
 
   db.run(
-    "INSERT INTO movies (title, description, image, imdb_point, release_year, director, duration, types) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+    "INSERT INTO movies (title, description, image, imdb_point, release_year, director, duration, types,is_watched) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
     [
       title,
       description,
@@ -261,6 +262,7 @@ app.post("/api/movies", (req, res) => {
       director,
       duration,
       typesString,
+      is_watched ?? false,
     ],
     function (err) {
       if (err) {
@@ -270,6 +272,44 @@ app.post("/api/movies", (req, res) => {
       res.json({ id: this.lastID, message: "Film başarıyla eklendi" });
     }
   );
+});
+
+app.patch("/api/movies/:id", (req, res) => {
+  const { id } = req.params;
+  const { is_watched } = req.body;
+
+  if (typeof is_watched !== "boolean") {
+    return res
+      .status(400)
+      .json({ error: "is_watched alanı boolean (true/false) olmalıdır" });
+  }
+  const sql = "UPDATE movies SET updated_at = ? ,is_watched = ? WHERE id = ?";
+  const params = [new Date().toISOString(), is_watched, id];
+
+  db.run(sql, params, function (err) {
+    if (err) {
+      console.error("Film Güncellemesi Hatası:", err);
+      return res.status(500).json({ error: "Film güncellenirken hata oluştu" });
+    }
+
+    if (this.changes === 0) {
+      return res.status(404).json({ error: "Film bulunamadı" });
+    }
+
+    db.get("SELECT * FROM movies WHERE id = ?", [id], (err, row) => {
+      if (err) {
+        return res
+          .status(500)
+          .json({ error: "Güncellenmiş film verisi getirilemedi" });
+      }
+      const movie = {
+        ...row,
+        types: row.types ? row.types.split(",") : [],
+      };
+
+      return res.json(movie);
+    });
+  });
 });
 
 app.post("/api/books", (req, res) => {

@@ -1,18 +1,20 @@
 import { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { movieApi } from "../services/movieApi";
+import { IMovie } from "../types/IMovie";
 
-type Movie = {
-  id: number;
-  image: string;
-  title: string;
-  description: string;
-  IMDB_Point: string;
-  types: string[];
-  director: string;
-  duration: string;
-  release_year: number;
-};
+// type Movie = {
+//   id: number;
+//   image: string;
+//   title: string;
+//   description: string;
+//   IMDB_Point: string;
+//   types: string[];
+//   director: string;
+//   duration: string;
+//   release_year: number;
+//   is_watched: boolean;
+// };
 
 interface MoviesProps {
   category?: string;
@@ -21,14 +23,14 @@ interface MoviesProps {
 
 export default function Movies({ category }: MoviesProps) {
   const [query, setQuery] = useState("");
-  const [movies, setMovies] = useState<Movie[]>([]);
+  const [movies, setMovies] = useState<IMovie[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
-  const handleMovieClick = (movieId: number) => {
-    navigate(`/movie/detail/${movieId}`);
-  };
+  // const handleMovieClick = (movieId: number) => {
+  //   navigate(`/movie/detail/${movieId}`);
+  // };
 
   useEffect(() => {
     let cancelled = false;
@@ -38,7 +40,7 @@ export default function Movies({ category }: MoviesProps) {
         setLoading(true);
         setError(null);
 
-        let data;
+        let data: IMovie[] | null;
         if (category) {
           // Kategori bazlı API çağrısı
           switch (category) {
@@ -83,19 +85,21 @@ export default function Movies({ category }: MoviesProps) {
         }
 
         if (cancelled) return;
-        setMovies(
-          data.map((m) => ({
-            id: m.id,
-            image: m.image,
-            title: m.title,
-            description: m.description,
-            IMDB_Point: m.imdb_point.toString(),
-            types: m.types,
-            director: m.director,
-            duration: m.duration,
-            release_year: m.release_year,
-          }))
-        );
+        // setMovies(
+        //   data.map((m) => ({
+        //     id: m.id,
+        //     image: m.image,
+        //     title: m.title,
+        //     description: m.description,
+        //     IMDB_Point: m.imdb_point.toString(),
+        //     types: m.types,
+        //     director: m.director,
+        //     duration: m.duration,
+        //     release_year: m.release_year,
+        //     is_watched: m.is_watched,
+        //   }))
+        // );
+        setMovies(data ?? []);
       } catch (e) {
         if (cancelled) return;
         setError("Veri alınamadı");
@@ -163,7 +167,7 @@ export default function Movies({ category }: MoviesProps) {
             >
               <img
                 src={
-                  movie.image ||
+                  movie.posterPath ||
                   "https://res.cloudinary.com/dklvz02ew/image/upload/v1761658140/no-image-available_es01vr.jpg"
                 }
                 alt={movie.title}
@@ -184,20 +188,20 @@ export default function Movies({ category }: MoviesProps) {
                   </h3>
                   <div className="flex flex-col items-end gap-1 shrink-0">
                     <span className="inline-flex items-center px-2 py-1 rounded-full text-sm font-medium bg-orange-400 text-yellow-100 dark:bg-yellow-600 dark:text-gray-100 whitespace-nowrap leading-none">
-                      {movie.IMDB_Point}
+                      {movie.voteAverage}
                     </span>
                     <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-orange-400 text-gray-700 dark:bg-orange-600 dark:text-gray-100 whitespace-nowrap leading-none">
-                      {movie.duration}
+                      {movie.runtime} dk
                     </span>
                   </div>
                 </div>
 
                 <div className="text-sm text-blue-950 dark:text-white mb-3">
-                  <p>{movie.description}</p>
+                  <p>{movie.overview}</p>
                 </div>
                 <div className="mt-auto">
                   <div className="flex flex-wrap gap-1">
-                    {movie.types.map((type) => (
+                    {movie.genres?.map((type) => (
                       <span
                         key={type}
                         className="inline-flex items-center px-1 py-1 rounded-full text-xs font-medium bg-blue-500 text-gray-50 dark:bg-blue-800  dark:text-gray-50"
@@ -208,7 +212,7 @@ export default function Movies({ category }: MoviesProps) {
                   </div>
                   <div className="text-sm text-blue-950 dark:text-white flex flex-col gap-1">
                     <span className="text-sm font-medium text-center py-1 mb-2 my-3 rounded-full whitespace-nowrap leading-none border-2 border-blue-800 text-gray-800 dark:text-gray-100">
-                      {movie.release_year}
+                      {movie.releaseDate}
                     </span>
                     <div className="flex items-center gap-1">
                       <span className="font-semibold text-gray-900 dark:text-gray-300">

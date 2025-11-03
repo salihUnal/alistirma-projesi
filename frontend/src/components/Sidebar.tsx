@@ -45,7 +45,6 @@ export default function Sidebar({
         { label: "Öykü", to: "/books/Oyku" },
       ],
     },
-    { label: "Özlü Sözler" },
     {
       label: "Filmler",
       children: [
@@ -63,6 +62,8 @@ export default function Sidebar({
         { label: "Popüler", to: "/movies/Populer" },
       ],
     },
+    { label: "Şiirler" },
+    { label: "Özlü Sözler" },
     { label: "Yapılacaklar" },
     { label: "Ayarlar" },
   ],
