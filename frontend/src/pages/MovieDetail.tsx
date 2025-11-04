@@ -169,6 +169,9 @@ export default function MovieDetail() {
               {typeof movie.runtime === "number" && (
                 <span>Süre: {movie.runtime} dk</span>
               )}
+               <span className={`px-2 py-1 rounded-full border text-xs  bg-blue-200 dark:bg-blue-900 text-blue-800 dark:text-blue-200 ${movie.is_watched ? "bg-green-200 dark:bg-green-900 dark:text-green-200" : "bg-yellow-200 dark:bg-yellow-900 dark:text-yellow-200" }`}>
+                  {movie.is_watched ? "İzlendi" : "İzlenmedi"}
+                </span>
             </div>
 
             {movie.genres?.length ? (
@@ -181,6 +184,7 @@ export default function MovieDetail() {
                     {g}
                   </span>
                 ))}
+               
               </div>
             ) : null}
             <button
@@ -190,8 +194,8 @@ export default function MovieDetail() {
               {watchUpdated
                 ? "Güncelleniyor..."
                 : movie.is_watched
-                ? "Bu Filmı İzledim"
-                : "Bu Filmı İzlemedim"}
+                ? "Bu Filmı İzlemedim"
+                : "Bu Filmı İzledim"}
             </button>
           </div>
         </div>

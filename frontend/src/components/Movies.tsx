@@ -131,7 +131,7 @@ export default function Movies({ category }: MoviesProps) {
       )}
 
       {/* <div className="grid grid-cols-6 sm:grid-cols-3 lg:grid-cols-6 gap-6"> */}
-      <div className="grid grid-cols-2  sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+      <div className="grid grid-cols-2  sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6 ">
         {!loading &&
           !error &&
           movies.map((movie, index) => (
@@ -161,7 +161,7 @@ export default function Movies({ category }: MoviesProps) {
               aria-label={`${movie.title} filmini görüntüle`}
               className="cursor-pointer flex flex-col h-full rounded-2xl shadow border text-gray-700
                          bg-white/90 dark:bg-slate-900/70
-                         border-gray-200 dark:border-slate-700 overflow-hidden"
+                         border-gray-200 dark:border-slate-700 overflow-hidden hover:scale-105 transition-all duration-300"
               // onClick, onKeyDown, role, ve tabIndex prop'larına
               // 'Link' bileşeni kullandığımız için artık gerek yok.
             >
