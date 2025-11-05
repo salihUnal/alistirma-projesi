@@ -41,7 +41,7 @@ export default function Movies({ category }: MoviesProps) {
         setError(null);
 
         let data: IMovie[] | null;
-        if (category) {
+        if (category && category !== "Tumu") {
           // Kategori bazlı API çağrısı
           switch (category) {
             case "Popular":

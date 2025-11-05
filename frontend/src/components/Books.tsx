@@ -40,7 +40,7 @@ export default function Books({ category }: BooksProps) {
         setError(null);
 
         let data;
-        if (category) {
+        if (category && category !== "Tumu") {
           // Slug'ı API'nin beklediği genre metnine çevir
           const { BOOK_SLUG_TO_GENRE } = await import(
             "../utils/bookCategories"
@@ -48,6 +48,7 @@ export default function Books({ category }: BooksProps) {
           const genreForApi = BOOK_SLUG_TO_GENRE[category] ?? category;
           data = await bookApi.getBooksByGenre(genreForApi);
         } else {
+          // category yoksa veya "Tumu" ise tüm kitapları getir
           data = query
             ? await bookApi.search(query)
             : await bookApi.getAllBooks();
@@ -74,7 +75,7 @@ export default function Books({ category }: BooksProps) {
       <input
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Kitap, yazar, tür ara..."
+        placeholder="Kitap, yazar, tür, yıl ara..."
         className="w-full md:w-96 rounded border-separate border-blue-200 dark:border-blue-700 border-2 px-3 py-2 mb-4 bg-transparent text-black text-font-semibold text-lg dark:bg-gray-800 dark:text-white backdrop-blur-sm dark:bg-transparent placeholder:text-black placeholder:font-normal placeholder:italic placeholder:text-base dark:placeholder:text-gray-400 dark:placeholder:italic"
         aria-label="Ara"
       />

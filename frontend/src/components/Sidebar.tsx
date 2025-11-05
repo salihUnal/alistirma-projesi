@@ -24,7 +24,7 @@ export default function Sidebar({
     {
       label: "Kitap listesi",
       children: [
-        { label: "Tümü", to: "/books/Tumu" },
+        { label: "Tümü", to: "/books" },
         { label: "Allegori", to: "/books/Allegori" },
         { label: "Anı", to: "/books/Ani" },
         { label: "Bilim Kurgu", to: "/books/Bilim-Kurgu" },
@@ -48,7 +48,7 @@ export default function Sidebar({
     {
       label: "Filmler",
       children: [
-        { label: "Tümü", to: "/movies/Tumu" },
+        { label: "Tümü", to: "/movies" },
         { label: "Aksiyon", to: "/movies/Aksiyon" },
         { label: "Komedi", to: "/movies/Komedi" },
         { label: "Drama", to: "/movies/Drama" },

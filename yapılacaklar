@@ -1,0 +1,68 @@
+### Projeni daha “profesyonel” yapmak için öneriler (önceliklendirilmiş)
+
+- **Mimari ve Katmanlaşma**
+  - **API katmanı**: `frontend/src/services/` altında tek bir `apiClient` (axios instance + interceptors) oluştur, `bookApi.ts` ve `movieApi.ts` sadece endpoint fonksiyonları içersin.
+  - **Tip güvenliği**: Tüm API cevaplarını `movieApiTypes.ts`, `bookApiTypes.ts` gibi dosyalarda merkezileştir; mümkünse `zod` ile runtime doğrulama ekle.
+  - **Özellik modülleri**: `pages`, `components`, `services`, `types`, `utils` klasörlerini “özellik bazlı” alt klasörlere (ör. `features/books/...`) ayırmayı düşün.
+
+- **Veri Yönetimi ve İstekler**
+  - **React Query/TanStack Query**: Önbellekleme, yeniden deneme, arka plan senkronizasyonu, pagination ve sonsuz kaydırma için ideal. Loading/error state’leri sadeleşir.
+  - **Pagination/Infinite scroll**: `MovieList.tsx` ve `BookList.tsx` için backend destekliyse server-side pagination; değilse sayfalama + arama filtrelerini URL parametreleriyle yönet.
+  - **İstek iptali ve debouncing**: Arama kutuları için `debounce` + istek iptali.
+
+- **Durum Yönetimi**
+  - **Yerel vs global**: UI-özel state’leri bileşende, auth/tema gibi global state’leri `AuthContext.tsx` veya hafif bir store (Zustand) ile yönet.
+  - **Auth yenileme**: `AuthContext.tsx` içinde token yenileme, sessiz yenileme ve oturum düşmesi için merkezi akış.
+
+- **UI/UX ve Performans**
+  - **Skeleton ve boş durumlar**: `Movies.tsx`, `Books.tsx` için skeletonlar; boş sonuç ve hata görünümleri.
+  - **Resim optimizasyonu**: `public/images` büyük; lazy-load, `loading="lazy"`, responsive `srcset`, düşük çözünürlük placeholder (LQIP) düşün.
+  - **Kod bölme**: Route bazlı `React.lazy + Suspense` ile sayfa düzeyinde split.
+  - **Erişilebilirlik**: Alt metinler, buton/label ilişkileri, kontrast, klavye ile gezinme.
+
+- **Hata Yönetimi ve Gözlemlenebilirlik**
+  - **Hata sınırları**: Global ErrorBoundary + sayfa bazlı.
+  - **Bildirimler**: Merkezi toast/alert sistemi (örn. react-hot-toast).
+  - **Loglama**: `apiClient` interceptor’da hata logları; prod’da temel analitik.
+
+- **Testler**
+  - **Birim test**: `services` için mock’lu testler.
+  - **Bileşen testleri**: React Testing Library ile kritik akışlar (login, arama, pagination).
+  - **E2E (isteğe bağlı)**: Playwright ile temel kullanıcı senaryoları.
+
+- **Kod Kalitesi**
+  - **ESLint + Prettier**: TypeScript kuralları ile sıkılaştır; CI’da zorunlu hale getir.
+  - **Strict TS**: `tsconfig.json` strict mod; `any` kullanımını azalt.
+  - **Maliyetli tekrarlar**: Ortak UI parçalarını `components/common` altında topla.
+
+- **Konfigürasyon ve Ortamlar**
+  - **.env**: API URL, anahtarlar, feature flag’ler; prod/dev ayrımı.
+  - **CI/CD**: GitHub Actions ile lint/test/build; Netlify/Vercel/Render otomatik deploy.
+
+- **Güvenlik**
+  - **Token saklama**: XSS riskine göre HttpOnly cookie tercih et; olmazsa güvenli localStorage + kısa ömür + yenileme.
+  - **Rate limit/CORS**: Backend’de temel korumalar.
+  - **Girdi doğrulama**: `zod` ile form + API cevabı doğrulaması.
+
+- **Backend İyileştirmeleri**
+  - **Katmanlı yapı**: `backend/src` için router/service/repo ayrımı.
+  - **DTO/Schema**: Cevap ve istekleri şemaya bağla; Swagger/OpenAPI dokümanı ekle.
+  - **Veritabanı**: SQLite kullanıyorsan migration’ları versiyonla; Prisma/Drizzle düşünebilirsin.
+
+- **SEO / PWA**
+  - **Meta ve paylaşım kartları**: `public/index.html` ve sayfa bazlı başlıklar.
+  - **PWA**: Manifest zaten var; service worker ile offline cache (isteğe bağlı).
+
+- **Dokümantasyon**
+  - **README**: Kurulum, komutlar, env örneği (`.env.example`), mimari diyagramı, klasör yapısı.
+  - **Contributing**: Kod standartları ve commit mesaj kuralları (Conventional Commits).
+
+### Projene özel hızlı kazanımlar (Quick Wins)
+- `services`i tek bir `apiClient` etrafında birleştir, `movieApi.ts` ve `bookApi.ts` yalnızca endpoint fonksiyonları kalsın.
+- React Query ekle; `MovieList.tsx` ve `BookList.tsx`’de veri çekmeyi buraya taşı.
+- `AuthContext.tsx`’e otomatik token yenileme ve oturum düşmesi yönetimi ekle.
+- Sayfa bileşenleri için `React.lazy` + `Suspense` ile kod bölme.
+- Liste sayfalarında skeleton + boş durum bileşenleri.
+- ESLint + Prettier + strict TS + basit GitHub Actions pipeline.
+
+İstersen adım adım gidelim: Önce `apiClient` ve React Query entegrasyonunu ekleyip `bookApi.ts` ile `movieApi.ts`’i buna uyarlayabilirim. Uygun mu?

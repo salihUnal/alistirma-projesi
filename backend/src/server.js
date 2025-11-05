@@ -176,8 +176,9 @@ app.get("/api/books", (req, res) => {
   let params = [];
 
   if (search) {
-    query += " WHERE title LIKE ? OR author LIKE ? OR description LIKE ?";
-    params = [`%${search}%`, `%${search}%`, `%${search}%`];
+    query +=
+      " WHERE title LIKE ? OR author LIKE ? OR description LIKE ? OR CAST(publish_date AS TEXT) LIKE ?";
+    params = [`%${search}%`, `%${search}%`, `%${search}%`, `%${search}%`];
   }
 
   if (genre) {

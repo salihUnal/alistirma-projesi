@@ -96,7 +96,7 @@ function BookList({ onBack }: BookListPageProps) {
                 <button
                   onClick={() => navigate(buildBookUrl("Bilim-Kurgu"))}
                   className={`px-3 py-1 rounded-full text-sm ${
-                    category === "Bilim-Kurgu"
+                    category === "Bilim Kurgu"
                       ? "bg-blue-500 text-white font-mono"
                       : "bg-blue-300 text-black font-mono hover:bg-blue-500"
                   }`}
