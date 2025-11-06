@@ -13,19 +13,20 @@ const db = new sqlite3.Database(dbPath, (err) => {
 
 db.serialize(() => {
   db.run(
-    `CREATE TABLE IF NOT EXISTS movies (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    title TEXT NOT NULL,
-    description TEXT,
-    image TEXT,
-    imdb_point REAL,
-    release_year INTEGER,
-    director TEXT,
-    duration TEXT,
-    types TEXT,
-    is_watched BOOLEAN DEFAULT 0,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    `CREATE TABLE IF NOT EXISTS Movies (
+    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+    Title TEXT NOT NULL,
+    Description TEXT,
+    Image TEXT,
+    Imdb_Point REAL,
+    Release_Year INTEGER,
+    Director TEXT,
+    Duration TEXT,
+    Types TEXT,
+    Is_Watched BOOLEAN DEFAULT 0,
+    Is_Liked BOOLEAN DEFAULT 0,
+    Created_At DATETIME DEFAULT CURRENT_TIMESTAMP,
+    Updated_At DATETIME DEFAULT CURRENT_TIMESTAMP
   )`,
     (err) => {
       if (err) {
@@ -37,18 +38,19 @@ db.serialize(() => {
   );
   // Books tablosu
   db.run(
-    `CREATE TABLE IF NOT EXISTS books (
-    id           INTEGER  PRIMARY KEY AUTOINCREMENT,
-    title        TEXT     NOT NULL,
-    author       TEXT     NOT NULL,
-    publish_date INTEGER,
-    genre        TEXT,
-    description  TEXT,
-    image        TEXT,
+    `CREATE TABLE IF NOT EXISTS Books (
+    Id           INTEGER  PRIMARY KEY AUTOINCREMENT,
+    Title        TEXT     NOT NULL,
+    Author       TEXT     NOT NULL,
+    Publish_Date INTEGER,
+    Genre        TEXT,
+    Description  TEXT,
+    Image        TEXT,
     Page_Count   NUMERIC,
-    is_read      BOOLEAN  DEFAULT 0,
-    created_at   DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at   DATETIME DEFAULT CURRENT_TIMESTAMP
+    Is_Read      BOOLEAN  DEFAULT 0,
+    Is_Liked     BOOLEAN  DEFAULT 0,
+    Created_At   DATETIME DEFAULT CURRENT_TIMESTAMP,
+    Updated_At   DATETIME DEFAULT CURRENT_TIMESTAMP
   )`,
     (err) => {
       if (err) {

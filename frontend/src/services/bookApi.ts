@@ -1,4 +1,3 @@
-
 const API_BASE_URL = "http://localhost:3001/api";
 
 type ApiBook = {
@@ -11,6 +10,8 @@ type ApiBook = {
   image: string;
   Page_Count: number;
   is_read: boolean;
+  like_count?: number;
+  is_liked?: boolean;
 };
 
 export const bookApi = {
@@ -69,8 +70,32 @@ export const bookApi = {
     if (!response.ok) {
       throw new Error("Kitap okunma durumu güncellenemedi");
     }
+    return response.json();
+  },
 
-    // Sunucudan dönen güncel kitabı (JSON) döndür
+  toggleBookLike: async (id: number, liked: boolean): Promise<void> => {
+    const method = liked ? "POST" : "DELETE";
+    const response = await fetch(`${API_BASE_URL}/books/${id}/like`, {
+      method,
+      headers: {
+        "Content-Type": "application/json",
+        // İleride auth eklenirse:
+        // "Authorization": `Bearer ${token}`
+      },
+    });
+    if (!response.ok) {
+      throw new Error("Beğeni durumu güncellenemedi");
+    }
+  },
+
+  // 2. Kitap beğeni durumunu getirme (opsiyonel)
+  getBookLikeStatus: async (
+    id: number
+  ): Promise<{ liked: boolean; count: number }> => {
+    const response = await fetch(`${API_BASE_URL}/books/${id}/like`);
+    if (!response.ok) {
+      throw new Error("Beğeni durumu alınamadı");
+    }
     return response.json();
   },
 };

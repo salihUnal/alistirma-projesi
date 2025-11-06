@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 type Book = {
   id: number;
-  title: string;
+  title: string; // DÜZELTME: Title → title (ApiBook ile uyumlu)
   author: string;
   description: string;
   publish_date: number;
@@ -13,6 +13,8 @@ type Book = {
   image: string;
   Page_Count: number;
   is_read: boolean;
+  like_count?: number; // Beğeni sayısı (opsiyonel)
+  is_liked?: boolean; // Kullanıcının beğenip beğenmediği (opsiyonel)
 };
 
 interface BooksProps {

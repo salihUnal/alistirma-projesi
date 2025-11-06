@@ -139,21 +139,21 @@ app.post("/api/login", (req, res) => {
 
 app.get("/api/movies", (req, res) => {
   const { search, type } = req.query;
-  let query = "SELECT * FROM movies";
+  let query = "SELECT * FROM Movies";
   let params = [];
 
   if (search) {
     query +=
-      " WHERE title LIKE ? OR description LIKE ? OR director LIKE ? OR CAST(release_year AS TEXT) LIKE ?";
+      " WHERE title LIKE ? OR description LIKE ? OR Director LIKE ? OR CAST(Release_Year AS TEXT) LIKE ?";
     params = [`%${search}%`, `%${search}%`, `%${search}%`, `%${search}%`];
   }
 
   if (type) {
-    query += search ? " AND types LIKE ?" : " WHERE types LIKE ?";
+    query += search ? " AND types LIKE ?" : " WHERE Types LIKE ?";
     params.push(`%${type}%`);
   }
 
-  query += " ORDER BY id DESC";
+  query += " ORDER BY Id DESC";
 
   db.all(query, params, (err, rows) => {
     if (err) {
@@ -170,23 +170,42 @@ app.get("/api/movies", (req, res) => {
     res.json(movies);
   });
 });
+// Helper fonksiyon: Veritabanından gelen büyük harfli sütun isimlerini küçük harfli camelCase'e çevir
+function mapBookRowToApiFormat(row) {
+  if (!row) return null;
+  return {
+    id: row.Id,
+    title: row.Title,
+    author: row.Author,
+    publish_date: row.Publish_Date,
+    genre: row.Genre,
+    description: row.Description,
+    image: row.Image,
+    Page_Count: row.Page_Count,
+    is_read: row.Is_Read === 1 || row.Is_Read === true,
+    like_count: row.Like_Count || 0,
+    created_at: row.Created_At,
+    updated_at: row.Updated_At,
+  };
+}
+
 app.get("/api/books", (req, res) => {
   const { search, genre } = req.query;
-  let query = "SELECT * FROM books";
+  let query = "SELECT * FROM Books";
   let params = [];
 
   if (search) {
     query +=
-      " WHERE title LIKE ? OR author LIKE ? OR description LIKE ? OR CAST(publish_date AS TEXT) LIKE ?";
+      " WHERE Title LIKE ? OR Author LIKE ? OR Description LIKE ? OR CAST(Publish_Date AS TEXT) LIKE ?";
     params = [`%${search}%`, `%${search}%`, `%${search}%`, `%${search}%`];
   }
 
   if (genre) {
-    query += search ? " AND genre LIKE ?" : " WHERE genre LIKE ?";
+    query += search ? " AND Genre LIKE ?" : " WHERE Genre LIKE ?";
     params.push(`%${genre}%`);
   }
 
-  query += " ORDER BY id ASC";
+  query += " ORDER BY Id ASC";
 
   db.all(query, params, (err, rows) => {
     if (err) {
@@ -194,7 +213,9 @@ app.get("/api/books", (req, res) => {
       res.status(500).json({ error: err.message });
       return;
     }
-    res.json(rows);
+    // Veritabanından gelen büyük harfli sütun isimlerini küçük harfli format'a çevir
+    const books = rows.map(mapBookRowToApiFormat);
+    res.json(books);
   });
 });
 
@@ -224,7 +245,7 @@ app.get("/api/movies/:id", (req, res) => {
 
 app.get("/api/books/:id", (req, res) => {
   const { id } = req.params;
-  db.get("SELECT * FROM books WHERE id = ?", [id], (err, row) => {
+  db.get("SELECT * FROM Books WHERE Id = ?", [id], (err, row) => {
     if (err) {
       res.status(500).json({ error: err.message });
       return;
@@ -233,7 +254,9 @@ app.get("/api/books/:id", (req, res) => {
       res.status(404).json({ error: "Kitap Bulunamadı!!" });
       return;
     }
-    res.json(row);
+    // Veritabanından gelen büyük harfli sütun isimlerini küçük harfli format'a çevir
+    const book = mapBookRowToApiFormat(row);
+    res.json(book);
   });
 });
 
@@ -325,8 +348,9 @@ app.post("/api/books", (req, res) => {
     is_read,
   } = req.body;
 
+  // Veritabanı sütun isimleri büyük harfli: Title, Author, Publish_Date, Genre, Description, Image, Page_Count, Is_Read
   db.run(
-    "INSERT INTO books (title, author, publish_date, genre, description, image,  Page_Count,is_read) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+    "INSERT INTO Books (Title, Author, Publish_Date, Genre, Description, Image, Page_Count, Is_Read) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
     [
       title,
       author,
@@ -335,7 +359,7 @@ app.post("/api/books", (req, res) => {
       description,
       image,
       Page_Count,
-      is_read,
+      is_read ? 1 : 0, // Boolean'ı 1/0'a çevir
     ],
     function (err) {
       if (err) {
@@ -356,8 +380,9 @@ app.patch("/api/books/:id", (req, res) => {
       .status(400)
       .json({ error: "is_read alanı boolean (true/false) olmalıdır" });
   }
-  const sql = "UPDATE books SET updated_at = ? ,is_read = ? WHERE id = ?";
-  const params = [new Date().toISOString(), is_read, id];
+  // Veritabanı sütun isimleri büyük harfli: Is_Read, Updated_At, Id
+  const sql = "UPDATE Books SET Updated_At = ?, Is_Read = ? WHERE Id = ?";
+  const params = [new Date().toISOString(), is_read ? 1 : 0, id];
 
   db.run(sql, params, function (err) {
     if (err) {
@@ -371,15 +396,67 @@ app.patch("/api/books/:id", (req, res) => {
       return res.status(404).json({ error: "Kitap bulunamadı" });
     }
 
-    db.get("SELECT * FROM books WHERE id = ?", [id], (err, row) => {
+    db.get("SELECT * FROM Books WHERE Id = ?", [id], (err, row) => {
       if (err) {
         return res
           .status(500)
           .json({ error: "Güncellenmiş kitap verisi getirilemedi" });
       }
-      return res.json(row);
+      // Veritabanından gelen büyük harfli sütun isimlerini küçük harfli format'a çevir
+      const book = mapBookRowToApiFormat(row);
+      return res.json(book);
     });
   });
+});
+
+app.post("/api/books/:id/like", (req, res) => {
+  const { id } = req.params;
+
+  // Veritabanı sütun isimleri büyük harfli: Like_Count, Updated_At, Id
+  db.run(
+    "UPDATE Books SET Like_Count = COALESCE(Like_Count, 0) + 1, Updated_At = ? WHERE Id = ?",
+    [new Date().toISOString(), id],
+    function (err) {
+      if (err) {
+        return res.status(500).json({ error: "Beğeni eklenirken hata oluştu" });
+      }
+      if (this.changes === 0) {
+        return res.status(404).json({ error: "Kitap bulunamadı" });
+      }
+
+      db.get("SELECT Like_Count FROM Books WHERE Id = ?", [id], (err, row) => {
+        if (err)
+          return res.status(500).json({ error: "Beğeni sayısı alınamadı" });
+        res.json({ like_count: row.Like_Count || 0, liked: true });
+      });
+    }
+  );
+});
+
+app.delete("/api/books/:id/like", (req, res) => {
+  const { id } = req.params;
+
+  // Veritabanı sütun isimleri büyük harfli: Like_Count, Updated_At, Id
+  db.run(
+    "UPDATE Books SET Like_Count = MAX(COALESCE(Like_Count, 0) - 1, 0), Updated_At = ? WHERE Id = ?",
+    [new Date().toISOString(), id],
+    function (err) {
+      if (err) {
+        return res
+          .status(500)
+          .json({ error: "Beğeni kaldırılırken hata oluştu" });
+      }
+      if (this.changes === 0) {
+        return res.status(404).json({ error: "Kitap bulunamadı" });
+      }
+
+      db.get("SELECT Like_Count FROM Books WHERE Id = ?", [id], (err, row) => {
+        if (err)
+          return res.status(500).json({ error: "Beğeni sayısı alınamadı" });
+        res.json({ like_count: row.Like_Count || 0, liked: false });
+      });
+    }
+  );
 });
 
 app.listen(PORT, () => {

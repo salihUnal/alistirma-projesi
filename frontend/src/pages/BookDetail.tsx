@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { bookApi } from "../services/bookApi";
 import ThemeToggle from "../components/common/ThemeToggle";
+import LikeButton from "../components/common/LikeButton";
 
 type Book = {
   id: number;
@@ -13,6 +14,8 @@ type Book = {
   image: string;
   Page_Count: number;
   is_read: boolean;
+  Like_Count?: number;
+  is_liked?: boolean;
 };
 
 export default function BookDetail() {
@@ -186,18 +189,32 @@ export default function BookDetail() {
                 </span>
               </div>
             )}
-            {/* <div className="md:col-span-2 space-y-4 p-6 m-4"> */}
-            <button
-              onClick={handleToggleRead}
-              className="rounded-3xl text-sm  border-2 border-blue-300 mb-6 px-4 py-2   bg-orange-500  dark:bg-orange-500 text-white hover:bg-orange-600 dark:hover:bg-orange-700 transition-colors"
-            >
-              {readUpdated
-                ? "Güncelleniyor..."
-                : book.is_read
-                ? "Bu Kitabı Okumadım"
-                : "Bu Kitabı Okudum"}
-            </button>
-            {/* </div> */}
+            <div className="container  p-3 ">
+              <button
+                onClick={handleToggleRead}
+                className="rounded-3xl text-sm  border-2 border-blue-300 m-3 px-4 py-2   bg-orange-500  dark:bg-orange-500 text-white hover:bg-orange-600 dark:hover:bg-orange-700 transition-colors"
+              >
+                {readUpdated
+                  ? "Güncelleniyor..."
+                  : book.is_read
+                  ? "Bu Kitabı Okumadım"
+                  : "Bu Kitabı Okudum"}
+              </button>
+              <LikeButton
+                initialLiked={book.is_liked || false}
+                initialCount={book.Like_Count || 0}
+                onToggleLike={async (nextLiked) => {
+                  if (!book) return;
+
+                  await bookApi.toggleBookLike(book.id, nextLiked);
+                  setBook({
+                    ...book,
+                    is_liked: nextLiked,
+                    Like_Count: (book.Like_Count || 0) + (nextLiked ? 1 : -1),
+                  });
+                }}
+              />
+            </div>
           </div>
         </div>
       </div>

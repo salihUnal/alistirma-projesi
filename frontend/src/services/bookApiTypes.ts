@@ -8,4 +8,6 @@ export interface BookApiResponse {
   image: string;
   Page_Count: number;
   is_read: boolean;
+  Like_Count: number;
+  is_liked: boolean;
 }

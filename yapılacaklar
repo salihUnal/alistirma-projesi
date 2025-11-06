@@ -6,12 +6,15 @@
   - **Özellik modülleri**: `pages`, `components`, `services`, `types`, `utils` klasörlerini “özellik bazlı” alt klasörlere (ör. `features/books/...`) ayırmayı düşün.
 
 - **Veri Yönetimi ve İstekler**
-  - **React Query/TanStack Query**: Önbellekleme, yeniden deneme, arka plan senkronizasyonu, pagination ve sonsuz kaydırma için ideal. Loading/error state’leri sadeleşir.
-  - **Pagination/Infinite scroll**: `MovieList.tsx` ve `BookList.tsx` için backend destekliyse server-side pagination; değilse sayfalama + arama filtrelerini URL parametreleriyle yönet.
+  - **React Query/TanStack Query**: Önbellekleme, yeniden deneme, arka plan senkronizasyonu, pagination ve sonsuz kaydırma için 
+  ideal. Loading/error state’leri sadeleşir.
+  - **Pagination/Infinite scroll**: `MovieList.tsx` ve `BookList.tsx` için backend destekliyse server-side pagination; 
+  değilse sayfalama + arama filtrelerini URL parametreleriyle yönet.
   - **İstek iptali ve debouncing**: Arama kutuları için `debounce` + istek iptali.
 
 - **Durum Yönetimi**
-  - **Yerel vs global**: UI-özel state’leri bileşende, auth/tema gibi global state’leri `AuthContext.tsx` veya hafif bir store (Zustand) ile yönet.
+  - **Yerel vs global**: UI-özel state’leri bileşende, auth/tema gibi global state’leri `AuthContext.tsx` veya hafif bir store
+   (Zustand) ile yönet.
   - **Auth yenileme**: `AuthContext.tsx` içinde token yenileme, sessiz yenileme ve oturum düşmesi için merkezi akış.
 
 - **UI/UX ve Performans**
