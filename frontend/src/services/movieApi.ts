@@ -28,6 +28,7 @@ function mapApiResponseToIMovie(data: IMovieApiResponse): IMovie {
     genres: data.types ?? [],
     runtime: Number(String(data.duration ?? "").split(" ")[0] || 0),
     is_watched: data.is_watched ?? false,
+    Like_Count: data.Like_Count ?? 0,
   };
 }
 
@@ -128,5 +129,28 @@ export const movieApi = {
     }
     const updatedRawData: IMovieApiResponse = await response.json();
     return mapApiResponseToIMovie(updatedRawData);
+  },
+
+  toggleMovieLike: async (id: number, liked: boolean): Promise<void> => {
+    const method = liked ? "POST" : "DELETE";
+    const response = await fetch(`${API_BASE_URL}/movies/${id}/like`, {
+      method,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (!response.ok) {
+      throw new Error("Beğeni durumu güncellenemedi");
+    }
+  },
+
+  getMovieLikeStatus: async (
+    id: number
+  ): Promise<{ liked: boolean; count: number }> => {
+    const response = await fetch(`${API_BASE_URL}/movies/${id}/like`);
+    if (!response.ok) {
+      throw new Error("Beğeni durumu alınamadı");
+    }
+    return response.json();
   },
 };

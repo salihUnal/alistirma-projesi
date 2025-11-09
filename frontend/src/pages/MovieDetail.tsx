@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { movieApi } from "../services/movieApi";
 import type { IMovie } from "../types/IMovie";
 import ThemeToggle from "../components/common/ThemeToggle";
+import LikeButton from "../components/common/LikeButton";
 
 export default function MovieDetail() {
   const { id } = useParams();
@@ -169,9 +170,15 @@ export default function MovieDetail() {
               {typeof movie.runtime === "number" && (
                 <span>Süre: {movie.runtime} dk</span>
               )}
-               <span className={`px-2 py-1 rounded-full border text-xs  bg-blue-200 dark:bg-blue-900 text-blue-800 dark:text-blue-200 ${movie.is_watched ? "bg-green-200 dark:bg-green-900 dark:text-green-200" : "bg-yellow-200 dark:bg-yellow-900 dark:text-yellow-200" }`}>
-                  {movie.is_watched ? "İzlendi" : "İzlenmedi"}
-                </span>
+              <span
+                className={`px-2 py-1 rounded-full border text-xs  bg-blue-200 dark:bg-blue-900 text-blue-800 dark:text-blue-200 ${
+                  movie.is_watched
+                    ? "bg-green-200 dark:bg-green-900 dark:text-green-200"
+                    : "bg-yellow-200 dark:bg-yellow-900 dark:text-yellow-200"
+                }`}
+              >
+                {movie.is_watched ? "İzlendi" : "İzlenmedi"}
+              </span>
             </div>
 
             {movie.genres?.length ? (
@@ -184,19 +191,35 @@ export default function MovieDetail() {
                     {g}
                   </span>
                 ))}
-               
               </div>
             ) : null}
-            <button
-              onClick={handleToggleWatch}
-              className="rounded-3xl text-sm  border-2 border-blue-300 mb-6 px-4 py-2   bg-orange-500  dark:bg-orange-500 text-white hover:bg-orange-600 dark:hover:bg-orange-700 transition-colors"
-            >
-              {watchUpdated
-                ? "Güncelleniyor..."
-                : movie.is_watched
-                ? "Bu Filmı İzlemedim"
-                : "Bu Filmı İzledim"}
-            </button>
+
+            <div className="container  p-3 ">
+              <button
+                onClick={handleToggleWatch}
+                className="rounded-3xl text-sm  border-2 border-blue-300 m-3 px-4 py-2   bg-orange-500  dark:bg-orange-500 text-white hover:bg-orange-600 dark:hover:bg-orange-700 transition-colors"
+              >
+                {watchUpdated
+                  ? "Güncelleniyor..."
+                  : movie.is_watched
+                  ? "Bu Filmı İzlemedim"
+                  : "Bu Filmı İzledim"}
+              </button>
+              <LikeButton
+                initialLiked={movie.is_liked || false}
+                initialCount={movie.Like_Count || 0}
+                onToggleLike={async (nextLiked) => {
+                  if (!movie) return;
+
+                  await movieApi.toggleMovieLike(movie.id, nextLiked);
+                  setMovie({
+                    ...movie,
+                    is_liked: nextLiked,
+                    Like_Count: (movie.Like_Count || 0) + (nextLiked ? 1 : -1),
+                  });
+                }}
+              />
+            </div>
           </div>
         </div>
       </div>

@@ -9,4 +9,6 @@ export interface IMovieApiResponse {
   director: string;
   duration: string;
   is_watched: boolean;
+  Like_Count: number;
+  is_liked: boolean;
 }

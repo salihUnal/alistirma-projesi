@@ -346,11 +346,13 @@ app.post("/api/books", (req, res) => {
     image,
     Page_Count,
     is_read,
+    Like_Count,
+    is_liked,
   } = req.body;
 
   // Veritabanı sütun isimleri büyük harfli: Title, Author, Publish_Date, Genre, Description, Image, Page_Count, Is_Read
   db.run(
-    "INSERT INTO Books (Title, Author, Publish_Date, Genre, Description, Image, Page_Count, Is_Read) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+    "INSERT INTO Books (Title, Author, Publish_Date, Genre, Description, Image, Page_Count, Is_Read, Lİke_Count, is_liked) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?)",
     [
       title,
       author,
@@ -360,6 +362,8 @@ app.post("/api/books", (req, res) => {
       image,
       Page_Count,
       is_read ? 1 : 0, // Boolean'ı 1/0'a çevir
+      Like_Count ? 1 : 0,
+      is_liked ? 1 : 0,
     ],
     function (err) {
       if (err) {
@@ -421,7 +425,7 @@ app.post("/api/books/:id/like", (req, res) => {
         return res.status(500).json({ error: "Beğeni eklenirken hata oluştu" });
       }
       if (this.changes === 0) {
-        return res.status(404).json({ error: "Kitap bulunamadı" });
+        return res.status(404).json({ error: "Kitap Bulunamadı" });
       }
 
       db.get("SELECT Like_Count FROM Books WHERE Id = ?", [id], (err, row) => {
@@ -447,10 +451,64 @@ app.delete("/api/books/:id/like", (req, res) => {
           .json({ error: "Beğeni kaldırılırken hata oluştu" });
       }
       if (this.changes === 0) {
-        return res.status(404).json({ error: "Kitap bulunamadı" });
+        return res.status(404).json({ error: "Kitap Bulunamadı" });
       }
 
       db.get("SELECT Like_Count FROM Books WHERE Id = ?", [id], (err, row) => {
+        if (err)
+          return res.status(500).json({ error: "Beğeni sayısı alınamadı" });
+        res.json({ like_count: row.Like_Count || 0, liked: false });
+      });
+    }
+  );
+});
+
+app.post("/api/movies/:id/like", (req, res) => {
+  const { id } = req.params;
+
+  db.run(
+    "UPDATE Movies SET Like_Count = COALESCE(Like_Count, 0) + 1, updated_at = ? WHERE id = ?",
+    [new Date().toISOString(), id],
+    function (err) {
+      if (err) {
+        console.error("Movie Like (POST) Error:", err);
+        return res.status(500).json({ error: "Beğeni eklenirken hata oluştu" });
+      }
+      if (this.changes === 0) {
+        return res.status(404).json({ error: "Film Bulunamadı" });
+      }
+
+      db.get(
+        "SELECT  Like_Count FROM Movies WHERE Id = ?",
+        [id],
+        (err, row) => {
+          if (err)
+            return res.status(500).json({ error: "Beğeni sayısı alınamadı" });
+          res.json({ like_count: row.Like_Count || 0, liked: true });
+        }
+      );
+    }
+  );
+});
+
+app.delete("/api/movies/:id/like", (req, res) => {
+  const { id } = req.params;
+
+  db.run(
+    "UPDATE Movies SET Like_Count = MAX(COALESCE(Like_Count, 0) - 1, 0), updated_at = ? WHERE id = ?",
+    [new Date().toISOString(), id],
+    function (err) {
+      if (err) {
+        console.error("Movie Like (DELETE) Error:", err);
+        return res
+          .status(500)
+          .json({ error: "Beğeni kaldırılırken hata oluştu" });
+      }
+      if (this.changes === 0) {
+        return res.status(404).json({ error: "Film Bulunamadı" });
+      }
+
+      db.get("SELECT Like_Count FROM Movies WHERE Id = ?", [id], (err, row) => {
         if (err)
           return res.status(500).json({ error: "Beğeni sayısı alınamadı" });
         res.json({ like_count: row.Like_Count || 0, liked: false });

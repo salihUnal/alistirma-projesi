@@ -9,4 +9,6 @@ export interface IMovie {
   genres?: string[];
   runtime?: number;
   is_watched?: boolean;
-};
+  Like_Count?: number;
+  is_liked?: boolean;
+}
