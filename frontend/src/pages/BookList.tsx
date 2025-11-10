@@ -35,31 +35,6 @@ function BookList({ onBack }: BookListPageProps) {
     const slug = LABEL_TO_BOOK_SLUG[label] ?? "";
     const targetUrl = buildBookUrl(slug || undefined);
     navigate(targetUrl);
-
-    // const urlMap: Record<string, string> = {
-    //   Kitaplar: "/books",
-    //   Roman: "/books/Roman",
-    //   "Bilim Kurgu Kitap": "/books/Bilim-Kurgu",
-    //   Tarih: "/books/Tarih",
-    //   "Kisisel-Gelisim": "/books/Kisisel-Gelisim",
-    //   Distopya: "/books/Distopya",
-    //   Oyku: "/books/Oyku",
-    //   "Cocuk-Edebiyati": "/books/Cocuk-Edebiyati",
-    //   Otobiyografi: "/books/Otobiyografi",
-    //   Mektup: "/books/Mektup",
-    //   Macera: "/books/Macera",
-    //   Felsefe: "/books/Felsefe",
-    //   Gunluk: "/books/Gunluk",
-    //   Fantastik: "/books/Fantastik",
-    //   Deneme: "/books/Deneme",
-    //   Biyografi: "/books/Biyografi",
-    //   Ani: "/books/Ani",
-    //   Allegori: "/books/Allegori",
-    //   Genclik: "/books/Genclik",
-    // };
-
-    // const targetUrl = urlMap[label] || "/books";
-    // navigate(targetUrl);
   };
 
   const renderContent = () => {
@@ -315,34 +290,6 @@ function BookList({ onBack }: BookListPageProps) {
       <div className="mt-4 flex gap-3">
         <div className="w-64 shrink-0">
           <Sidebar title="Menü" />
-          {/* <Sidebar
-            title="Menü"
-            items={[
-              {
-                label: "Kitap listesi",
-                children: [
-                  { label: "Roman", to: "/books/Roman" },
-                  { label: "Bilim Kurgu", to: "/books/Bilim-Kurgu" },
-                  { label: "Tarih", to: "/books/Tarih" },
-                  { label: "Kişisel Gelişim", to: "/books/Kisisel-Gelisim" },
-                  { label: "Distopya", to: "/books/Distopya" },
-                  { label: "Öykü", to: "/books/Oyku" },
-                  { label: "Çocuk Edebiyatı", to: "/books/Cocuk-Edebiyati" },
-                  { label: "Otobiyografi", to: "/books/Otobiyografi" },
-                  { label: "Mektup", to: "/books/Mektup" },
-                  { label: "Macera", to: "/books/Macera" },
-                  { label: "Felsefe", to: "/books/Felsefe" },
-                  { label: "Günlük", to: "/books/Gunluk" },
-                  { label: "Fantastik", to: "/books/Fantastik" },
-                  { label: "Deneme", to: "/books/Deneme" },
-                  { label: "Biyografi", to: "/books/Biyografi" },
-                  { label: "Anı", to: "/books/Ani" },
-                  { label: "Allegori", to: "/books/Allegori" },
-                  { label: "Gençlik", to: "/books/Genclik" },
-                ],
-              },
-            ]}
-          /> */}
         </div>
         <div className="flex-1">
           <h1 className="text-3xl text-center font-bold mb-6 text-gray-900 dark:text-white">

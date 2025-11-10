@@ -12,6 +12,7 @@ import Unauthorized from "./pages/Unauthorized";
 import BookList from "./pages/BookList";
 import BookDetail from "./pages/BookDetail";
 import Register from "./pages/public/Register";
+import BookRead from "./components/BookRead";
 
 function App() {
   const handleLogout = () => {
@@ -101,6 +102,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <BookDetail />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/mybooks"
+              element={
+                <ProtectedRoute>
+                  <BookRead onBack={handleLogout} />
                 </ProtectedRoute>
               }
             />

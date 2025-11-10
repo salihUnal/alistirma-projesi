@@ -63,6 +63,7 @@ export default function Sidebar({
       ],
     },
     { label: "Şiirler" },
+    { label: "Okuduğum Kitaplar", to: "/mybooks" },
     { label: "Özlü Sözler" },
     { label: "Yapılacaklar" },
     { label: "Ayarlar" },
@@ -87,7 +88,7 @@ export default function Sidebar({
     const isExpanded = expandedItems.has(item.label);
 
     return (
-      <div className="pr-4" key={item.label}>
+      <div className="pr-4 " key={item.label}>
         <li>
           <button
             onClick={() => {
@@ -116,7 +117,7 @@ export default function Sidebar({
             ${hasChildren ? "justify-between" : ""}
           `}
           >
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-1">
               <div
                 className={`
               w-2 h-2 rounded-full 
