@@ -62,7 +62,13 @@ export default function Sidebar({
         { label: "Popüler", to: "/movies/Populer" },
       ],
     },
-    { label: "Şiirler" },
+    {
+      label: "Şiirler",
+      children: [
+        { label: "Tümü", to: "/poems" },
+        { label: "Aşk", to: "/poems/love" },
+      ],
+    },
     { label: "Okuduğum Kitaplar", to: "/mybooks" },
     { label: "Özlü Sözler" },
     { label: "Yapılacaklar" },
