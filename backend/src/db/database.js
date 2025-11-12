@@ -11,6 +11,7 @@ const db = new sqlite3.Database(dbPath, (err) => {
   }
 });
 
+//movies tablosu
 db.serialize(() => {
   db.run(
     `CREATE TABLE IF NOT EXISTS Movies (
@@ -64,7 +65,7 @@ db.serialize(() => {
   //Users tablosu
 
   db.run(
-    `CREATE TABLE IF NOT EXISTS  users (
+    `CREATE TABLE IF NOT EXISTS  Users (
         Id            TEXT         PRIMARY KEY,
         Username      TEXT         UNIQUE                                   NOT NULL,
         Email         TEXT         UNIQUE                                   NOT NULL,
@@ -81,7 +82,26 @@ db.serialize(() => {
       if (err) {
         console.error("Tablo oluşturma hatası:", err.message);
       } else {
-        console.log("Users tablosu hazır.");
+        console.log("Users Tablosu Hazır.");
+      }
+    }
+  );
+
+  db.run(
+    `CREATE TABLE IF NOT EXISTS  Readbooks (
+    Id          INTEGER      PRIMARY KEY  AUTOINCREMENT,
+    Book_Name   TEXT  NOT NULL,
+    Completed   BOOLEN ,
+    Author_Name TEXT,
+    Creation_At DATETIME  DEFAULT CURRENT_TIMESTAMP,
+    Updated_At  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    User_Id     NUMERIC   REFERENCES Users (id) 
+)`,
+    (err) => {
+      if (err) {
+        console.error("Tablo oluşturma hatası:", err.message);
+      } else {
+        console.log("Readbooks Tablosu Hazır");
       }
     }
   );
