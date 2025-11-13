@@ -13,6 +13,7 @@ import BookList from "./pages/BookList";
 import BookDetail from "./pages/BookDetail";
 import Register from "./pages/public/Register";
 import BookRead from "./components/BookRead";
+import Poems from "./components/Poems";
 
 function App() {
   const handleLogout = () => {
@@ -110,6 +111,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <BookRead onBack={handleLogout} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/poems"
+              element={
+                <ProtectedRoute>
+                  <Poems onBack={handleLogout} />
                 </ProtectedRoute>
               }
             />
