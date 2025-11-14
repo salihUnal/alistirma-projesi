@@ -89,7 +89,7 @@ function BookRead({ onBack }: BookReadProps) {
           <div className="border-separate border-blue-200 dark:border-blue-700 border-2 bg-white dark:bg-gray-800 p-6 mt-10 rounded-lg shadow">
             <div className="mb-1">
               <h3 className="text-center md:grid-cols-2 text-2xl font-bold italic text-gray-800 dark:text-white mb-3">
-                Okunmuş Kitaplarım alt
+                🎧📓 Okuduğum Kitaplarım alt
               </h3>
               <div className="flex gap-2 mb-6 items-center justify-center">
                 <input
@@ -178,8 +178,11 @@ function BookRead({ onBack }: BookReadProps) {
       </div>
 
       <div className="bg-white-100">
-        <footer className="text-center text-lg font-thin italic capitalize py-1">
-          Powered By {username?.trim() || "Misafir"}
+        <footer className="text-center text-lg text-black dark:text-white font-thin italic capitalize py-1">
+          Powered By{" "}
+          <span className="font-semibold not-italic text-cyan-500 dark:text-cyan-400">
+            {username?.trim() || "Misafir"}
+          </span>
         </footer>
       </div>
     </div>

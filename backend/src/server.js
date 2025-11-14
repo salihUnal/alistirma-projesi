@@ -229,7 +229,7 @@ app.get("/api/movies/:id", (req, res) => {
     }
 
     if (!row) {
-      res.status(404).json({ error: "Film bulunamadı" });
+      res.status(404).json({ error: "Film Bulunamadı" });
       return;
     }
 
@@ -515,6 +515,41 @@ app.delete("/api/movies/:id/like", (req, res) => {
       });
     }
   );
+});
+
+app.get("/api/mybooks", (req, res) => {
+  const { search, type } = req.query;
+  let query = "SELECT * FROM Readbooks";
+  let params = [];
+
+  if (search) {
+    query += "WHERE Book_Name LIKE ? OR Author_Name LIKE ? ";
+    params = [`%${search}%`, `%${search}%`];
+  }
+
+  query += " ORDER BY Id DESC";
+
+  db.all(query, params, (err, rows) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    }
+  });
+});
+
+app.get("/api/mybooks/:id", (req, res) => {
+  const { id } = req.params;
+  db.get("SELECT * FROM Readbooks WHERE Id = ?", [id], (err, row) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    }
+
+    if (!row) {
+      res.status(404).json({ error: "Kitap Bulunamadı" });
+      return;
+    }
+  });
 });
 
 app.listen(PORT, () => {

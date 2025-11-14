@@ -28,7 +28,7 @@ export const bookApi = {
   getAllBooks: async (): Promise<ApiBook[]> => {
     const response = await fetch(`${API_BASE_URL}/books`);
     if (!response.ok) {
-      throw new Error("Kitaplar yüklenemedi");
+      throw new Error("Kitaplar Yüklenemedi");
     }
     return response.json();
   },

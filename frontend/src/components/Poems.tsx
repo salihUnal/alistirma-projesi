@@ -15,15 +15,23 @@ function Poems({ onBack }: PoemsProps) {
   const [currentPage, setCurrentPage] = useState("Şiirler");
 
   useEffect(() => {
-    setCurrentPage("Şiirler ");
+    setCurrentPage("Şiirler");
   }, [category]);
 
   const renderContent = () => {
     switch (currentPage) {
       case "Şiirler":
         return (
-          <div>
-            <h1>Şiirler</h1>
+          <div className="border-separate border-blue-200 dark:border-blue-700 border-2 bg-white dark:bg-gray-800 p-6 mt-10 rounded-lg shadow">
+            <div className="mb-1">
+              <h3 className="text-center md:grid-cols-2 text-2xl font-bold italic text-gray-800 dark:text-white mb-3">
+                🪶 Sevdiğim Şiirler alt
+              </h3>
+              <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                Henüz Şiirler eklenmemiş. Yukarıdaki alandan Şiirler
+                ekleyebilirsiniz.
+              </div>
+            </div>
           </div>
         );
     }
@@ -34,7 +42,7 @@ function Poems({ onBack }: PoemsProps) {
       <div className="flex items-center justify-between px-4 py-3 bg-white/70 dark:bg-slate-900/70 backdrop-blur border-b border-slate-200/60 dark:border-slate-700/60 rounded-lg">
         <Link to="/poems/" className="flex items-center gap-3">
           <img
-            src="https://res.cloudinary.com/dklvz02ew/image/upload/v1761658139/kitap-logo_acpjzd.png"
+            src="https://res.cloudinary.com/dklvz02ew/image/upload/v1763127284/poem_logo_np5xdk.svg"
             alt="Uygulama Logosu"
             className="w-12 h-12 shrink-0 "
             // role="button"
@@ -72,8 +80,11 @@ function Poems({ onBack }: PoemsProps) {
       </div>
 
       <div className="bg-white-100">
-        <footer className="text-center text-lg font-thin italic capitalize py-1">
-          Powered By {username?.trim() || "Misafir"}
+        <footer className="text-center text-lg text-black dark:text-white font-thin italic capitalize py-1">
+          Powered By{" "}
+          <span className="font-semibold not-italic text-cyan-500 dark:text-cyan-400">
+            {username?.trim() || "Misafir"}
+          </span>
         </footer>
       </div>
     </div>
