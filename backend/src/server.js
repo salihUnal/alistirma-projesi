@@ -293,7 +293,7 @@ app.post("/api/movies", (req, res) => {
         res.status(500).json({ error: err.message });
         return;
       }
-      res.json({ id: this.lastID, message: "Film başarıyla eklendi" });
+      res.json({ id: this.lastID, message: "Film Başarıyla Eklendi" });
     }
   );
 });
@@ -518,7 +518,7 @@ app.delete("/api/movies/:id/like", (req, res) => {
 });
 
 app.get("/api/mybooks", (req, res) => {
-  const { search, type } = req.query;
+  const { search } = req.query;
   let query = "SELECT * FROM Readbooks";
   let params = [];
 
@@ -531,9 +531,11 @@ app.get("/api/mybooks", (req, res) => {
 
   db.all(query, params, (err, rows) => {
     if (err) {
+      console.error("MyBooks (GET) Error:", err.message);
       res.status(500).json({ error: err.message });
       return;
     }
+    res.json(rows);
   });
 });
 
@@ -549,6 +551,71 @@ app.get("/api/mybooks/:id", (req, res) => {
       res.status(404).json({ error: "Kitap Bulunamadı" });
       return;
     }
+
+    res.json(row);
+  });
+});
+
+app.post("/api/mybooks", (req, res) => {
+  const { Book_Name, Author_Name, Completed, User_Id } = req.body;
+
+  if (!Book_Name || !Author_Name) {
+    return res.status(400).json({ error: "Kitap adı ve Yazar adı zorunludur" });
+  }
+  const sql = `
+    INSERT INTO Readbooks (
+      Book_Name, 
+      Completed, 
+      Author_Name, 
+      Creation_At, 
+      Updated_At, 
+      User_Id
+    ) VALUES (?, ?, ?, ?, ?, ?)
+  `;
+
+  const newBook = {
+    Book_Name: Book_Name,
+    Completed: Completed ?? true, // Eğer gönderilmezse varsayılan 'true'
+    Author_Name: Author_Name,
+    Creation_At: new Date().toISOString(),
+    Updated_At: new Date().toISOString(),
+    User_Id: User_Id || 1, // Şimdilik varsayılan 1, Geliştirme Önerisi'ne bakın
+  };
+
+  const params = [
+    newBook.Book_Name,
+    newBook.Completed,
+    newBook.Author_Name,
+    newBook.Creation_At,
+    newBook.Updated_At,
+    newBook.User_Id,
+  ];
+
+  // HATA DÜZELTMESİ: db.run söz dizimi (syntax) düzeltildi
+  db.run(sql, params, function (err) {
+    if (err) {
+      console.error("MyBooks (POST) Error:", err.message);
+      res.status(500).json({ error: err.message });
+      return;
+    }
+    // Yeni eklenen kitabı Id'si ile birlikte geri dön
+    res.status(201).json({ id: this.lastID, ...newBook });
+  });
+});
+
+app.delete("/api/mybooks/:id", (req, res) => {
+  const { id } = req.params;
+
+  db.run("DELETE FROM Readbooks WHERE Id = ?", [id], function (err) {
+    if (err) {
+      console.error("Kitap Silme Hatası", err.message);
+      return res.status(500).json({ error: "Kitap Silinirken Hata Oluştu" });
+    }
+    if (this.changes === 0) {
+      return res.status(404).json({ error: "Kitap Bulunamadı" });
+    }
+
+    res.json({ message: "Kitap Başarıyla Silindi", id: id });
   });
 });
 

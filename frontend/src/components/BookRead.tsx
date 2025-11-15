@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
+import { BookReadApi } from "../services/bookReadApi";
+import type { bookReadApiResponse } from "../services/bookReadApiTypes";
 import Sidebar from "../components/Sidebar";
 import { useAuth } from "../contexts/AuthContext";
 import ThemeToggle from "../components/common/ThemeToggle";
@@ -8,72 +10,138 @@ interface BookReadProps {
   onBack: () => void;
 }
 
-interface ReadBook {
-  id: string | number;
-  title: string;
-  addedAt?: Date;
-  updatedAt?: Date;
-}
-
-const STORAGE_KEY = "readBooks";
-
 function BookRead({ onBack }: BookReadProps) {
   const { username, logout } = useAuth();
   const { category } = useParams();
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState("Okunmuş Kitaplar");
-  const [readBooks, setReadBooks] = useState<ReadBook[]>([]);
-  const [inputValue, setInputValue] = useState("");
+  const [readBooks, setReadBooks] = useState<bookReadApiResponse[]>([]);
+  const [inputValueB, setInputValueB] = useState("");
+  const [inputValueA, setInputValueA] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [bookToDelete, setBookToDelete] = useState<number | null>(null);
+
+  // useEffect(() => {
+  //   const savedBooks = localStorage.getItem(STORAGE_KEY);
+  //   if (savedBooks) {
+  //     try {
+  //       const parsedBooks = JSON.parse(savedBooks);
+  //       // Date string'lerini Date objesine çevir
+  //       const booksWithDates = parsedBooks.map((book: any) => ({
+  //         ...book,
+  //         Creation_At: book.Creation_At
+  //           ? new Date(book.Creation_At)
+  //           : undefined,
+  //         Updated_At: book.Updated_At ? new Date(book.Updated_At) : undefined,
+  //       }));
+  //       setReadBooks(booksWithDates);
+  //     } catch (error) {
+  //       console.error("Kitaplar yüklenirken hata oluştu:", error);
+  //     }
+  //   }
+  // }, []);
+
+  // // Kitaplar değiştiğinde localStorage'a kaydet
+  // useEffect(() => {
+  //   // Date objelerini string'e çevir (localStorage için)
+  //   const booksToSave = readBooks.map((book) => ({
+  //     ...book,
+  //     addedAt: book.Creation_At ? book.Creation_At.toISOString() : undefined,
+  //     updatedAt: book.Updated_At ? book.Updated_At.toISOString() : undefined,
+  //   }));
+  //   localStorage.setItem(STORAGE_KEY, JSON.stringify(booksToSave));
+  // }, [readBooks]); // readBooks değiştiğinde çalışır
 
   useEffect(() => {
-    const savedBooks = localStorage.getItem(STORAGE_KEY);
-    if (savedBooks) {
+    const fetchBooks = async () => {
+      setLoading(true);
+      setError(null);
       try {
-        const parsedBooks = JSON.parse(savedBooks);
-        // Date string'lerini Date objesine çevir
-        const booksWithDates = parsedBooks.map((book: any) => ({
-          ...book,
-          addedAt: book.addedAt ? new Date(book.addedAt) : undefined,
-          updatedAt: book.updatedAt ? new Date(book.updatedAt) : undefined,
-        }));
-        setReadBooks(booksWithDates);
-      } catch (error) {
-        console.error("Kitaplar yüklenirken hata oluştu:", error);
-      }
-    }
-  }, []);
+        let books;
+        if (searchQuery.trim()) {
+          books = await BookReadApi.search(searchQuery.trim());
+        } else {
+          books = await BookReadApi.getAllReadBook();
+        }
 
-  // Kitaplar değiştiğinde localStorage'a kaydet
-  useEffect(() => {
-    // Date objelerini string'e çevir (localStorage için)
-    const booksToSave = readBooks.map((book) => ({
-      ...book,
-      addedAt: book.addedAt ? book.addedAt.toISOString() : undefined,
-      updatedAt: book.updatedAt ? book.updatedAt.toISOString() : undefined,
-    }));
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(booksToSave));
-  }, [readBooks]); // readBooks değiştiğinde çalışır
+        setReadBooks(books);
+      } catch (err) {
+        setError(
+          err instanceof Error
+            ? err.message
+            : "Kitaplar Yüklenirken Hata Oluştu"
+        );
+        console.error("Kitaplar Yüklenirken Hata", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchBooks();
+  }, [searchQuery]);
 
   useEffect(() => {
     setCurrentPage("Okunmuş Kitaplar");
   }, [category]);
 
-  const handleAddBook = () => {
-    const trimedValue = inputValue.trim();
+  const handleAddBook = async () => {
+    const trimedValueB = inputValueB.trim();
+    const trimedValueA = inputValueA.trim();
 
-    if (!trimedValue) {
+    if (!trimedValueB) {
+      return;
+    }
+    if (!trimedValueA) {
       return;
     }
 
-    const newBook: ReadBook = {
-      id: Date.now(),
-      title: trimedValue,
-      addedAt: new Date(),
-    };
+    setLoading(true);
+    setError(null);
 
-    setReadBooks((prevBooks) => [...prevBooks, newBook]);
+    try {
+      const newBook = await BookReadApi.addBookRead({
+        Book_Name: trimedValueB,
+        Completed: true,
+        Author_Name: trimedValueA || "Bilinmiyor", //şimdlikl defaoult yazar için ayrı bir input ekle
+        User_Id: 1, // Şimdilik default, daha sonra AuthContext'ten alabilirsiniz
+      });
 
-    setInputValue("");
+      setReadBooks((prevBooks) => [newBook, ...prevBooks]);
+
+      setInputValueB("");
+      setInputValueA("");
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Kitap Eklenirken Hata Oluştu"
+      );
+      console.error("Kitap Eklenirken Hata Oluştu", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteBook = async (id: number) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      await BookReadApi.deletedBookRead(id);
+      // Başarılı olursa state'ten kaldır
+      setReadBooks((prevBooks) => prevBooks.filter((book) => book.Id !== id));
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Kitap silinirken hata oluştu"
+      );
+      console.error("Kitap silinirken hata:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEditBook = async (id: number) => {
+    setLoading(true);
+    setError(null);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -91,22 +159,55 @@ function BookRead({ onBack }: BookReadProps) {
               <h3 className="text-center md:grid-cols-2 text-2xl font-bold italic text-gray-800 dark:text-white mb-3">
                 🎧📓 Okuduğum Kitaplarım alt
               </h3>
+
+              {/* Arama Input'u */}
+              <div className="flex gap-2 mb-4 items-center justify-center">
+                <input
+                  className="flex-1 px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 max-w-md"
+                  placeholder="Kitap ara (kitap adı veya yazar)..."
+                  value={searchQuery}
+                  type="text"
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
+
+              {/* Error ve Loading Mesajları */}
+              {error && (
+                <div className="mb-4 p-3 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 rounded-lg text-center">
+                  {error}
+                </div>
+              )}
+
+              {loading && (
+                <div className="mb-4 p-3 text-center text-gray-500 dark:text-gray-400">
+                  Yükleniyor...
+                </div>
+              )}
+
+              {/* Kitap Ekleme Input'u */}
               <div className="flex gap-2 mb-6 items-center justify-center">
                 <input
-                  // className="w-full px-3 py-1  rounded-lg text-black"
                   className="flex-1 px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 max-w-md"
                   placeholder="Okuduğun Yeni Kitabı ekle"
-                  value={inputValue}
+                  value={inputValueB}
                   type="text"
-                  onChange={(e) => setInputValue(e.target.value)}
+                  onChange={(e) => setInputValueB(e.target.value)}
                   onKeyDown={handleKeyDown}
                 />
-
+                <input
+                  className="flex-1 px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 max-w-md"
+                  placeholder="Okuduğun Yeni Kitabın Yazarı"
+                  value={inputValueA}
+                  type="text"
+                  onChange={(e) => setInputValueA(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                />
                 <button
                   onClick={handleAddBook}
                   className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+                  disabled={loading}
                 >
-                  Ekle
+                  ⌯⌲
                 </button>
               </div>
 
@@ -119,12 +220,31 @@ function BookRead({ onBack }: BookReadProps) {
                 <ul className="space-y-2 mt-6 max-w-2xl mx-auto ">
                   {readBooks.map((book) => (
                     <li
-                      key={book.id}
-                      className="flex justify-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600"
+                      key={book.Id}
+                      className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600"
                     >
-                      <span className=" text-gray-800 dark:text-gray-200">
-                        {book.title}
+                      <span className="text-gray-800 dark:text-gray-200">
+                        {book.Book_Name}
+                        {book.Author_Name && (
+                          <span className="text-sm text-gray-500 dark:text-gray-400 ml-2">
+                            - {book.Author_Name}
+                          </span>
+                        )}
                       </span>
+                      <button
+                        // onClick={() => handleEditBook(book.Id)}
+                        className="px-3 py-1 bg-green-500 hover:bg-green-700 text-white rounded text-sm transition-colors"
+                        disabled={loading}
+                      >
+                        𓂃🖊
+                      </button>
+                      <button
+                        onClick={() => handleDeleteBook(book.Id)}
+                        className="px-3 py-1 bg-red-500 hover:bg-red-700 text-white rounded text-sm transition-colors"
+                        disabled={loading}
+                      >
+                        🗑
+                      </button>
                     </li>
                   ))}
                 </ul>
@@ -176,7 +296,38 @@ function BookRead({ onBack }: BookReadProps) {
           {renderContent()}
         </div>
       </div>
-
+      {bookToDelete && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl">
+            <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
+              Silme Onayı
+            </h4>
+            <p className="text-gray-700 dark:text-gray-300 mb-6">
+              Bu kitabı silmek istediğinize emin misiniz? Bu işlem geri
+              alınamaz.
+            </p>
+            <div className="flex justify-end gap-4">
+              <button
+                onClick={() => setBookToDelete(null)} // Modalı kapat
+                className="px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-400"
+                disabled={loading}
+              >
+                İptal
+              </button>
+              <button
+                onClick={async () => {
+                  await handleDeleteBook(bookToDelete); // Silme işlemini çalıştır
+                  setBookToDelete(null); // Modalı kapat
+                }}
+                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+                disabled={loading}
+              >
+                {loading ? "Siliniyor..." : "Evet, Sil"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="bg-white-100">
         <footer className="text-center text-lg text-black dark:text-white font-thin italic capitalize py-1">
           Powered By{" "}

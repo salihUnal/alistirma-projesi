@@ -16,7 +16,7 @@ export const BookReadApi = {
       `${API_BASE_URL}/mybooks?search=${encodeURIComponent(q)}`
     );
 
-    if (!response) {
+    if (!response.ok) {
       throw new Error("Arama Başarısız");
     }
     return response.json();
@@ -24,7 +24,7 @@ export const BookReadApi = {
 
   getAllReadBook: async (): Promise<ApiBookRead[]> => {
     const response = await fetch(`${API_BASE_URL}/mybooks`);
-    if (!response) {
+    if (!response.ok) {
       throw new Error("Kitaplar Yüklenemedi");
     }
     return response.json();
@@ -35,6 +35,34 @@ export const BookReadApi = {
     if (!response.ok) {
       if (response.status === 404) return null;
       throw new Error("Kitap detayı yüklenemedi");
+    }
+    return response.json();
+  },
+
+  addBookRead: async (readbook: {
+    Book_Name: string;
+    Author_Name: string;
+    Completed?: boolean;
+    User_Id: number;
+  }): Promise<ApiBookRead> => {
+    const response = await fetch(`${API_BASE_URL}/mybooks`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(readbook),
+    });
+    if (!response.ok) throw new Error("Kitap Eklenemedi");
+    return response.json();
+  },
+
+  deletedBookRead: async (id: number): Promise<void> => {
+    const response = await fetch(`${API_BASE_URL}/mybooks/${id}`, {
+      method: "DELETE",
+    });
+    if (!response.ok) {
+      if (response.status === 404) {
+        throw new Error("Kitap Bulunamadı");
+      }
+      throw new Error("Kitap Silinemedi");
     }
     return response.json();
   },
