@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { movieApi } from "../services/movieApi";
 import { IMovie } from "../types/IMovie";
+import { useDebounce } from "../hooks/useDebounce";
 
 // type Movie = {
 //   id: number;
@@ -23,6 +24,7 @@ interface MoviesProps {
 
 export default function Movies({ category }: MoviesProps) {
   const [query, setQuery] = useState("");
+  const debouncedQuery = useDebounce(query, 300);
   const [movies, setMovies] = useState<IMovie[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -112,7 +114,7 @@ export default function Movies({ category }: MoviesProps) {
     return () => {
       cancelled = true;
     };
-  }, [category, query]);
+  }, [category, debouncedQuery]);
   return (
     <div className="p-4">
       <input

@@ -5,6 +5,7 @@ import type { bookReadApiResponse } from "../services/bookReadApiTypes";
 import Sidebar from "../components/Sidebar";
 import { useAuth } from "../contexts/AuthContext";
 import ThemeToggle from "../components/common/ThemeToggle";
+import { useDebounce } from "../hooks/useDebounce";
 
 interface BookReadProps {
   onBack: () => void;
@@ -19,6 +20,7 @@ function BookRead({ onBack }: BookReadProps) {
   const [inputValueB, setInputValueB] = useState("");
   const [inputValueA, setInputValueA] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [bookToDelete, setBookToDelete] = useState<number | null>(null);
@@ -60,8 +62,8 @@ function BookRead({ onBack }: BookReadProps) {
       setError(null);
       try {
         let books;
-        if (searchQuery.trim()) {
-          books = await BookReadApi.search(searchQuery.trim());
+        if (debouncedSearchQuery.trim()) {
+          books = await BookReadApi.search(debouncedSearchQuery.trim());
         } else {
           books = await BookReadApi.getAllReadBook();
         }
@@ -79,7 +81,7 @@ function BookRead({ onBack }: BookReadProps) {
       }
     };
     fetchBooks();
-  }, [searchQuery]);
+  }, [debouncedSearchQuery]);
 
   useEffect(() => {
     setCurrentPage("Okunmuş Kitaplar");
@@ -163,7 +165,7 @@ function BookRead({ onBack }: BookReadProps) {
               {/* Arama Input'u */}
               <div className="flex gap-2 mb-4 items-center justify-center">
                 <input
-                  className="flex-1 px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 max-w-md"
+                  className="flex-1 px-3 py-2 rounded-2xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 max-w-md"
                   placeholder="Kitap ara (kitap adı veya yazar)..."
                   value={searchQuery}
                   type="text"
@@ -185,9 +187,9 @@ function BookRead({ onBack }: BookReadProps) {
               )}
 
               {/* Kitap Ekleme Input'u */}
-              <div className="flex gap-2 mb-6 items-center justify-center">
+              <div className="flex gap-2 mb-6 items-center justify-center ">
                 <input
-                  className="flex-1 px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 max-w-md"
+                  className="flex-1 px-3 py-2 rounded-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 max-w-60"
                   placeholder="Okuduğun Yeni Kitabı ekle"
                   value={inputValueB}
                   type="text"
@@ -195,7 +197,7 @@ function BookRead({ onBack }: BookReadProps) {
                   onKeyDown={handleKeyDown}
                 />
                 <input
-                  className="flex-1 px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 max-w-md"
+                  className="flex-1 px-3 py-2 rounded-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 max-w-60"
                   placeholder="Okuduğun Yeni Kitabın Yazarı"
                   value={inputValueA}
                   type="text"
@@ -204,7 +206,7 @@ function BookRead({ onBack }: BookReadProps) {
                 />
                 <button
                   onClick={handleAddBook}
-                  className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+                  className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-full font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
                   disabled={loading}
                 >
                   ⌯⌲
@@ -217,34 +219,36 @@ function BookRead({ onBack }: BookReadProps) {
                   ekleyebilirsiniz.
                 </div>
               ) : (
-                <ul className="space-y-2 mt-6 max-w-2xl mx-auto ">
+                <ul className="space-y-2 mt-6 max-w-2xl mx-auto  ">
                   {readBooks.map((book) => (
                     <li
                       key={book.Id}
-                      className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600"
+                      className="cursor-pointer  shadow text-gray-700 flex justify-between items-center p-3  bg-white/90 dark:bg-slate-900/70 rounded-3xl border border-gray-200 dark:border-slate-700 overflow-hidden hover:scale-105 transition-all duration-300"
                     >
-                      <span className="text-gray-800 dark:text-gray-200">
+                      <span className="text-center font-semibold text-slate-900  dark:text-white w-full">
                         {book.Book_Name}
                         {book.Author_Name && (
-                          <span className="text-sm text-gray-500 dark:text-gray-400 ml-2">
+                          <span className="text-sm font-light italic text-slate-900  dark:text-white ml-2">
                             - {book.Author_Name}
                           </span>
                         )}
                       </span>
-                      <button
-                        // onClick={() => handleEditBook(book.Id)}
-                        className="px-3 py-1 bg-green-500 hover:bg-green-700 text-white rounded text-sm transition-colors"
-                        disabled={loading}
-                      >
-                        𓂃🖊
-                      </button>
-                      <button
-                        onClick={() => handleDeleteBook(book.Id)}
-                        className="px-3 py-1 bg-red-500 hover:bg-red-700 text-white rounded text-sm transition-colors"
-                        disabled={loading}
-                      >
-                        🗑
-                      </button>
+                      <div className="flex flex-wrap gap-2  ">
+                        <button
+                          // onClick={() => handleEditBook(book.Id)}
+                          className="px-2 py-1 bg-green-500 hover:bg-green-700 text-white rounded-3xl  transition-colors"
+                          disabled={loading}
+                        >
+                          𓂃🖊
+                        </button>
+                        <button
+                          onClick={() => handleDeleteBook(book.Id)}
+                          className="px-2 py-1 bg-red-500 hover:bg-red-700 text-white rounded-3xl  transition-colors"
+                          disabled={loading}
+                        >
+                          🗑
+                        </button>
+                      </div>
                     </li>
                   ))}
                 </ul>
@@ -291,7 +295,7 @@ function BookRead({ onBack }: BookReadProps) {
         </div>
         <div className="flex-1">
           <h1 className="text-3xl text-center font-bold mb-6 text-gray-900 dark:text-white">
-            Kitaplar
+            Okunmuş Kitaplar
           </h1>
           {renderContent()}
         </div>

@@ -2,6 +2,7 @@ import React from "react";
 import { useEffect, useState } from "react";
 import { bookApi } from "../services/bookApi";
 import { useNavigate } from "react-router-dom";
+import { useDebounce } from "../hooks/useDebounce";
 
 type Book = {
   id: number;
@@ -24,6 +25,7 @@ interface BooksProps {
 
 export default function Books({ category }: BooksProps) {
   const [query, setQuery] = useState("");
+  const debouncedQuery = useDebounce(query, 300);
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -70,7 +72,7 @@ export default function Books({ category }: BooksProps) {
     return () => {
       cancelled = true;
     };
-  }, [category, query]);
+  }, [category, debouncedQuery]);
 
   return (
     <div className="p-4">

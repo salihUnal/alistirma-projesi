@@ -352,7 +352,7 @@ app.post("/api/books", (req, res) => {
 
   // Veritabanı sütun isimleri büyük harfli: Title, Author, Publish_Date, Genre, Description, Image, Page_Count, Is_Read
   db.run(
-    "INSERT INTO Books (Title, Author, Publish_Date, Genre, Description, Image, Page_Count, Is_Read, Lİke_Count, is_liked) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?)",
+    "INSERT INTO Books (Title, Author, Publish_Date, Genre, Description, Image, Page_Count, Is_Read, Like_Count, is_liked) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?)",
     [
       title,
       author,
@@ -523,7 +523,7 @@ app.get("/api/mybooks", (req, res) => {
   let params = [];
 
   if (search) {
-    query += "WHERE Book_Name LIKE ? OR Author_Name LIKE ? ";
+    query += " WHERE Book_Name LIKE ? OR Author_Name LIKE ?";
     params = [`%${search}%`, `%${search}%`];
   }
 
