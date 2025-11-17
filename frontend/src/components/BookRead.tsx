@@ -24,6 +24,8 @@ function BookRead({ onBack }: BookReadProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [bookToDelete, setBookToDelete] = useState<number | null>(null);
+  const [editingBookId, setEditingBookId] = useState<number | null>(null);
+  const [editFields, setEditFields] = useState({ name: "", author: "" });
 
   // useEffect(() => {
   //   const savedBooks = localStorage.getItem(STORAGE_KEY);
@@ -141,9 +143,31 @@ function BookRead({ onBack }: BookReadProps) {
     }
   };
 
-  const handleEditBook = async (id: number) => {
+  const handleCancelEdit = () => {
+    setEditingBookId(null);
+    setEditFields({ name: "", author: "" });
+  };
+  
+  const handleUpdateBook = async (id: number) => {
+    if (!editFields.name.trim()) return;
+  
     setLoading(true);
     setError(null);
+    try {
+      const updated = await BookReadApi.updateBookRead(id, {
+        Book_Name: editFields.name.trim(),
+        Author_Name: editFields.author.trim() || null,
+      });
+  
+      setReadBooks((prev) =>
+        prev.map((book) => (book.Id === id ? { ...book, ...updated } : book))
+      );
+      handleCancelEdit();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Kitap güncellenirken hata oluştu");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -219,36 +243,96 @@ function BookRead({ onBack }: BookReadProps) {
                   ekleyebilirsiniz.
                 </div>
               ) : (
-                <ul className="space-y-2 mt-6 max-w-2xl mx-auto  ">
+                <ul className="space-y-2 mt-6 max-w-2xl mx-auto">
                   {readBooks.map((book) => (
                     <li
                       key={book.Id}
-                      className="cursor-pointer  shadow text-gray-700 flex justify-between items-center p-3  bg-white/90 dark:bg-slate-900/70 rounded-3xl border border-gray-200 dark:border-slate-700 overflow-hidden hover:scale-105 transition-all duration-300"
+                      className="cursor-pointer shadow text-gray-700 flex justify-between items-center p-3 bg-white/90 dark:bg-slate-900/70 rounded-3xl border border-gray-200 dark:border-slate-700 overflow-hidden hover:scale-105 transition-all duration-300"
                     >
-                      <span className="text-center font-semibold text-slate-900  dark:text-white w-full">
-                        {book.Book_Name}
-                        {book.Author_Name && (
-                          <span className="text-sm font-light italic text-slate-900  dark:text-white ml-2">
-                            - {book.Author_Name}
-                          </span>
-                        )}
-                      </span>
-                      <div className="flex flex-wrap gap-2  ">
-                        <button
-                          // onClick={() => handleEditBook(book.Id)}
-                          className="px-2 py-1 bg-green-500 hover:bg-green-700 text-white rounded-3xl  transition-colors"
-                          disabled={loading}
-                        >
-                          𓂃🖊
-                        </button>
-                        <button
-                          onClick={() => handleDeleteBook(book.Id)}
-                          className="px-2 py-1 bg-red-500 hover:bg-red-700 text-white rounded-3xl  transition-colors"
-                          disabled={loading}
-                        >
-                          🗑
-                        </button>
-                      </div>
+                      {/* Düzenleme modundaki içerik ile sadece görüntü modunu ayırıyoruz */}
+                      {editingBookId === book.Id ? (
+                        <div className="flex flex-col gap-2 w-full">
+                          {/* Kitap adı inputu */}
+                          <input
+                            value={editFields.name}
+                            onChange={(e) =>
+                              setEditFields((prev) => ({
+                                ...prev,
+                                name: e.target.value,
+                              }))
+                            }
+                            className="px-3 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                            placeholder="Kitap adı"
+                          />
+                          {/* Yazar adı inputu */}
+                          <input
+                            value={editFields.author}
+                            onKeyDown={handleKeyDown}
+                            onChange={(e) =>
+                              setEditFields((prev) => ({
+                                ...prev,
+                                author: e.target.value,
+                              }))
+                            }
+                            className="px-3 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                            placeholder="Yazar adı"
+                          />
+                          {/* Kaydet / İptal butonları */}
+                          <div className="flex gap-2 justify-end">
+                            <button
+                              onClick={handleCancelEdit}
+                              className="px-3 py-1 rounded-xl bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-gray-100"
+                              disabled={loading}
+                            >
+                              İptal
+                            </button>
+                            <button
+                              onClick={() => handleUpdateBook(book.Id)}
+                              className="px-3 py-1 rounded-xl bg-blue-500 hover:bg-blue-600 text-white"
+                              disabled={loading}
+                              
+                            >
+                              Kaydet
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        /* Normal görüntü modu (mevcut span yapın) */
+                        <span className="text-center font-semibold text-slate-900 dark:text-white w-full">
+                          {book.Book_Name}
+                          {book.Author_Name && (
+                            <span className="text-sm font-light italic text-slate-900 dark:text-white ml-2">
+                              - {book.Author_Name}
+                            </span>
+                          )}
+                        </span>
+                      )}
+
+                      {/* Düzenleme modunda butonları gizle */}
+                      {editingBookId !== book.Id && (
+                        <div className="flex flex-wrap gap-2">
+                          <button
+                            onClick={() => {
+                              setEditingBookId(book.Id);
+                              setEditFields({
+                                name: book.Book_Name ?? "",
+                                author: book.Author_Name ?? "",
+                              });
+                            }}
+                            className="px-2 py-1 bg-green-500 hover:bg-green-700 text-white rounded-3xl transition-colors"
+                            disabled={loading}
+                          >
+                            𓂃🖊
+                          </button>
+                          <button
+                            onClick={() => setBookToDelete(book.Id)}
+                            className="px-2 py-1 bg-red-500 hover:bg-red-700 text-white rounded-3xl transition-colors"
+                            disabled={loading}
+                          >
+                            🗑
+                          </button>
+                        </div>
+                      )}
                     </li>
                   ))}
                 </ul>
@@ -320,6 +404,7 @@ function BookRead({ onBack }: BookReadProps) {
               </button>
               <button
                 onClick={async () => {
+                  if (bookToDelete === null) return;
                   await handleDeleteBook(bookToDelete); // Silme işlemini çalıştır
                   setBookToDelete(null); // Modalı kapat
                 }}
