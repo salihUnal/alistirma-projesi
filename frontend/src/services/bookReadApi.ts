@@ -25,18 +25,18 @@ export const BookReadApi = {
     return response.json();
   },
 
-  updateBookRead: async (
-    id: number,
-    payload: { Book_Name: string; Author_Name?: string | null }
-  ): Promise<ApiBookRead> => {
-    const response = await fetch(`${API_BASE_URL}/mybooks/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-    if (!response.ok) throw new Error("Kitap Güncellenemedi");
-    return response.json();
-  },
+  // updateBookRead: async (
+  //   id: number,
+  //   payload: { Book_Name: string; Author_Name?: string | null }
+  // ): Promise<ApiBookRead> => {
+  //   const response = await fetch(`${API_BASE_URL}/mybooks/${id}`, {
+  //     method: "PUT",
+  //     headers: { "Content-Type": "application/json" },
+  //     body: JSON.stringify(payload),
+  //   });
+  //   if (!response.ok) throw new Error("Kitap Güncellenemedi");
+  //   return response.json();
+  // },
 
   getAllReadBook: async (): Promise<ApiBookRead[]> => {
     const response = await fetch(`${API_BASE_URL}/mybooks`);
