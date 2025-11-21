@@ -98,7 +98,7 @@ export default function Sidebar({
     const isExpanded = expandedItems.has(item.label);
 
     return (
-      <div className="pr-4 " key={item.label}>
+      <div className="pr-4 ">
         <li>
           <button
             onClick={() => {
@@ -158,7 +158,11 @@ export default function Sidebar({
 
           {hasChildren && isExpanded && item.children && (
             <ul className="mt-1 space-y-2 overflow-clip">
-              {item.children.map((child) => renderMenuItem(child, level + 1))}
+              {item.children.map((child) => (
+                <React.Fragment key={child.label}>
+                  {renderMenuItem(child, level + 1)}
+                </React.Fragment>
+              ))}
             </ul>
           )}
         </li>
@@ -178,7 +182,11 @@ export default function Sidebar({
       {/* Navigation */}
       <nav className=" pl-4 pr-1 py-4 ">
         <ul className="space-y-2  ">
-          {items.map((item) => renderMenuItem(item))}
+          {items.map((item) => (
+            <React.Fragment key={item.label}>
+              {renderMenuItem(item)}
+            </React.Fragment>
+          ))}
         </ul>
       </nav>
       {/* Footer */}

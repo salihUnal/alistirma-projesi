@@ -25,7 +25,7 @@ function Poems({ onBack }: PoemsProps) {
           <div className="border-separate border-blue-200 dark:border-blue-700 border-2 bg-white dark:bg-gray-800 p-6 mt-10 rounded-lg shadow">
             <div className="mb-1">
               <h3 className="text-center md:grid-cols-2 text-2xl font-bold italic text-gray-800 dark:text-white mb-3">
-                🪶 Sevdiğim Şiirler alt
+                🪶 Sevdiğim Şiirler
               </h3>
               <div className="text-center py-8 text-gray-500 dark:text-gray-400">
                 Henüz Şiirler eklenmemiş. Yukarıdaki alandan Şiirler

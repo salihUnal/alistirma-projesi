@@ -6,6 +6,8 @@ import Sidebar from "../components/Sidebar";
 import { useAuth } from "../contexts/AuthContext";
 import ThemeToggle from "../components/common/ThemeToggle";
 import { useDebounce } from "../hooks/useDebounce";
+import BookReadGenres from "./BookReadGenres";
+import LikeButton from "./common/LikeButton";
 
 interface BookReadProps {
   onBack: () => void;
@@ -17,44 +19,24 @@ function BookRead({ onBack }: BookReadProps) {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState("Okunmuş Kitaplar");
   const [readBooks, setReadBooks] = useState<bookReadApiResponse[]>([]);
-  const [inputValueB, setInputValueB] = useState("");
-  const [inputValueA, setInputValueA] = useState("");
+  // const [book, setBook] = useState<bookReadApiResponse | null>(null);
+  const [inputValueBook, setInputValueBook] = useState("");
+  const [inputValueAuthor, setInputValueAuthor] = useState("");
+  const [inputValueGenre, setInputValueGenre] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [bookToDelete, setBookToDelete] = useState<number | null>(null);
-
-  // useEffect(() => {
-  //   const savedBooks = localStorage.getItem(STORAGE_KEY);
-  //   if (savedBooks) {
-  //     try {
-  //       const parsedBooks = JSON.parse(savedBooks);
-  //       // Date string'lerini Date objesine çevir
-  //       const booksWithDates = parsedBooks.map((book: any) => ({
-  //         ...book,
-  //         Creation_At: book.Creation_At
-  //           ? new Date(book.Creation_At)
-  //           : undefined,
-  //         Updated_At: book.Updated_At ? new Date(book.Updated_At) : undefined,
-  //       }));
-  //       setReadBooks(booksWithDates);
-  //     } catch (error) {
-  //       console.error("Kitaplar yüklenirken hata oluştu:", error);
-  //     }
-  //   }
-  // }, []);
-
-  // // Kitaplar değiştiğinde localStorage'a kaydet
-  // useEffect(() => {
-  //   // Date objelerini string'e çevir (localStorage için)
-  //   const booksToSave = readBooks.map((book) => ({
-  //     ...book,
-  //     addedAt: book.Creation_At ? book.Creation_At.toISOString() : undefined,
-  //     updatedAt: book.Updated_At ? book.Updated_At.toISOString() : undefined,
-  //   }));
-  //   localStorage.setItem(STORAGE_KEY, JSON.stringify(booksToSave));
-  // }, [readBooks]); // readBooks değiştiğinde çalışır
+  const [editingBook, setEditingBook] = useState<bookReadApiResponse | null>(
+    null
+  );
+  const [editBookName, setEditBookName] = useState("");
+  const [editAuthorName, setEditAuthorName] = useState("");
+  const [editGenre, setEditGenre] = useState("");
+  const [isAdding, setIsAdding] = useState(false);
+  const isFormValid =
+    inputValueBook.trim() && inputValueAuthor.trim() && inputValueGenre.trim();
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -88,31 +70,34 @@ function BookRead({ onBack }: BookReadProps) {
   }, [category]);
 
   const handleAddBook = async () => {
-    const trimedValueB = inputValueB.trim();
-    const trimedValueA = inputValueA.trim();
+    const trimedValueAuthor = inputValueAuthor.trim();
+    const trimedValueBook = inputValueBook.trim();
+    const trimedValueGenre = inputValueGenre.trim();
 
-    if (!trimedValueB) {
+    if (!trimedValueBook) {
       return;
     }
-    if (!trimedValueA) {
+    if (!trimedValueAuthor) {
       return;
     }
 
+    setIsAdding(true);
     setLoading(true);
     setError(null);
-
     try {
       const newBook = await BookReadApi.addBookRead({
-        Book_Name: trimedValueB,
+        Book_Name: trimedValueBook,
         Completed: true,
-        Author_Name: trimedValueA || "Bilinmiyor", //şimdlikl defaoult yazar için ayrı bir input ekle
+        Author_Name: trimedValueAuthor || "Bilinmiyor",
+        Genre: trimedValueGenre,
         User_Id: 1, // Şimdilik default, daha sonra AuthContext'ten alabilirsiniz
       });
 
       setReadBooks((prevBooks) => [newBook, ...prevBooks]);
 
-      setInputValueB("");
-      setInputValueA("");
+      setInputValueAuthor("");
+      setInputValueBook("");
+      setInputValueGenre("");
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Kitap Eklenirken Hata Oluştu"
@@ -120,6 +105,7 @@ function BookRead({ onBack }: BookReadProps) {
       console.error("Kitap Eklenirken Hata Oluştu", err);
     } finally {
       setLoading(false);
+      setIsAdding(false);
     }
   };
 
@@ -141,9 +127,48 @@ function BookRead({ onBack }: BookReadProps) {
     }
   };
 
-  const handleEditBook = async (id: number) => {
+  const handleEditBook = async (book: bookReadApiResponse) => {
+    setEditingBook(book);
+    setEditBookName(book.Book_Name);
+    setEditAuthorName(book.Author_Name || "");
+    setEditGenre(book.Genre);
+  };
+
+  const handleSaveEditBook = async () => {
+    if (!editingBook) return;
+    const trimmedBookName = editBookName.trim();
+    const trimmedAuthorName = editAuthorName.trim();
+    const trimmedGenre = editGenre.trim();
+    if (!trimmedBookName || !trimmedAuthorName) {
+      setError("Kitap adı ve yazar adı boş olamaz");
+      return;
+    }
+
     setLoading(true);
     setError(null);
+
+    try {
+      const updatedBook = await BookReadApi.updateBookRead(editingBook.Id, {
+        Book_Name: trimmedBookName,
+        Author_Name: trimmedAuthorName,
+        Genre: trimmedGenre,
+      });
+      setReadBooks((prevBooks) =>
+        prevBooks.map((book) =>
+          book.Id === editingBook.Id ? updatedBook : book
+        )
+      );
+      setEditingBook(null);
+      setEditBookName("");
+      setEditAuthorName("");
+      setEditGenre("");
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Kitap güncellenirken hata oluştu"
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -159,7 +184,7 @@ function BookRead({ onBack }: BookReadProps) {
           <div className="border-separate border-blue-200 dark:border-blue-700 border-2 bg-white dark:bg-gray-800 p-6 mt-10 rounded-lg shadow">
             <div className="mb-1">
               <h3 className="text-center md:grid-cols-2 text-2xl font-bold italic text-gray-800 dark:text-white mb-3">
-                🎧📓 Okuduğum Kitaplarım alt
+                🎧📓 Okuduğum Kitaplarımın Listesi
               </h3>
 
               {/* Arama Input'u */}
@@ -191,25 +216,49 @@ function BookRead({ onBack }: BookReadProps) {
                 <input
                   className="flex-1 px-3 py-2 rounded-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 max-w-60"
                   placeholder="Okuduğun Yeni Kitabı ekle"
-                  value={inputValueB}
+                  value={inputValueBook}
                   type="text"
-                  onChange={(e) => setInputValueB(e.target.value)}
+                  onChange={(e) => setInputValueBook(e.target.value)}
                   onKeyDown={handleKeyDown}
+                  disabled={loading || isAdding}
                 />
                 <input
                   className="flex-1 px-3 py-2 rounded-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 max-w-60"
                   placeholder="Okuduğun Yeni Kitabın Yazarı"
-                  value={inputValueA}
+                  value={inputValueAuthor}
                   type="text"
-                  onChange={(e) => setInputValueA(e.target.value)}
+                  onChange={(e) => setInputValueAuthor(e.target.value)}
                   onKeyDown={handleKeyDown}
+                  disabled={loading || isAdding}
+                />
+                {/* <input
+                  className="flex-1 px-3 py-2 rounded-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 max-w-60"
+                  placeholder="Okuduğun Yeni Kitabın Türü"
+                  value={inputValueGenre}
+                  type="text"
+                  onChange={(e) => setInputValueGenre(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  disabled={loading || isAdding}
+                /> */}
+                <BookReadGenres
+                  value={inputValueGenre}
+                  onChange={(e) => setInputValueGenre(e.target.value)}
+                  disabled={loading || isAdding}
+                  // Senin inputlarındaki stilin aynısını buraya className olarak veriyoruz:
+                  className="flex-1 px-3 py-2 rounded-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 max-w-60 cursor-pointer"
                 />
                 <button
                   onClick={handleAddBook}
-                  className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-full font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
-                  disabled={loading}
+                  className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-full font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={loading || isAdding || !isFormValid}
                 >
+                  {isAdding ? "Ekleniyor..." : ""}
                   ⌯⌲
+                  {isAdding && (
+                    <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">
+                      {new Date().toLocaleTimeString("tr-TR")}
+                    </span>
+                  )}
                 </button>
               </div>
 
@@ -220,10 +269,11 @@ function BookRead({ onBack }: BookReadProps) {
                 </div>
               ) : (
                 <ul className="space-y-2 mt-6 max-w-2xl mx-auto  ">
-                  {readBooks.map((book) => (
+                  {readBooks.map((book, index) => (
                     <li
-                      key={book.Id}
-                      className="cursor-pointer  shadow text-gray-700 flex justify-between items-center p-3  bg-white/90 dark:bg-slate-900/70 rounded-3xl border border-gray-200 dark:border-slate-700 overflow-hidden hover:scale-105 transition-all duration-300"
+                      key={book.Id || `book-${index}`}
+                      onClick={() => handleEditBook(book)}
+                      className="cursor-pointer  relative shadow text-gray-700 flex justify-between items-center p-3  bg-slate-200/50 dark:bg-slate-900/70 rounded-3xl border border-gray-200 dark:border-slate-700 overflow-hidden hover:scale-105 transition-all duration-300"
                     >
                       <span className="text-center font-semibold text-slate-900  dark:text-white w-full">
                         {book.Book_Name}
@@ -232,22 +282,55 @@ function BookRead({ onBack }: BookReadProps) {
                             - {book.Author_Name}
                           </span>
                         )}
+                        <span className="absolute bottom-0 left-0 m-1 text-xs opacity-70 px-3 pb-1 bg-slate-200/50 rounded-3xl border border-slate-900/50 border-b-3 border-r-3 dark:border-slate-200/50 dark:bg-slate-900/50 font-light italic text-slate-900  dark:text-white ml-2">
+                          {new Date(book.Updated_At).toLocaleString("tr-TR")}
+                        </span>
+                        <span className="absolute top-0 left-0 m-1 text-xs opacity-70 px-3 pb-1 bg-slate-200/50 rounded-3xl border border-slate-900/50 border-b-3 border-r-3 dark:border-slate-200/50 dark:bg-slate-900/50 font-light italic text-slate-900  dark:text-white ml-2">
+                          {book.Genre || "Bilinmiyor"}
+                        </span>
                       </span>
                       <div className="flex flex-wrap gap-2  ">
                         <button
-                          // onClick={() => handleEditBook(book.Id)}
+                          onClick={() => handleEditBook(book)}
                           className="px-2 py-1 bg-green-500 hover:bg-green-700 text-white rounded-3xl  transition-colors"
                           disabled={loading}
                         >
                           𓂃🖊
                         </button>
                         <button
-                          onClick={() => handleDeleteBook(book.Id)}
+                          onClick={() => setBookToDelete(book.Id)}
                           className="px-2 py-1 bg-red-500 hover:bg-red-700 text-white rounded-3xl  transition-colors"
                           disabled={loading}
                         >
                           🗑
                         </button>
+                        <LikeButton
+                          initialLiked={book.Is_liked || false}
+                          initialCount={book.Like_Count || 0}
+                          onToggleLike={async (nextLiked) => {
+                            if (!book) return;
+
+                            await BookReadApi.toggleBookLike(
+                              book.Id,
+                              nextLiked
+                            );
+
+                            // Array içindeki kitabı güncelle
+                            setReadBooks((prevBooks) =>
+                              prevBooks.map((b) =>
+                                b.Id === book.Id
+                                  ? {
+                                      ...b,
+                                      Is_liked: nextLiked,
+                                      Like_Count:
+                                        (b.Like_Count || 0) +
+                                        (nextLiked ? 1 : -1),
+                                    }
+                                  : b
+                              )
+                            );
+                          }}
+                        />
                       </div>
                     </li>
                   ))}
@@ -332,6 +415,86 @@ function BookRead({ onBack }: BookReadProps) {
           </div>
         </div>
       )}
+      {editingBook && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
+            <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
+              Kitabı Düzenle
+            </h4>
+            <div className="space-y-4 mb-6">
+              <label
+                htmlFor="editBookName"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
+                Kitap Adı
+              </label>
+              <input
+                type="text"
+                placeholder="Kitap Adı"
+                value={editBookName}
+                onChange={(e) => setEditBookName(e.target.value)}
+                className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <label
+                htmlFor="editAuthorName"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
+                Yazar Adı
+              </label>
+
+              <input
+                type="text"
+                placeholder="Yazar Adı"
+                value={editAuthorName}
+                onChange={(e) => setEditAuthorName(e.target.value)}
+                className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+
+              <label
+                htmlFor="editGenre"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
+                Tür
+              </label>
+              {/* <input
+                type="text"
+                placeholder="Tür"
+                value={editGenre}
+                onChange={(e) => setEditGenre(e.target.value)}
+                className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              /> */}
+              <BookReadGenres
+                value={editGenre}
+                onChange={(e) => setEditGenre(e.target.value)}
+                // Edit modalındaki input stiline uygun className:
+                className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+              />
+            </div>
+            <div className="flex justify-end gap-4">
+              <button
+                onClick={() => {
+                  setEditingBook(null);
+                  setEditBookName("");
+                  setEditAuthorName("");
+                  setEditGenre("");
+                }}
+                className="px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-400"
+                disabled={loading}
+              >
+                İptal
+              </button>
+              <button
+                onClick={handleSaveEditBook}
+                className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
+                disabled={loading}
+              >
+                {loading ? "Kaydediliyor..." : "Kaydet"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      ;
       <div className="bg-white-100">
         <footer className="text-center text-lg text-black dark:text-white font-thin italic capitalize py-1">
           Powered By{" "}

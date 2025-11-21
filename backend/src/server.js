@@ -523,7 +523,7 @@ app.get("/api/mybooks", (req, res) => {
   let params = [];
 
   if (search) {
-    query += " WHERE Book_Name LIKE ? OR Author_Name LIKE ?";
+    query += " WHERE Book_Name LIKE ? OR Author_Name LIKE ? OR Genre LIKE ?";
     params = [`%${search}%`, `%${search}%`];
   }
 
@@ -566,17 +566,19 @@ app.post("/api/mybooks", (req, res) => {
     INSERT INTO Readbooks (
       Book_Name, 
       Completed, 
-      Author_Name, 
+      Author_Name,
+      Genre,
       Creation_At, 
       Updated_At, 
       User_Id
-    ) VALUES (?, ?, ?, ?, ?, ?)
+    ) VALUES (?, ?, ?, ?, ?, ?, ?)
   `;
 
   const newBook = {
     Book_Name: Book_Name,
     Completed: Completed ?? true, // Eğer gönderilmezse varsayılan 'true'
     Author_Name: Author_Name,
+    Genre: Genre ?? "Bilinmiyor",
     Creation_At: new Date().toISOString(),
     Updated_At: new Date().toISOString(),
     User_Id: User_Id || 1, // Şimdilik varsayılan 1, Geliştirme Önerisi'ne bakın
@@ -586,12 +588,12 @@ app.post("/api/mybooks", (req, res) => {
     newBook.Book_Name,
     newBook.Completed,
     newBook.Author_Name,
+    newBook.Genre,
     newBook.Creation_At,
     newBook.Updated_At,
     newBook.User_Id,
   ];
 
-  // HATA DÜZELTMESİ: db.run söz dizimi (syntax) düzeltildi
   db.run(sql, params, function (err) {
     if (err) {
       console.error("MyBooks (POST) Error:", err.message);
@@ -617,6 +619,109 @@ app.delete("/api/mybooks/:id", (req, res) => {
 
     res.json({ message: "Kitap Başarıyla Silindi", id: id });
   });
+});
+
+app.patch("/api/mybooks/:id", (req, res) => {
+  const { id } = req.params;
+  const { Book_Name, Author_Name, Completed, Genre } = req.body;
+
+  const sql = `UPDATE Readbooks SET Book_Name = ?, Author_Name = ?, Genre = ?,
+        Completed = ?,
+        Updated_At = ? 
+    WHERE Id = ?`;
+
+  const params = [
+    Book_Name,
+    Author_Name,
+    Genre || null,
+    Completed ?? true,
+    new Date().toISOString(),
+    id,
+  ];
+
+  if (!Book_Name || !Author_Name) {
+    return res
+      .status(400)
+      .json({ error: "Kitap adı, yazar adı ve tamamlama durumu zorunludur" });
+  }
+
+  db.run(sql, params, function (err) {
+    if (err) {
+      console.error("Kitap Güncellemesi Hatası", err.message);
+      return res
+        .status(500)
+        .json({ error: "Kitap güncellenirken hata oluştu" });
+    }
+    if (this.changes === 0) {
+      return res.status(404).json({ error: "Kitap Bulunamadı" });
+    }
+
+    db.get("SELECT * FROM Readbooks WHERE Id = ?", [id], (err, row) => {
+      if (err) {
+        return res
+          .status(500)
+          .json({ error: "Güncellenmiş kitap verisi getirilemedi" });
+      }
+      res.json(row);
+      // res.json({ message: "Kitap Başarıyla Güncellendi", id: id });
+    });
+  });
+});
+
+app.post("/api/mybooks/:id/like", (req, res) => {
+  const { id } = req.params;
+  db.run(
+    "UPDATE Readbooks SET Like_Count = COALESCE(Like_Count, 0) + 1, Updated_At = ? WHERE Id = ?",
+    [new Date().toISOString(), id],
+    function (err) {
+      if (err) {
+        return res.status(500).json({ error: "Beğeni eklenirken hata oluştu" });
+      }
+      if (this.changes === 0) {
+        return res.status(404).json({ error: "Kitap Bulunamadı" });
+      }
+
+      db.get(
+        "SELECT Like_Count FROM Readbooks WHERE Id = ?",
+        [id],
+        (err, row) => {
+          if (err)
+            return res.status(500).json({ error: "Beğeni sayısı alınamadı" });
+          res.json({ like_count: row.Like_Count || 0, liked: true });
+        }
+      );
+    }
+  );
+});
+
+app.delete("/api/mybooks/:id/like", (req, res) => {
+  const { id } = req.params;
+
+  // Veritabanı sütun isimleri büyük harfli: Like_Count, Updated_At, Id
+  db.run(
+    "UPDATE Readbooks SET Like_Count = MAX(COALESCE(Like_Count, 0) - 1, 0), Updated_At = ? WHERE Id = ?",
+    [new Date().toISOString(), id],
+    function (err) {
+      if (err) {
+        return res
+          .status(500)
+          .json({ error: "Beğeni kaldırılırken hata oluştu" });
+      }
+      if (this.changes === 0) {
+        return res.status(404).json({ error: "Kitap Bulunamadı" });
+      }
+
+      db.get(
+        "SELECT Like_Count FROM Readbooks WHERE Id = ?",
+        [id],
+        (err, row) => {
+          if (err)
+            return res.status(500).json({ error: "Beğeni sayısı alınamadı" });
+          res.json({ like_count: row.Like_Count || 0, liked: false });
+        }
+      );
+    }
+  );
 });
 
 app.listen(PORT, () => {

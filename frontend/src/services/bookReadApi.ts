@@ -5,9 +5,12 @@ type ApiBookRead = {
   Book_Name: string;
   Completed: boolean;
   Author_Name: string;
+  Genre: string;
+  Like_Count: number;
+  is_liked?: boolean;
+  User_Id: number;
   Creation_At: number;
   Updated_At: number;
-  User_Id: number;
 };
 
 export const BookReadApi = {
@@ -43,6 +46,7 @@ export const BookReadApi = {
     Book_Name: string;
     Author_Name: string;
     Completed?: boolean;
+    Genre: string;
     User_Id: number;
   }): Promise<ApiBookRead> => {
     const response = await fetch(`${API_BASE_URL}/mybooks`, {
@@ -66,4 +70,49 @@ export const BookReadApi = {
     }
     return response.json();
   },
+
+  updateBookRead: async (
+    id: number,
+    readbook: {
+      Book_Name: string;
+      Author_Name: string;
+      Completed?: boolean;
+      Genre?: string;
+    }
+  ): Promise<ApiBookRead> => {
+    const response = await fetch(`${API_BASE_URL}/mybooks/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(readbook),
+    });
+    if (!response.ok) throw new Error("Kitap Güncellenemedi");
+    return response.json();
+  },
+
+  toggleBookLike: async (id: number, liked: boolean): Promise<void> => {
+    const method = liked ? "POST" : "DELETE";
+    const response = await fetch(`${API_BASE_URL}/mybooks/${id}/like`, {
+      method,
+      headers: {
+        "Content-Type": "application/json",
+        // İleride auth eklenirse:
+        // "Authorization": `Bearer ${token}`
+      },
+    });
+    if (!response.ok) {
+      throw new Error("Beğeni durumu güncellenemedi");
+    }
+  },
+
+  getBookLikeStatus: async (
+    id: number
+  ): Promise<{ liked: boolean; count: number }> => {
+    const response = await fetch(`${API_BASE_URL}/mybooks/${id}/like`);
+    if (!response.ok) {
+      throw new Error("Beğeni durumu alınamadı");
+    }
+    return response.json();
+  },
 };
+
+export default BookReadApi;

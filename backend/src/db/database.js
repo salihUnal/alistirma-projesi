@@ -93,6 +93,9 @@ db.serialize(() => {
     Book_Name   TEXT  NOT NULL,
     Completed   BOOLEN ,
     Author_Name TEXT,
+     Genre       TEXT,
+    Is_Liked     BOOLEN DEFAULT 0,
+    Like_Count  INTEGER DEFAULT 0,
     Creation_At DATETIME  DEFAULT CURRENT_TIMESTAMP,
     Updated_At  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     User_Id     NUMERIC   REFERENCES Users (id) 
