@@ -291,14 +291,20 @@ function BookRead({ onBack }: BookReadProps) {
                       </span>
                       <div className="flex flex-wrap gap-2  ">
                         <button
-                          onClick={() => handleEditBook(book)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEditBook(book);
+                          }}
                           className="px-2 py-1 bg-green-500 hover:bg-green-700 text-white rounded-3xl  transition-colors"
                           disabled={loading}
                         >
                           𓂃🖊
                         </button>
                         <button
-                          onClick={() => setBookToDelete(book.Id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setBookToDelete(book.Id);
+                          }}
                           className="px-2 py-1 bg-red-500 hover:bg-red-700 text-white rounded-3xl  transition-colors"
                           disabled={loading}
                         >
@@ -403,6 +409,7 @@ function BookRead({ onBack }: BookReadProps) {
               </button>
               <button
                 onClick={async () => {
+                  if (bookToDelete === null) return;
                   await handleDeleteBook(bookToDelete); // Silme işlemini çalıştır
                   setBookToDelete(null); // Modalı kapat
                 }}
@@ -494,7 +501,6 @@ function BookRead({ onBack }: BookReadProps) {
           </div>
         </div>
       )}
-      ;
       <div className="bg-white-100">
         <footer className="text-center text-lg text-black dark:text-white font-thin italic capitalize py-1">
           Powered By{" "}
