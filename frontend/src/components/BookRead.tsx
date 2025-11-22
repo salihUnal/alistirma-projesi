@@ -183,9 +183,12 @@ function BookRead({ onBack }: BookReadProps) {
         return (
           <div className="border-separate border-blue-200 dark:border-blue-700 border-2 bg-white dark:bg-gray-800 p-6 mt-10 rounded-lg shadow">
             <div className="mb-1">
-              <h3 className="text-center md:grid-cols-2 text-2xl font-bold italic text-gray-800 dark:text-white mb-3">
+              {/* <h3 className="text-center md:grid-cols-2 text-2xl font-bold italic text-gray-800 dark:text-white mb-3">
                 🎧📓 Okuduğum Kitaplarımın Listesi
-              </h3>
+              </h3> */}
+              <div className=" flex items-center justify-center text-center text-2xl font-bold italic text-gray-800 dark:text-white mb-3">
+                <span>🎧📓 Okuduğum Kitaplarımın Listesi</span>
+              </div>
 
               {/* Arama Input'u */}
               <div className="flex gap-2 mb-4 items-center justify-center">
@@ -268,79 +271,113 @@ function BookRead({ onBack }: BookReadProps) {
                   ekleyebilirsiniz.
                 </div>
               ) : (
-                <ul className="space-y-2 mt-6 max-w-2xl mx-auto  ">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6 mt-6">
                   {readBooks.map((book, index) => (
-                    <li
+                    <div
                       key={book.Id || `book-${index}`}
                       onClick={() => handleEditBook(book)}
-                      className="cursor-pointer  relative shadow text-gray-700 flex justify-between items-center p-3  bg-slate-200/50 dark:bg-slate-900/70 rounded-3xl border border-gray-200 dark:border-slate-700 overflow-hidden hover:scale-105 transition-all duration-300"
+                      className="cursor-pointer flex flex-col h-full rounded-2xl shadow border text-gray-700 bg-white/90 dark:bg-slate-900/70 border-gray-200 dark:border-slate-700 overflow-hidden hover:scale-105 transition-all duration-300"
                     >
-                      <span className="text-center font-semibold text-slate-900  dark:text-white w-full">
+                      {/* <span className="text-center font-semibold text-slate-900  dark:text-white w-full">
                         {book.Book_Name}
                         {book.Author_Name && (
                           <span className="text-sm font-light italic text-slate-900  dark:text-white ml-2">
                             - {book.Author_Name}
                           </span>
                         )}
-                        <span className="absolute bottom-0 left-0 m-1 text-xs opacity-70 px-3 pb-1 bg-slate-200/50 rounded-3xl border border-slate-900/50 border-b-3 border-r-3 dark:border-slate-200/50 dark:bg-slate-900/50 font-light italic text-slate-900  dark:text-white ml-2">
+                        <span className=" bottom-0 left-0 m-1 text-xs opacity-70 px-3 pb-1 bg-slate-200/50 rounded-3xl border border-slate-900/50 border-b-3 border-r-3 dark:border-slate-200/50 dark:bg-slate-900/50 font-light italic text-slate-900  dark:text-white ml-2">
                           {new Date(book.Updated_At).toLocaleString("tr-TR")}
                         </span>
-                        <span className="absolute top-0 left-0 m-1 text-xs opacity-70 px-3 pb-1 bg-slate-200/50 rounded-3xl border border-slate-900/50 border-b-3 border-r-3 dark:border-slate-200/50 dark:bg-slate-900/50 font-light italic text-slate-900  dark:text-white ml-2">
+                        <span className=" top-0 left-0 m-1 text-xs opacity-70 px-3 pb-1 bg-slate-200/50 rounded-3xl border border-slate-900/50 border-b-3 border-r-3 dark:border-slate-200/50 dark:bg-slate-900/50 font-light italic text-slate-900  dark:text-white ml-2">
                           {book.Genre || "Bilinmiyor"}
                         </span>
-                      </span>
-                      <div className="flex flex-wrap gap-2  ">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleEditBook(book);
-                          }}
-                          className="px-2 py-1 bg-green-500 hover:bg-green-700 text-white rounded-3xl  transition-colors"
-                          disabled={loading}
-                        >
-                          𓂃🖊
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setBookToDelete(book.Id);
-                          }}
-                          className="px-2 py-1 bg-red-500 hover:bg-red-700 text-white rounded-3xl  transition-colors"
-                          disabled={loading}
-                        >
-                          🗑
-                        </button>
-                        <LikeButton
-                          initialLiked={book.Is_liked || false}
-                          initialCount={book.Like_Count || 0}
-                          onToggleLike={async (nextLiked) => {
-                            if (!book) return;
+                      </span> */}
+                      <div className="flex flex-col h-full p-4">
+                        {/* Kitap Adı */}
+                        <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
+                          {book.Book_Name}
+                        </h3>
 
-                            await BookReadApi.toggleBookLike(
-                              book.Id,
-                              nextLiked
-                            );
+                        {/* Yazar */}
+                        <div className="text-sm text-blue-950 dark:text-white mb-3">
+                          <div className="flex items-center gap-1">
+                            <span className="font-semibold text-gray-900 dark:text-gray-300">
+                              Yazar:
+                            </span>
+                            <span className="italic text-blue-700 dark:text-blue-300">
+                              {book.Author_Name || "Bilinmiyor"}
+                            </span>
+                          </div>
+                        </div>
+                        {/* Alt Kısım - Genre, Tarih ve Butonlar */}
+                        <div className="mt-auto">
+                          {/* Genre Badge */}
+                          <div className="flex flex-wrap gap-1 mb-2">
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-500 text-gray-50 dark:bg-blue-800 dark:text-gray-50">
+                              {book.Genre || "Bilinmiyor"}
+                            </span>
+                          </div>
+                          <div className="text-sm text-blue-950 dark:text-white mb-3">
+                            <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
+                              {new Date(book.Updated_At).toLocaleString(
+                                "tr-TR"
+                              )}
+                            </span>
+                          </div>
+                          <div className="flex flex-wrap gap-2">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleEditBook(book);
+                              }}
+                              className="px-2 py-1 bg-green-500 hover:bg-green-700 text-white rounded-full  transition-colors"
+                              disabled={loading}
+                            >
+                              𓂃🖊
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setBookToDelete(book.Id);
+                              }}
+                              className="px-2 py-1 bg-red-500 hover:bg-red-700 text-white rounded-3xl  transition-colors"
+                              disabled={loading}
+                            >
+                              🗑
+                            </button>
+                            <LikeButton
+                              initialLiked={book.Is_liked || false}
+                              initialCount={book.Like_Count || 0}
+                              onToggleLike={async (nextLiked) => {
+                                if (!book) return;
 
-                            // Array içindeki kitabı güncelle
-                            setReadBooks((prevBooks) =>
-                              prevBooks.map((b) =>
-                                b.Id === book.Id
-                                  ? {
-                                      ...b,
-                                      Is_liked: nextLiked,
-                                      Like_Count:
-                                        (b.Like_Count || 0) +
-                                        (nextLiked ? 1 : -1),
-                                    }
-                                  : b
-                              )
-                            );
-                          }}
-                        />
+                                await BookReadApi.toggleBookLike(
+                                  book.Id,
+                                  nextLiked
+                                );
+
+                                // Array içindeki kitabı güncelle
+                                setReadBooks((prevBooks) =>
+                                  prevBooks.map((b) =>
+                                    b.Id === book.Id
+                                      ? {
+                                          ...b,
+                                          Is_liked: nextLiked,
+                                          Like_Count:
+                                            (b.Like_Count || 0) +
+                                            (nextLiked ? 1 : -1),
+                                        }
+                                      : b
+                                  )
+                                );
+                              }}
+                            />
+                          </div>
+                        </div>
                       </div>
-                    </li>
+                    </div>
                   ))}
-                </ul>
+                </div>
               )}
             </div>
           </div>
@@ -351,7 +388,7 @@ function BookRead({ onBack }: BookReadProps) {
   return (
     <div className="w-full min-h-screen px-4 py-8 dark:bg-slate-900 text-white">
       <div className="flex items-center justify-between px-4 py-3 bg-white/70 dark:bg-slate-900/70 backdrop-blur border-b border-slate-200/60 dark:border-slate-700/60 rounded-lg">
-        <Link to="/books/" className="flex items-center gap-3">
+        <Link to="/mybooks/" className="flex items-center gap-3">
           <img
             src="https://res.cloudinary.com/dklvz02ew/image/upload/v1761658139/kitap-logo_acpjzd.png"
             alt="Uygulama Logosu"
