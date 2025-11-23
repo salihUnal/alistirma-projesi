@@ -38,7 +38,7 @@ function MovieList({ onBack }: TestPageProps) {
     // Sidebar butonlarına göre URL değiştir
     const urlMap: Record<string, string> = {
       Filmler: "/movies",
-      Suç: "/movies/Aksiyon",
+      Suç: "/movies/Suc",
       Drama: "/movies/Drama",
       Fantastik: "/movies/Fantastik",
       "Bilim Kurgu": "/movies/Bilim-Kurgu",

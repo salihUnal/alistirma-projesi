@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 
 type LikeButtonProps = {
   initialLiked?: boolean;
@@ -18,7 +18,8 @@ export default function LikeButton({
   const [isBusy, setIsBusy] = useState(false);
   const bounceRef = useRef<HTMLButtonElement | null>(null);
 
-  const toggle = async () => {
+  const toggle = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
     if (isBusy) return;
     setIsBusy(true);
 

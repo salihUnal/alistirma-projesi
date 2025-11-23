@@ -15,9 +15,10 @@ interface BookReadProps {
 
 function BookRead({ onBack }: BookReadProps) {
   const { username, logout } = useAuth();
-  const { category } = useParams();
+  const { category, page: urlPage } = useParams();
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState("Okunmuş Kitaplar");
+  const [page, setPage] = useState(1);
   const [readBooks, setReadBooks] = useState<bookReadApiResponse[]>([]);
   // const [book, setBook] = useState<bookReadApiResponse | null>(null);
   const [inputValueBook, setInputValueBook] = useState("");
@@ -39,6 +40,73 @@ function BookRead({ onBack }: BookReadProps) {
     inputValueBook.trim() && inputValueAuthor.trim() && inputValueGenre.trim();
 
   useEffect(() => {
+    if (urlPage) {
+      setPage(parseInt(urlPage));
+    }
+  }, [urlPage]);
+
+  useEffect(() => {
+    // “/movies” veya “/movies/:category” her durumda Film görünümü
+    setCurrentPage("Okuduğum Kitaplar");
+  }, [category]);
+
+  const handleSidebarClick = (label: string) => {
+    setCurrentPage(label);
+
+    // Sidebar butonlarına göre URL değiştir
+    const urlMap: Record<string, string> = {
+      Kitaplar: "/mybooks",
+      Alegori: "/mybooks/Alegori",
+      Anı: "/mybooks/Ani",
+      Akademik: "/mybooks/Akademik",
+      Antoloji: "/mybooks/Antoloji",
+      "Araştırma - İnceleme": "/mybooks/Arastirma-inceleme",
+      Bilim: "/mybooks/Bilim",
+      "Bilim Kurgu": "/mybooks/Bilim-Kurgu",
+      Biyografi: "/mybooks/Biyografi",
+      "Çizgi Roman / Manga": "/mybooks/Cizgi-Roman-Manga",
+      "Çocuk Edebiyatı": "/mybooks/Çocuk Edebiyatı",
+      Deneme: "/mybooks/Deneme",
+      "Din ve Mitoloji": "/mybooks/Din-Mitoloji",
+      Distopya: "/mybooks/Distopya",
+      Edebiyat: "/mybooks/Edebiyat",
+      "Eğitim / Akademik": "/mybooks/Egitim-Akademik",
+      Ekonomi: "/mybooks/Ekonomi",
+      Fantastik: "/mybooks/Fantastik",
+      Felsefe: "/mybooks/Felsefe",
+      "Gezi / Seyahat": "/mybooks/Gezi-Seyahat",
+      "Genç Yetişkin": "/mybooks/Genc-Yetiskin",
+      Gerilim: "/mybooks/Gerilim",
+      Günlük: "/mybooks/Gunluk",
+      "Hikaye (Öykü)": "/mybooks/Hikaye",
+      Hobi: "/mybooks/Hobi",
+      "Kişisel Gelişim": "/mybooks/Kisisel-Gelisim",
+      Klasikler: "/mybooks/Klasikler",
+      Korku: "/mybooks/Korku",
+      Macera: "/mybooks/Macera",
+      Mektup: "/mybooks/Mektup",
+      Mizah: "/mybooks/Mizah",
+      Otobiyografi: "/mybooks/Otobiyografi",
+      Polisiye: "/mybooks/Polisiye",
+      Psikoloji: "/mybooks/Psikoloji",
+      Referans: "/mybooks/Referans",
+      Roman: "/mybooks/Roman",
+      Sağlık: "/mybooks/Saglık",
+      Sanat: "/mybooks/Sanat",
+      Siyaset: "/mybooks/Siyaset",
+      Sosyoloji: "/mybooks/Sosyoloji",
+      Şiir: "/mybooks/Siir",
+      Tarih: "/mybooks/Tarih",
+      "Tarihi Kurgu": "/mybooks/Tarihi-Kurgu",
+      Tiyatro: "/mybooks/Tiyatro",
+      Diğer: "/mybooks/Diger",
+    };
+
+    const targetUrl = urlMap[label] || "/mybooks";
+    navigate(targetUrl);
+  };
+
+  useEffect(() => {
     const fetchBooks = async () => {
       setLoading(true);
       setError(null);
@@ -48,6 +116,60 @@ function BookRead({ onBack }: BookReadProps) {
           books = await BookReadApi.search(debouncedSearchQuery.trim());
         } else {
           books = await BookReadApi.getAllReadBook();
+        }
+
+        // Category'ye göre filtreleme
+        if (category && category !== "Tumu") {
+          // URL'deki category slug'ını genre değerine çevir
+          const categoryMap: Record<string, string> = {
+            Alegori: "Alegori",
+            Ani: "Anı",
+            Akademik: "Akademik",
+            Antoloji: "Antoloji",
+            "Arastirma-inceleme": "Araştırma - İnceleme",
+            Bilim: "Bilim",
+            "Bilim-Kurgu": "Bilim Kurgu",
+            Biyografi: "Biyografi",
+            "Cizgi-Roman-Manga": "Çizgi Roman / Manga",
+            "Cocuk-Edebiyati": "Çocuk Edebiyatı",
+            Deneme: "Deneme",
+            "Din-Mitoloji": "Din ve Mitoloji",
+            Distopya: "Distopya",
+            Edebiyat: "Edebiyat",
+            "Egitim-Akademik": "Eğitim / Akademik",
+            Ekonomi: "Ekonomi",
+            Fantastik: "Fantastik",
+            Felsefe: "Felsefe",
+            "Gezi-Seyahat": "Gezi / Seyahat",
+            "Genc-Yetiskin": "Genç Yetişkin",
+            Gerilim: "Gerilim",
+            Gunluk: "Günlük",
+            Hikaye: "Hikaye (Öykü)",
+            Hobi: "Hobi",
+            "Kisisel-Gelisim": "Kişisel Gelişim",
+            Klasikler: "Klasikler",
+            Korku: "Korku",
+            Macera: "Macera",
+            Mektup: "Mektup",
+            Mizah: "Mizah",
+            Otobiyografi: "Otobiyografi",
+            Polisiye: "Polisiye",
+            Psikoloji: "Psikoloji",
+            Referans: "Referans",
+            Roman: "Roman",
+            Saglik: "Sağlık",
+            Sanat: "Sanat",
+            Siyaset: "Siyaset",
+            Sosyoloji: "Sosyoloji",
+            Siir: "Şiir",
+            Tarih: "Tarih",
+            "Tarihi-Kurgu": "Tarihi Kurgu",
+            Tiyatro: "Tiyatro",
+            Diger: "Diğer",
+          };
+
+          const genreFilter = categoryMap[category] || category;
+          books = books.filter((book) => book.Genre === genreFilter);
         }
 
         setReadBooks(books);
@@ -63,7 +185,7 @@ function BookRead({ onBack }: BookReadProps) {
       }
     };
     fetchBooks();
-  }, [debouncedSearchQuery]);
+  }, [debouncedSearchQuery, category]);
 
   useEffect(() => {
     setCurrentPage("Okunmuş Kitaplar");
@@ -186,10 +308,471 @@ function BookRead({ onBack }: BookReadProps) {
               {/* <h3 className="text-center md:grid-cols-2 text-2xl font-bold italic text-gray-800 dark:text-white mb-3">
                 🎧📓 Okuduğum Kitaplarımın Listesi
               </h3> */}
-              <div className=" flex items-center justify-center text-center text-2xl font-bold italic text-gray-800 dark:text-white mb-3">
+              {/* <div className=" flex items-center justify-center text-center text-2xl font-bold italic text-gray-800 dark:text-white mb-3">
                 <span>🎧📓 Okuduğum Kitaplarımın Listesi</span>
-              </div>
+              </div> */}
+              <div className="mb-6">
+                <h3 className=" text-center md:grid-cols-2 text-2xl font-bold italic text-gray-800 dark:text-white mb-6">
+                  {category
+                    ? `🎬 ${category} Okunmuş Kitaplar`
+                    : "🎧📓  Tüm Okunmuş Kitaplar"}
+                  {""}
+                </h3>
+                {/* Filtre butonları */}
 
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={() => navigate("/mybooks")}
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      !category
+                        ? "bg-blue-500 text-white font-mono "
+                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
+                    }`}
+                  >
+                    Tümü
+                  </button>
+                  <button
+                    onClick={() => navigate("/mybooks/Alegori")}
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      category === "Alegori"
+                        ? "bg-blue-500 text-white font-mono "
+                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
+                    }`}
+                  >
+                    Alegori
+                  </button>
+                  <button
+                    onClick={() => navigate("/mybooks/Ani")}
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      category === "Anı"
+                        ? "bg-blue-500 text-white font-mono "
+                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
+                    }`}
+                  >
+                    Anı
+                  </button>
+                  <button
+                    onClick={() => navigate("/mybooks/Akademik")}
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      category === "Akademik"
+                        ? "bg-blue-500 text-white font-mono "
+                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
+                    }`}
+                  >
+                    Akademik
+                  </button>
+                  <button
+                    onClick={() => navigate("/mybooks/Antoloji")}
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      category === "Antoloji"
+                        ? "bg-blue-500 text-white font-mono "
+                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
+                    }`}
+                  >
+                    Antoloji
+                  </button>
+                  <button
+                    onClick={() => navigate("/mybooks/Arastirma-inceleme")}
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      category === "Araştırma - İnceleme"
+                        ? "bg-blue-500 text-white font-mono "
+                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
+                    }`}
+                  >
+                    Araştırma - İnceleme
+                  </button>
+                  <button
+                    onClick={() => navigate("/mybooks/Bilim")}
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      category === "Bilim"
+                        ? "bg-blue-500 text-white font-mono "
+                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
+                    }`}
+                  >
+                    Bilim
+                  </button>
+                  <button
+                    onClick={() => navigate("/mybooks/Bilim-Kurgu")}
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      category === "Bilim-Kurgu"
+                        ? "bg-blue-500 text-white font-mono"
+                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
+                    }`}
+                  >
+                    Bilim Kurgu
+                  </button>
+                  <button
+                    onClick={() => navigate("/mybooks/Biyografi")}
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      category === "Biyografi"
+                        ? "bg-blue-500 text-white font-mono"
+                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
+                    }`}
+                  >
+                    Biyografi
+                  </button>
+                  <button
+                    onClick={() => navigate("/mybooks/Cizgi-Roman-Manga")}
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      category === "Çizgi Roman / Manga"
+                        ? "bg-blue-500 text-white font-mono"
+                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
+                    }`}
+                  >
+                    Çizgi Roman / Manga
+                  </button>
+                  <button
+                    onClick={() => navigate("/mybooks/Cocuk-Edebiyati")}
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      category === "Çocuk Edebiyatı"
+                        ? "bg-blue-500 text-white font-mono"
+                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
+                    }`}
+                  >
+                    Çocuk Edebiyatı
+                  </button>
+                  <button
+                    onClick={() => navigate("/mybooks/Deneme")}
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      category === "Deneme"
+                        ? "bg-blue-500 text-white font-mono"
+                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
+                    }`}
+                  >
+                    Deneme
+                  </button>
+                  <button
+                    onClick={() => navigate("/mybooks/Din-Mitoloji")}
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      category === "Din ve Mitoloji"
+                        ? "bg-blue-500 text-white font-mono"
+                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
+                    }`}
+                  >
+                    Din ve Mitoloji
+                  </button>
+                  <button
+                    onClick={() => navigate("/mybooks/Distopya")}
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      category === "Distopya"
+                        ? "bg-blue-500 text-white font-mono"
+                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
+                    }`}
+                  >
+                    Distopya
+                  </button>
+                  <button
+                    onClick={() => navigate("/mybooks/Edebiyat")}
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      category === "Edebiyat"
+                        ? "bg-blue-500 text-white font-mono"
+                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
+                    }`}
+                  >
+                    Edebiyat
+                  </button>
+                  <button
+                    onClick={() => navigate("/mybooks/Egitim-Akademik")}
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      category === "Eğitim / Akademik:"
+                        ? "bg-blue-500 text-white font-mono"
+                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
+                    }`}
+                  >
+                    Eğitim / Akademik:
+                  </button>
+                  <button
+                    onClick={() => navigate("/mybooks/Ekonomi")}
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      category === "Ekonomi"
+                        ? "bg-blue-500 text-white font-mono"
+                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
+                    }`}
+                  >
+                    Ekonomi
+                  </button>
+                  <button
+                    onClick={() => navigate("/mybooks/Fantastik")}
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      category === "Fantastik"
+                        ? "bg-blue-500 text-white font-mono"
+                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
+                    }`}
+                  >
+                    Fantastik
+                  </button>
+                  <button
+                    onClick={() => navigate("/mybooks/Felsefe")}
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      category === "Felsefe"
+                        ? "bg-blue-500 text-white font-mono"
+                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
+                    }`}
+                  >
+                    Felsefe
+                  </button>
+                  <button
+                    onClick={() => navigate("/mybooks/Gezi-Seyahat")}
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      category === "Gezi / Seyahat"
+                        ? "bg-blue-500 text-white font-mono"
+                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
+                    }`}
+                  >
+                    Gezi / Seyahat
+                  </button>
+                  <button
+                    onClick={() => navigate("/mybooks/Genç-Yetiskin")}
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      category === "Genç Yetişkin"
+                        ? "bg-blue-500 text-white font-mono"
+                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
+                    }`}
+                  >
+                    Genç Yetişkin
+                  </button>
+                  <button
+                    onClick={() => navigate("/mybooks/Gerilim")}
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      category === "Gerilim"
+                        ? "bg-blue-500 text-white font-mono"
+                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
+                    }`}
+                  >
+                    Gerilim
+                  </button>
+                  <button
+                    onClick={() => navigate("/mybooks/Gunluk")}
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      category === "Günlük"
+                        ? "bg-blue-500 text-white font-mono"
+                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
+                    }`}
+                  >
+                    Günlük
+                  </button>
+                  <button
+                    onClick={() => navigate("/mybooks/Hikaye")}
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      category === "Hikaye (Öykü)"
+                        ? "bg-blue-500 text-white font-mono"
+                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
+                    }`}
+                  >
+                    Hikaye
+                  </button>
+                  <button
+                    onClick={() => navigate("/mybooks/Hobi")}
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      category === "Hobi"
+                        ? "bg-blue-500 text-white font-mono"
+                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
+                    }`}
+                  >
+                    Hobi
+                  </button>
+                  <button
+                    onClick={() => navigate("/mybooks/Kisisel-Gelisim")}
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      category === "Kişisel Gelişim"
+                        ? "bg-blue-500 text-white font-mono"
+                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
+                    }`}
+                  >
+                    Kişisel Gelişim
+                  </button>
+                  <button
+                    onClick={() => navigate("/mybooks/Klasikler")}
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      category === "Klasikler"
+                        ? "bg-blue-500 text-white font-mono"
+                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
+                    }`}
+                  >
+                    Klasikler
+                  </button>
+                  <button
+                    onClick={() => navigate("/mybooks/Korku")}
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      category === "Korku"
+                        ? "bg-blue-500 text-white font-mono"
+                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
+                    }`}
+                  >
+                    Korku
+                  </button>
+                  <button
+                    onClick={() => navigate("/mybooks/Macera")}
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      category === "Macera"
+                        ? "bg-blue-500 text-white font-mono"
+                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
+                    }`}
+                  >
+                    Macera
+                  </button>
+                  <button
+                    onClick={() => navigate("/mybooks/Mektup")}
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      category === "Mektup"
+                        ? "bg-blue-500 text-white font-mono"
+                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
+                    }`}
+                  >
+                    Mektup
+                  </button>
+                  <button
+                    onClick={() => navigate("/mybooks/Mizah")}
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      category === "Mizah"
+                        ? "bg-blue-500 text-white font-mono"
+                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
+                    }`}
+                  >
+                    Mizah
+                  </button>
+                  <button
+                    onClick={() => navigate("/mybooks/Otobiyografi")}
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      category === "Otobiyografi"
+                        ? "bg-blue-500 text-white font-mono"
+                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
+                    }`}
+                  >
+                    Otobiyografi
+                  </button>
+                  <button
+                    onClick={() => navigate("/mybooks/Polisiye")}
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      category === "Polisiye"
+                        ? "bg-blue-500 text-white font-mono"
+                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
+                    }`}
+                  >
+                    Polisiye
+                  </button>
+                  <button
+                    onClick={() => navigate("/mybooks/Psikoloji")}
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      category === "Psikoloji"
+                        ? "bg-blue-500 text-white font-mono"
+                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
+                    }`}
+                  >
+                    Psikoloji
+                  </button>
+                  <button
+                    onClick={() => navigate("/mybooks/Referans")}
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      category === "Referans"
+                        ? "bg-blue-500 text-white font-mono"
+                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
+                    }`}
+                  >
+                    Referans
+                  </button>
+                  <button
+                    onClick={() => navigate("/mybooks/Roman")}
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      category === "Roman"
+                        ? "bg-blue-500 text-white font-mono"
+                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
+                    }`}
+                  >
+                    Roman
+                  </button>
+                  <button
+                    onClick={() => navigate("/mybooks/Saglik")}
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      category === "Sağlık"
+                        ? "bg-blue-500 text-white font-mono"
+                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
+                    }`}
+                  >
+                    Sağlık
+                  </button>
+                  <button
+                    onClick={() => navigate("/mybooks/Sanat")}
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      category === "Sanat"
+                        ? "bg-blue-500 text-white font-mono"
+                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
+                    }`}
+                  >
+                    Sanat
+                  </button>
+                  <button
+                    onClick={() => navigate("/mybooks/Siyaset")}
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      category === "Siyaset"
+                        ? "bg-blue-500 text-white font-mono"
+                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
+                    }`}
+                  >
+                    Siyaset
+                  </button>
+                  <button
+                    onClick={() => navigate("/mybooks/Sosyoloji")}
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      category === "Sosyoloji"
+                        ? "bg-blue-500 text-white font-mono"
+                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
+                    }`}
+                  >
+                    Sosyoloji
+                  </button>
+                  <button
+                    onClick={() => navigate("/mybooks/Siir")}
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      category === "Şiir"
+                        ? "bg-blue-500 text-white font-mono"
+                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
+                    }`}
+                  >
+                    Şiir
+                  </button>
+                  <button
+                    onClick={() => navigate("/mybooks/Tarih")}
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      category === "Tarih"
+                        ? "bg-blue-500 text-white font-mono"
+                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
+                    }`}
+                  >
+                    Tarih
+                  </button>
+                  <button
+                    onClick={() => navigate("/mybooks/Tarihi-Kurgu")}
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      category === "Tarihi Kurgu"
+                        ? "bg-blue-500 text-white font-mono"
+                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
+                    }`}
+                  >
+                    Tarihi Kurgu
+                  </button>
+                  <button
+                    onClick={() => navigate("/mybooks/Tiyatro")}
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      category === "Tiyatro"
+                        ? "bg-blue-500 text-white font-mono"
+                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
+                    }`}
+                  >
+                    Tiyatro
+                  </button>
+                  <button
+                    onClick={() => navigate("/mybooks/Diger")}
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      category === "Diğer"
+                        ? "bg-blue-500 text-white font-mono"
+                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
+                    }`}
+                  >
+                    Diğer
+                  </button>
+                </div>
+              </div>
               {/* Arama Input'u */}
               <div className="flex gap-2 mb-4 items-center justify-center">
                 <input

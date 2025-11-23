@@ -115,6 +115,14 @@ function App() {
               }
             />
             <Route
+              path="/mybooks/:category"
+              element={
+                <ProtectedRoute>
+                  <BookRead onBack={handleLogout} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/poems"
               element={
                 <ProtectedRoute>
