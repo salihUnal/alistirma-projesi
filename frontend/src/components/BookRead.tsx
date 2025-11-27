@@ -38,6 +38,7 @@ function BookRead({ onBack }: BookReadProps) {
   const [isAdding, setIsAdding] = useState(false);
   const isFormValid =
     inputValueBook.trim() && inputValueAuthor.trim() && inputValueGenre.trim();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     if (urlPage) {
@@ -312,7 +313,7 @@ function BookRead({ onBack }: BookReadProps) {
                 <span>🎧📓 Okuduğum Kitaplarımın Listesi</span>
               </div> */}
               <div className="mb-6">
-                <h3 className=" text-center md:grid-cols-2 text-2xl font-bold italic text-gray-800 dark:text-white mb-6">
+                <h3 className=" text-center md:grid-cols-0 text-2xl font-bold italic text-gray-800 dark:text-white mb-6 truncate">
                   {category
                     ? `🎬 ${category} Okunmuş Kitaplar`
                     : "🎧📓  Tüm Okunmuş Kitaplar"}
@@ -320,8 +321,14 @@ function BookRead({ onBack }: BookReadProps) {
                 </h3>
                 {/* Filtre butonları */}
 
-                <div className="flex flex-wrap gap-2">
-                  <button
+                <div className="flex  gap-2 overflow-x-auto whitespace-nowrap pb-2">
+                  <BookReadGenres
+                    value={editGenre}
+                    onChange={(e) => setEditGenre(e.target.value)}
+                    //  onClick
+                    className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 sm:max-w-full md:max-w-60 cursor-pointer"
+                  />
+                  {/* <button
                     onClick={() => navigate("/mybooks")}
                     className={`px-3 py-1 rounded-full text-sm ${
                       !category
@@ -770,7 +777,7 @@ function BookRead({ onBack }: BookReadProps) {
                     }`}
                   >
                     Diğer
-                  </button>
+                  </button> */}
                 </div>
               </div>
               {/* Arama Input'u */}
@@ -798,9 +805,9 @@ function BookRead({ onBack }: BookReadProps) {
               )}
 
               {/* Kitap Ekleme Input'u */}
-              <div className="flex gap-2 mb-6 items-center justify-center ">
+              <div className="flex flex-col sm:flex-col md:flex-row lg:flex-row gap-2 lg:flex-col-row mb-6 items-center justify-center ">
                 <input
-                  className="flex-1 px-3 py-2 rounded-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 max-w-60"
+                  className="flex-1 px-3 py-2 rounded-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 sm:max-w-full md:max-w-60"
                   placeholder="Okuduğun Yeni Kitabı ekle"
                   value={inputValueBook}
                   type="text"
@@ -809,7 +816,7 @@ function BookRead({ onBack }: BookReadProps) {
                   disabled={loading || isAdding}
                 />
                 <input
-                  className="flex-1 px-3 py-2 rounded-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 max-w-60"
+                  className="flex-1 px-3 py-2 rounded-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 sm:max-w-full md:max-w-60"
                   placeholder="Okuduğun Yeni Kitabın Yazarı"
                   value={inputValueAuthor}
                   type="text"
@@ -877,17 +884,17 @@ function BookRead({ onBack }: BookReadProps) {
                       </span> */}
                       <div className="flex flex-col h-full p-4">
                         {/* Kitap Adı */}
-                        <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
+                        <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2 truncate">
                           {book.Book_Name}
                         </h3>
 
                         {/* Yazar */}
                         <div className="text-sm text-blue-950 dark:text-white mb-3">
-                          <div className="flex items-center gap-1">
-                            <span className="font-semibold text-gray-900 dark:text-gray-300">
+                          <div className="flex items-center gap-1 min-w-0">
+                            <span className="font-semibold text-gray-900 dark:text-gray-300 shrink-0">
                               Yazar:
                             </span>
-                            <span className="italic text-blue-700 dark:text-blue-300">
+                            <span className="italic text-blue-700 dark:text-blue-300 truncate">
                               {book.Author_Name || "Bilinmiyor"}
                             </span>
                           </div>
@@ -970,8 +977,8 @@ function BookRead({ onBack }: BookReadProps) {
 
   return (
     <div className="w-full min-h-screen px-4 py-8 dark:bg-slate-900 text-white">
-      <div className="flex items-center justify-between px-4 py-3 bg-white/70 dark:bg-slate-900/70 backdrop-blur border-b border-slate-200/60 dark:border-slate-700/60 rounded-lg">
-        <Link to="/mybooks/" className="flex items-center gap-3">
+      <div className="flex flex-1 items-center justify-between px-4 py-3 bg-white/70 dark:bg-slate-900/70 backdrop-blur border-b border-slate-200/60 dark:border-slate-700/60 rounded-lg">
+        <Link to="/mybooks/" className="flex flex-1 min-w-0 items-center gap-3">
           <img
             src="https://res.cloudinary.com/dklvz02ew/image/upload/v1761658139/kitap-logo_acpjzd.png"
             alt="Uygulama Logosu"
@@ -979,12 +986,50 @@ function BookRead({ onBack }: BookReadProps) {
             // role="button"
             // onClick={() => navigate("/books/Tumu")}
           />
-          <span className="text-2xl font-semibold text-slate-800 dark:text-slate-100">
+          <span className="text-lg font-semibold sm:text-lg md:text-md lg:text-lg xl:text-xl 2xl:text-2xl text-slate-800 dark:text-slate-100 truncate ">
             Okuduğum Kitaplar Listesi
           </span>
         </Link>
 
         <div className="flex items-center gap-3">
+          <button
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            className="md:hidden p-2 rounded-lg text-slate-800 dark:text-slate-100 hover:bg-slate-200/50 dark:hover:bg-slate-700/50 transition-colors"
+            aria-label="Menüyü Aç/Kapat"
+          >
+            {/* Hamburger (Açık değilse) veya X (Açıksa) ikonu */}
+            {isSidebarOpen ? (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            ) : (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16m-7 6h7"
+                />
+              </svg>
+            )}
+          </button>
           <ThemeToggle />
           <button
             type="button"
@@ -998,12 +1043,39 @@ function BookRead({ onBack }: BookReadProps) {
           </button>
         </div>
       </div>
-      <div className="mt-4 flex gap-3">
-        <div className="w-64 shrink-0">
-          <Sidebar title="Menü" />
+      <div className="mt-4 flex flex-col md:flex-row gap-4 items-start max-w-full">
+        {/* 1. Sidebar Bölümü (Solda Sabit) */}
+        <div
+          className={`
+            shrink-0 
+            ${
+              isSidebarOpen
+                ? "fixed inset-y-0 left-0 z-50 w-64 shadow-2xl bg-white dark:bg-slate-900 transition-transform duration-300 ease-in-out" // Mobil Açık
+                : "hidden" // Mobil Kapalı
+            } 
+            md:block md:w-64 md:static md:shadow-none md:transform-none md:bg-transparent // Desktop (Daima Görünür ve Sabit Yerinde)
+          `}
+        >
+          {isSidebarOpen && (
+            <div
+              className="fixed inset-0 bg-black/50 z-30 md:hidden"
+              onClick={() => setIsSidebarOpen(false)}
+              aria-hidden="true"
+            ></div>
+          )}
+          <Sidebar title="Menü" onItemClick={() => setIsSidebarOpen(false)} />
         </div>
-        <div className="flex-1">
-          <h1 className="text-3xl text-center font-bold mb-6 text-gray-900 dark:text-white">
+
+        {/* Mobil Arka Plan Karartma (Overlay) */}
+        {isSidebarOpen && (
+          <div
+            className="fixed inset-0 bg-black/50 z-40 md:hidden"
+            onClick={() => setIsSidebarOpen(false)}
+            aria-hidden="true"
+          />
+        )}
+        <div className="flex-1 w-full min-w-0">
+          <h1 className="text-3xl text-center font-bold sm:block mb-6 text-gray-900 dark:text-white">
             Okunmuş Kitaplar
           </h1>
           {renderContent()}
@@ -1094,7 +1166,7 @@ function BookRead({ onBack }: BookReadProps) {
                 value={editGenre}
                 onChange={(e) => setEditGenre(e.target.value)}
                 // Edit modalındaki input stiline uygun className:
-                className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 sm:max-w-full md:max-w-60 cursor-pointer"
               />
             </div>
             <div className="flex justify-end gap-4">

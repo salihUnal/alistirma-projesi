@@ -121,7 +121,7 @@ export default function Movies({ category }: MoviesProps) {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Film, tür, yönetmen, yıl ara..."
-        className="w-full md:w-96 rounded border-separate border-blue-200 dark:border-blue-700 border-2  px-3 py-2 mb-4 bg-transparent text-black text-font-semibold text-lg dark:bg-gray-800 dark:text-white backdrop-blur-sm dark:bg-transparent
+        className="w-full md:w-96 rounded  border-blue-200 dark:border-blue-300 border-2  px-3 py-2 mb-4 bg-transparent text-black text-font-semibold text-lg dark:bg-gray-800 dark:text-white backdrop-blur-sm dark:bg-transparent
          placeholder:text-black placeholder:font-normal placeholder:italic placeholder:text-base dark:placeholder:text-gray-400 dark:placeholder:italic"
         aria-label="Ara"
       />
@@ -133,7 +133,7 @@ export default function Movies({ category }: MoviesProps) {
       )}
 
       {/* <div className="grid grid-cols-6 sm:grid-cols-3 lg:grid-cols-6 gap-6"> */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6  gap-6 ">
+      <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-7 gap-6 ">
         {!loading &&
           !error &&
           movies.map((movie, index) => (

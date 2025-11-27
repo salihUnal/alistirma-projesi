@@ -259,7 +259,7 @@ function BookList({ onBack }: BookListPageProps) {
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 bg-white/70 dark:bg-slate-900/70 backdrop-blur border-b border-slate-200/60 dark:border-slate-700/60 rounded-lg">
         {/* <div className="flex items-center gap-3"> */}
-        <Link to="/books/" className="flex items-center gap-3">
+        <Link to="/books/" className="flex flex-1 min-w-0  items-center gap-3">
           <img
             src="https://res.cloudinary.com/dklvz02ew/image/upload/v1761658139/kitap-logo_acpjzd.png"
             alt="Uygulama Logosu"
@@ -267,7 +267,7 @@ function BookList({ onBack }: BookListPageProps) {
             // role="button"
             // onClick={() => navigate("/books/Tumu")}
           />
-          <span className="text-2xl font-semibold text-slate-800 dark:text-slate-100">
+          <span className="text-lg font-semibold sm:text-lg md:text-md lg:text-lg xl:text-xl 2xl:text-2xl text-slate-800 dark:text-slate-100">
             Kitap Uygulaması
           </span>
         </Link>
