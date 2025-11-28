@@ -46,6 +46,31 @@ function Home() {
           </button>
         </div>
       </div>
+
+      <div className="mt-4 flex gap-3 ">
+        {/* Sidebar’a sabit genişlik vererek yapıyı koru */}
+        <div className="w-64 shrink-0 ">
+          <Sidebar title="Menü" />
+        </div>
+
+        <div className="border  border-slate-400 dark:border-slate-700 bg-white dark:bg-gray-800 p-6 mt-10 rounded-lg shadow w-full">
+          <div className="mb-1">
+            <h3 className="text-center md:grid-cols-2 text-2xl font-bold italic text-gray-800 dark:text-white mb-3">
+              Kitapları
+            </h3>
+
+            <div className="flex flex-wrap gap-2 w-full">
+              <button
+                // onClick={() => navigate(buildBookUrl(""))}
+                className="px-3 py-1 rounded-full text-sm"
+              >
+                Tümü
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="flex flex-1 mt-4 gap-3">
         <main className="flex-1 flex flex-col items-center w-full min-w-0">
           {/* Başlık */}
@@ -59,13 +84,12 @@ function Home() {
             />
           </h1>
         </main>
-      </div>
 
-      <div className="mt-4 flex gap-3 ">
-        {/* Sidebar’a sabit genişlik vererek yapıyı koru */}
-        <div className="w-64 shrink-0 ">
-          <Sidebar title="Menü" />
-        </div>
+        {/* <div className="container  gap-3">
+            <div className="flex flex-cols-5">
+              <h3>card 1</h3>
+            </div>
+          </div> */}
       </div>
 
       <div className="bg-white-100">

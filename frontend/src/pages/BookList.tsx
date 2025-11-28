@@ -41,7 +41,7 @@ function BookList({ onBack }: BookListPageProps) {
     switch (currentPage) {
       case "Kitaplar":
         return (
-          <div className="border-separate border-blue-200 dark:border-blue-700 border-2 bg-white dark:bg-gray-800 p-6 mt-10 rounded-lg shadow">
+          <div className="border border-slate-400 dark:border-slate-700 bg-white dark:bg-gray-800 p-6 mt-10 rounded-lg shadow">
             <div className="mb-1">
               <h3 className="text-center md:grid-cols-2 text-2xl font-bold italic text-gray-800 dark:text-white mb-3">
                 {category ? `📚 ${category} Kitapları` : "📚 Tüm Kitaplar"}
@@ -292,9 +292,9 @@ function BookList({ onBack }: BookListPageProps) {
           <Sidebar title="Menü" />
         </div>
         <div className="flex-1">
-          <h1 className="text-3xl text-center font-bold mb-6 text-gray-900 dark:text-white">
+          {/* <h1 className="text-3xl text-center font-bold mb-6 text-gray-900 dark:text-white">
             Kitaplar
-          </h1>
+          </h1> */}
           {renderContent()}
         </div>
       </div>

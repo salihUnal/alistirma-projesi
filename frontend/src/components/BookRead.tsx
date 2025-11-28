@@ -6,7 +6,7 @@ import Sidebar from "../components/Sidebar";
 import { useAuth } from "../contexts/AuthContext";
 import ThemeToggle from "../components/common/ThemeToggle";
 import { useDebounce } from "../hooks/useDebounce";
-import BookReadGenres from "./BookReadGenres";
+import BookReadGenres, { bookGenres } from "./BookReadGenres";
 import LikeButton from "./common/LikeButton";
 
 interface BookReadProps {
@@ -56,7 +56,7 @@ function BookRead({ onBack }: BookReadProps) {
 
     // Sidebar butonlarına göre URL değiştir
     const urlMap: Record<string, string> = {
-      Kitaplar: "/mybooks",
+      Tümü: "/mybooks",
       Alegori: "/mybooks/Alegori",
       Anı: "/mybooks/Ani",
       Akademik: "/mybooks/Akademik",
@@ -65,7 +65,7 @@ function BookRead({ onBack }: BookReadProps) {
       Bilim: "/mybooks/Bilim",
       "Bilim Kurgu": "/mybooks/Bilim-Kurgu",
       Biyografi: "/mybooks/Biyografi",
-      "Çizgi Roman / Manga": "/mybooks/Cizgi-Roman-Manga",
+      "Çizgi Roman": "/mybooks/Cizgi-Roman",
       "Çocuk Edebiyatı": "/mybooks/Çocuk Edebiyatı",
       Deneme: "/mybooks/Deneme",
       "Din ve Mitoloji": "/mybooks/Din-Mitoloji",
@@ -75,8 +75,8 @@ function BookRead({ onBack }: BookReadProps) {
       Ekonomi: "/mybooks/Ekonomi",
       Fantastik: "/mybooks/Fantastik",
       Felsefe: "/mybooks/Felsefe",
-      "Gezi / Seyahat": "/mybooks/Gezi-Seyahat",
-      "Genç Yetişkin": "/mybooks/Genc-Yetiskin",
+      Gezi: "/mybooks/Gezi",
+      Gençlik: "/mybooks/Genclik",
       Gerilim: "/mybooks/Gerilim",
       Günlük: "/mybooks/Gunluk",
       "Hikaye (Öykü)": "/mybooks/Hikaye",
@@ -123,6 +123,7 @@ function BookRead({ onBack }: BookReadProps) {
         if (category && category !== "Tumu") {
           // URL'deki category slug'ını genre değerine çevir
           const categoryMap: Record<string, string> = {
+            // Tümü: "",
             Alegori: "Alegori",
             Ani: "Anı",
             Akademik: "Akademik",
@@ -131,18 +132,18 @@ function BookRead({ onBack }: BookReadProps) {
             Bilim: "Bilim",
             "Bilim-Kurgu": "Bilim Kurgu",
             Biyografi: "Biyografi",
-            "Cizgi-Roman-Manga": "Çizgi Roman / Manga",
+            "Cizgi-Roman-Manga": "Çizgi Roman",
             "Cocuk-Edebiyati": "Çocuk Edebiyatı",
             Deneme: "Deneme",
             "Din-Mitoloji": "Din ve Mitoloji",
             Distopya: "Distopya",
             Edebiyat: "Edebiyat",
-            "Egitim-Akademik": "Eğitim / Akademik",
+            Egitim: "Eğitim",
             Ekonomi: "Ekonomi",
             Fantastik: "Fantastik",
             Felsefe: "Felsefe",
-            "Gezi-Seyahat": "Gezi / Seyahat",
-            "Genc-Yetiskin": "Genç Yetişkin",
+            Gezi: "Gezi",
+            Gençlik: "Gençlik",
             Gerilim: "Gerilim",
             Gunluk: "Günlük",
             Hikaye: "Hikaye (Öykü)",
@@ -304,7 +305,7 @@ function BookRead({ onBack }: BookReadProps) {
     switch (currentPage) {
       case "Okunmuş Kitaplar":
         return (
-          <div className="border-separate border-blue-200 dark:border-blue-700 border-2 bg-white dark:bg-gray-800 p-6 mt-10 rounded-lg shadow">
+          <div className="border border-slate-400 dark:border-slate-700 bg-white dark:bg-gray-800 p-6 mt-10 rounded-lg shadow">
             <div className="mb-1">
               {/* <h3 className="text-center md:grid-cols-2 text-2xl font-bold italic text-gray-800 dark:text-white mb-3">
                 🎧📓 Okuduğum Kitaplarımın Listesi
@@ -313,477 +314,56 @@ function BookRead({ onBack }: BookReadProps) {
                 <span>🎧📓 Okuduğum Kitaplarımın Listesi</span>
               </div> */}
               <div className="mb-6">
-                <h3 className=" text-center md:grid-cols-0 text-2xl font-bold italic text-gray-800 dark:text-white mb-6 truncate">
+                <h3 className="text-center md:grid-cols-0 text-2xl font-bold italic text-gray-800 dark:text-white mb-6 truncate">
                   {category
-                    ? `🎬 ${category} Okunmuş Kitaplar`
-                    : "🎧📓  Tüm Okunmuş Kitaplar"}
-                  {""}
+                    ? `📖  Okunmuş ${category} Kitapları`
+                    : "🎧📖  Tüm Okunmuş Kitaplar"}
                 </h3>
-                {/* Filtre butonları */}
 
-                <div className="flex  gap-2 overflow-x-auto whitespace-nowrap pb-2">
-                  <BookReadGenres
-                    value={editGenre}
-                    onChange={(e) => setEditGenre(e.target.value)}
-                    //  onClick
-                    className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 sm:max-w-full md:max-w-60 cursor-pointer"
-                  />
-                  {/* <button
+                {/* Filtre butonları - DİNAMİK LİSTELEME */}
+                <div
+                  className="cursor-pointer flex gap-2 overflow-x-auto whitespace-nowrap pb-2 
+  {/* Webkit (Chrome, Safari, Edge) Ayarları */}
+  hover:[&::-webkit-scrollbar-thumb]:bg-blue-100
+  [&::-webkit-scrollbar]:h-2
+  [&::-webkit-scrollbar-track]:bg-gray-100
+  [&::-webkit-scrollbar-thumb]:bg-blue-400
+  [&::-webkit-scrollbar-thumb]:rounded-full
+    dark:[&::-webkit-scrollbar-track]:bg-slate-700
+  dark:[&::-webkit-scrollbar-thumb]:bg-blue-600"
+                >
+                  {/* 'Tümü' Butonu (Sabit Kalacak) */}
+                  <button
                     onClick={() => navigate("/mybooks")}
-                    className={`px-3 py-1 rounded-full text-sm ${
+                    className={`px-3 py-1 rounded-full text-sm transition-colors ${
                       !category
-                        ? "bg-blue-500 text-white font-mono "
-                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
+                        ? "bg-blue-500 text-white font-mono"
+                        : "bg-blue-100 dark:bg-blue-900 text-black dark:text-white font-mono hover:bg-blue-500 hover:text-white"
                     }`}
                   >
                     Tümü
                   </button>
-                  <button
-                    onClick={() => navigate("/mybooks/Alegori")}
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      category === "Alegori"
-                        ? "bg-blue-500 text-white font-mono "
-                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
-                    }`}
-                  >
-                    Alegori
-                  </button>
-                  <button
-                    onClick={() => navigate("/mybooks/Ani")}
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      category === "Anı"
-                        ? "bg-blue-500 text-white font-mono "
-                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
-                    }`}
-                  >
-                    Anı
-                  </button>
-                  <button
-                    onClick={() => navigate("/mybooks/Akademik")}
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      category === "Akademik"
-                        ? "bg-blue-500 text-white font-mono "
-                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
-                    }`}
-                  >
-                    Akademik
-                  </button>
-                  <button
-                    onClick={() => navigate("/mybooks/Antoloji")}
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      category === "Antoloji"
-                        ? "bg-blue-500 text-white font-mono "
-                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
-                    }`}
-                  >
-                    Antoloji
-                  </button>
-                  <button
-                    onClick={() => navigate("/mybooks/Arastirma-inceleme")}
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      category === "Araştırma - İnceleme"
-                        ? "bg-blue-500 text-white font-mono "
-                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
-                    }`}
-                  >
-                    Araştırma - İnceleme
-                  </button>
-                  <button
-                    onClick={() => navigate("/mybooks/Bilim")}
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      category === "Bilim"
-                        ? "bg-blue-500 text-white font-mono "
-                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
-                    }`}
-                  >
-                    Bilim
-                  </button>
-                  <button
-                    onClick={() => navigate("/mybooks/Bilim-Kurgu")}
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      category === "Bilim-Kurgu"
-                        ? "bg-blue-500 text-white font-mono"
-                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
-                    }`}
-                  >
-                    Bilim Kurgu
-                  </button>
-                  <button
-                    onClick={() => navigate("/mybooks/Biyografi")}
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      category === "Biyografi"
-                        ? "bg-blue-500 text-white font-mono"
-                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
-                    }`}
-                  >
-                    Biyografi
-                  </button>
-                  <button
-                    onClick={() => navigate("/mybooks/Cizgi-Roman-Manga")}
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      category === "Çizgi Roman / Manga"
-                        ? "bg-blue-500 text-white font-mono"
-                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
-                    }`}
-                  >
-                    Çizgi Roman / Manga
-                  </button>
-                  <button
-                    onClick={() => navigate("/mybooks/Cocuk-Edebiyati")}
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      category === "Çocuk Edebiyatı"
-                        ? "bg-blue-500 text-white font-mono"
-                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
-                    }`}
-                  >
-                    Çocuk Edebiyatı
-                  </button>
-                  <button
-                    onClick={() => navigate("/mybooks/Deneme")}
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      category === "Deneme"
-                        ? "bg-blue-500 text-white font-mono"
-                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
-                    }`}
-                  >
-                    Deneme
-                  </button>
-                  <button
-                    onClick={() => navigate("/mybooks/Din-Mitoloji")}
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      category === "Din ve Mitoloji"
-                        ? "bg-blue-500 text-white font-mono"
-                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
-                    }`}
-                  >
-                    Din ve Mitoloji
-                  </button>
-                  <button
-                    onClick={() => navigate("/mybooks/Distopya")}
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      category === "Distopya"
-                        ? "bg-blue-500 text-white font-mono"
-                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
-                    }`}
-                  >
-                    Distopya
-                  </button>
-                  <button
-                    onClick={() => navigate("/mybooks/Edebiyat")}
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      category === "Edebiyat"
-                        ? "bg-blue-500 text-white font-mono"
-                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
-                    }`}
-                  >
-                    Edebiyat
-                  </button>
-                  <button
-                    onClick={() => navigate("/mybooks/Egitim-Akademik")}
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      category === "Eğitim / Akademik:"
-                        ? "bg-blue-500 text-white font-mono"
-                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
-                    }`}
-                  >
-                    Eğitim / Akademik:
-                  </button>
-                  <button
-                    onClick={() => navigate("/mybooks/Ekonomi")}
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      category === "Ekonomi"
-                        ? "bg-blue-500 text-white font-mono"
-                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
-                    }`}
-                  >
-                    Ekonomi
-                  </button>
-                  <button
-                    onClick={() => navigate("/mybooks/Fantastik")}
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      category === "Fantastik"
-                        ? "bg-blue-500 text-white font-mono"
-                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
-                    }`}
-                  >
-                    Fantastik
-                  </button>
-                  <button
-                    onClick={() => navigate("/mybooks/Felsefe")}
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      category === "Felsefe"
-                        ? "bg-blue-500 text-white font-mono"
-                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
-                    }`}
-                  >
-                    Felsefe
-                  </button>
-                  <button
-                    onClick={() => navigate("/mybooks/Gezi-Seyahat")}
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      category === "Gezi / Seyahat"
-                        ? "bg-blue-500 text-white font-mono"
-                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
-                    }`}
-                  >
-                    Gezi / Seyahat
-                  </button>
-                  <button
-                    onClick={() => navigate("/mybooks/Genç-Yetiskin")}
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      category === "Genç Yetişkin"
-                        ? "bg-blue-500 text-white font-mono"
-                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
-                    }`}
-                  >
-                    Genç Yetişkin
-                  </button>
-                  <button
-                    onClick={() => navigate("/mybooks/Gerilim")}
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      category === "Gerilim"
-                        ? "bg-blue-500 text-white font-mono"
-                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
-                    }`}
-                  >
-                    Gerilim
-                  </button>
-                  <button
-                    onClick={() => navigate("/mybooks/Gunluk")}
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      category === "Günlük"
-                        ? "bg-blue-500 text-white font-mono"
-                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
-                    }`}
-                  >
-                    Günlük
-                  </button>
-                  <button
-                    onClick={() => navigate("/mybooks/Hikaye")}
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      category === "Hikaye (Öykü)"
-                        ? "bg-blue-500 text-white font-mono"
-                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
-                    }`}
-                  >
-                    Hikaye
-                  </button>
-                  <button
-                    onClick={() => navigate("/mybooks/Hobi")}
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      category === "Hobi"
-                        ? "bg-blue-500 text-white font-mono"
-                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
-                    }`}
-                  >
-                    Hobi
-                  </button>
-                  <button
-                    onClick={() => navigate("/mybooks/Kisisel-Gelisim")}
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      category === "Kişisel Gelişim"
-                        ? "bg-blue-500 text-white font-mono"
-                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
-                    }`}
-                  >
-                    Kişisel Gelişim
-                  </button>
-                  <button
-                    onClick={() => navigate("/mybooks/Klasikler")}
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      category === "Klasikler"
-                        ? "bg-blue-500 text-white font-mono"
-                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
-                    }`}
-                  >
-                    Klasikler
-                  </button>
-                  <button
-                    onClick={() => navigate("/mybooks/Korku")}
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      category === "Korku"
-                        ? "bg-blue-500 text-white font-mono"
-                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
-                    }`}
-                  >
-                    Korku
-                  </button>
-                  <button
-                    onClick={() => navigate("/mybooks/Macera")}
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      category === "Macera"
-                        ? "bg-blue-500 text-white font-mono"
-                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
-                    }`}
-                  >
-                    Macera
-                  </button>
-                  <button
-                    onClick={() => navigate("/mybooks/Mektup")}
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      category === "Mektup"
-                        ? "bg-blue-500 text-white font-mono"
-                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
-                    }`}
-                  >
-                    Mektup
-                  </button>
-                  <button
-                    onClick={() => navigate("/mybooks/Mizah")}
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      category === "Mizah"
-                        ? "bg-blue-500 text-white font-mono"
-                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
-                    }`}
-                  >
-                    Mizah
-                  </button>
-                  <button
-                    onClick={() => navigate("/mybooks/Otobiyografi")}
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      category === "Otobiyografi"
-                        ? "bg-blue-500 text-white font-mono"
-                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
-                    }`}
-                  >
-                    Otobiyografi
-                  </button>
-                  <button
-                    onClick={() => navigate("/mybooks/Polisiye")}
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      category === "Polisiye"
-                        ? "bg-blue-500 text-white font-mono"
-                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
-                    }`}
-                  >
-                    Polisiye
-                  </button>
-                  <button
-                    onClick={() => navigate("/mybooks/Psikoloji")}
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      category === "Psikoloji"
-                        ? "bg-blue-500 text-white font-mono"
-                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
-                    }`}
-                  >
-                    Psikoloji
-                  </button>
-                  <button
-                    onClick={() => navigate("/mybooks/Referans")}
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      category === "Referans"
-                        ? "bg-blue-500 text-white font-mono"
-                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
-                    }`}
-                  >
-                    Referans
-                  </button>
-                  <button
-                    onClick={() => navigate("/mybooks/Roman")}
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      category === "Roman"
-                        ? "bg-blue-500 text-white font-mono"
-                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
-                    }`}
-                  >
-                    Roman
-                  </button>
-                  <button
-                    onClick={() => navigate("/mybooks/Saglik")}
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      category === "Sağlık"
-                        ? "bg-blue-500 text-white font-mono"
-                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
-                    }`}
-                  >
-                    Sağlık
-                  </button>
-                  <button
-                    onClick={() => navigate("/mybooks/Sanat")}
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      category === "Sanat"
-                        ? "bg-blue-500 text-white font-mono"
-                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
-                    }`}
-                  >
-                    Sanat
-                  </button>
-                  <button
-                    onClick={() => navigate("/mybooks/Siyaset")}
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      category === "Siyaset"
-                        ? "bg-blue-500 text-white font-mono"
-                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
-                    }`}
-                  >
-                    Siyaset
-                  </button>
-                  <button
-                    onClick={() => navigate("/mybooks/Sosyoloji")}
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      category === "Sosyoloji"
-                        ? "bg-blue-500 text-white font-mono"
-                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
-                    }`}
-                  >
-                    Sosyoloji
-                  </button>
-                  <button
-                    onClick={() => navigate("/mybooks/Siir")}
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      category === "Şiir"
-                        ? "bg-blue-500 text-white font-mono"
-                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
-                    }`}
-                  >
-                    Şiir
-                  </button>
-                  <button
-                    onClick={() => navigate("/mybooks/Tarih")}
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      category === "Tarih"
-                        ? "bg-blue-500 text-white font-mono"
-                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
-                    }`}
-                  >
-                    Tarih
-                  </button>
-                  <button
-                    onClick={() => navigate("/mybooks/Tarihi-Kurgu")}
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      category === "Tarihi Kurgu"
-                        ? "bg-blue-500 text-white font-mono"
-                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
-                    }`}
-                  >
-                    Tarihi Kurgu
-                  </button>
-                  <button
-                    onClick={() => navigate("/mybooks/Tiyatro")}
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      category === "Tiyatro"
-                        ? "bg-blue-500 text-white font-mono"
-                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
-                    }`}
-                  >
-                    Tiyatro
-                  </button>
-                  <button
-                    onClick={() => navigate("/mybooks/Diger")}
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      category === "Diğer"
-                        ? "bg-blue-500 text-white font-mono"
-                        : "bg-blue-300 text-black font-mono  hover:bg-blue-500"
-                    }`}
-                  >
-                    Diğer
-                  </button> */}
+
+                  {/* Dinamik Genre Butonları */}
+                  {bookGenres.map((genre) => (
+                    <button
+                      key={genre}
+                      onClick={() => navigate(`/mybooks/${genre}`)}
+                      className={`px-3 py-1 rounded-full text-sm transition-colors ${
+                        category === genre
+                          ? "bg-blue-500 text-white font-mono"
+                          : "bg-blue-100 dark:bg-blue-900 text-black dark:text-white font-mono hover:bg-blue-500 hover:text-white"
+                      }`}
+                    >
+                      {genre}
+                    </button>
+                  ))}
                 </div>
               </div>
               {/* Arama Input'u */}
               <div className="flex gap-2 mb-4 items-center justify-center">
                 <input
-                  className="flex-1 px-3 py-2 rounded-2xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 max-w-md"
+                  className="flex-1 px-3 py-2 rounded-2xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 max-w-xs"
                   placeholder="Kitap ara (kitap adı veya yazar)..."
                   value={searchQuery}
                   type="text"
@@ -807,7 +387,7 @@ function BookRead({ onBack }: BookReadProps) {
               {/* Kitap Ekleme Input'u */}
               <div className="flex flex-col sm:flex-col md:flex-row lg:flex-row gap-2 lg:flex-col-row mb-6 items-center justify-center ">
                 <input
-                  className="flex-1 px-3 py-2 rounded-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 sm:max-w-full md:max-w-60"
+                  className="flex-1 px-3 py-2 rounded-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 sm:max-w-full md:max-w-56"
                   placeholder="Okuduğun Yeni Kitabı ekle"
                   value={inputValueBook}
                   type="text"
@@ -838,7 +418,15 @@ function BookRead({ onBack }: BookReadProps) {
                   onChange={(e) => setInputValueGenre(e.target.value)}
                   disabled={loading || isAdding}
                   // Senin inputlarındaki stilin aynısını buraya className olarak veriyoruz:
-                  className="flex-1 px-3 py-2 rounded-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 max-w-60 cursor-pointer"
+                  className="flex-1 px-3 py-2 rounded-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 max-w-52 cursor-pointer   
+                  {/* Webkit (Chrome, Safari, Edge) Ayarları */}
+  [&::-webkit-scrollbar]:w-2
+  hover:[&::-webkit-scrollbar-thumb]:bg-blue-500
+  [&::-webkit-scrollbar-track]:bg-gray-100
+  [&::-webkit-scrollbar-thumb]:bg-blue-400
+  [&::-webkit-scrollbar-thumb]:rounded-lg
+    dark:[&::-webkit-scrollbar-track]:bg-slate-700
+  dark:[&::-webkit-scrollbar-thumb]:bg-blue-600"
                 />
                 <button
                   onClick={handleAddBook}
@@ -1056,13 +644,6 @@ function BookRead({ onBack }: BookReadProps) {
             md:block md:w-64 md:static md:shadow-none md:transform-none md:bg-transparent // Desktop (Daima Görünür ve Sabit Yerinde)
           `}
         >
-          {isSidebarOpen && (
-            <div
-              className="fixed inset-0 bg-black/50 z-30 md:hidden"
-              onClick={() => setIsSidebarOpen(false)}
-              aria-hidden="true"
-            ></div>
-          )}
           <Sidebar title="Menü" onItemClick={() => setIsSidebarOpen(false)} />
         </div>
 
@@ -1075,9 +656,9 @@ function BookRead({ onBack }: BookReadProps) {
           />
         )}
         <div className="flex-1 w-full min-w-0">
-          <h1 className="text-3xl text-center font-bold sm:block mb-6 text-gray-900 dark:text-white">
+          {/* <h1 className="text-3xl text-center font-bold sm:block mb-6 text-gray-900 dark:text-white">
             Okunmuş Kitaplar
-          </h1>
+          </h1> */}
           {renderContent()}
         </div>
       </div>
@@ -1166,7 +747,15 @@ function BookRead({ onBack }: BookReadProps) {
                 value={editGenre}
                 onChange={(e) => setEditGenre(e.target.value)}
                 // Edit modalındaki input stiline uygun className:
-                className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 sm:max-w-full md:max-w-60 cursor-pointer"
+                className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 sm:max-w-full md:max-w-60 cursor-pointer
+                {/* Webkit (Chrome, Safari, Edge) Ayarları */}
+  [&::-webkit-scrollbar]:w-2
+  hover:[&::-webkit-scrollbar-thumb]:bg-blue-500
+  [&::-webkit-scrollbar-track]:bg-gray-100
+  [&::-webkit-scrollbar-thumb]:bg-blue-400
+  [&::-webkit-scrollbar-thumb]:rounded-lg
+    dark:[&::-webkit-scrollbar-track]:bg-slate-700
+  dark:[&::-webkit-scrollbar-thumb]:bg-blue-600"
               />
             </div>
             <div className="flex justify-end gap-4">
