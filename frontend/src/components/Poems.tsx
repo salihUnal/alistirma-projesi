@@ -22,7 +22,7 @@ function Poems({ onBack }: PoemsProps) {
     switch (currentPage) {
       case "Şiirler":
         return (
-          <div className="border-separate border-blue-200 dark:border-blue-700 border-2 bg-white dark:bg-gray-800 p-6 mt-10 rounded-lg shadow">
+          <div className="border border-slate-400 dark:border-slate-700 bg-white dark:bg-gray-800 p-6 mt-10 rounded-lg shadow">
             <div className="mb-1">
               <h3 className="text-center md:grid-cols-2 text-2xl font-bold italic text-gray-800 dark:text-white mb-3">
                 🪶 Sevdiğim Şiirler
